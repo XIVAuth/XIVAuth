@@ -15,11 +15,12 @@
 
 <ul>
   <li>
-    <strong>Do not use XIVAuth to track users</strong>
+    <strong>Don't use XIVAuth to track users</strong>
     <p>
       XIVAuth takes user privacy seriously and expects applications using it to do the same. Information received by
       and for a specific app is intended <em>for</em> that app, and that app only. Developers may not use information
-      provided by XIVAuth to create user profiles, trackers, or similar services.
+      provided by XIVAuth to create lists, advertising profiles, or other systems designed specfically to track or
+      invade the privacy of users.
     </p>
   </li>
   <li>
@@ -34,9 +35,8 @@
   <li>
     <strong>Don't abuse the service</strong>
     <p>
-      XIVAuth is a shared service run by a single developer in the corner of their network stack. Where possible,
-      design your application to be a good netizen. Avoid excessive polling, cache data where possible, and be mindful
-      of rate limits and similar concerns.
+      XIVAuth is a shared service run by a single developer. Where possible, design your application to be a good
+      netizen. Avoid excessive polling, cache data where possible, and be mindful of rate limits and similar concerns.
     </p>
   </li>
   <li>
@@ -47,15 +47,18 @@
       stalk, scam, defraud, deceive, or otherwise harm players.
     </p>
   </li>
+  <li>
+    <strong>Don't build high-risk applications</strong>
+    <p>
+      Applications that are considered high-risk are not permitted. High-risk applications are anything that can
+      reasonably require XIVAuth's involvement for mediation or conflict resolution purposes. Examples include services
+      that require the user to provide their location, facilitate financial transactions (e.g., a storefront or gambling
+      site), are targeted at minors, or make consequential real-world decisions.
+    </p>
+  </li>
 </ul>
 
 <p>
   As a service provider, we reserve the right to disable Applications (or in extreme cases, developer accounts) that
   blatantly violate these standards.
 </p>
-
-<div class="mt-4">
-  <%= link_to :back, class: "btn btn-secondary" do %>
-  <i class="bi bi-arrow-left"></i> Back
-  <% end %>
-</div>

@@ -28,17 +28,17 @@
   <p>In addition, please refrain from performing any of the following activities:</p>
   <ul>
     <li>
-      <strong>Testing the underlying infrastructure.</strong> We're hosted on Heroku right now, and are sharing
-      resources and server space with other people. They're (probably) innocent, so please don't make their day bad.
-      This includes denial of service attacks.
+      <strong>Testing the underlying infrastructure.</strong> We're hosted on a mix of PaaS, VPS platforms, and are
+      therefore sharing resources and service space with other people. They're (probably) innocent, so please don't
+      make their day bad. This includes denial-of-service attacks.
     </li>
     <li>
       <strong>Directly attacking our providers.</strong> A CAPTCHA bypass is cool, but only if you actually get the
       server to not care about the CAPTCHA. Outsourcing solves to a click farm is boring and has been done before.
     </li>
     <li>
-      <strong>Attacking other people on the platform.</strong> Attacking the platform is cool. Specifically attacking
-      other people using the platform in a targeted manner is not cool. Even if you report it to us afterwards.
+      <strong>Attacking other people on the platform.</strong> Attacking the platform is cool. Directly attacking
+      other people using the platform in a targeted manner is not cool. Even if you report it to us afterward.
     </li>
     <li>
       <strong>Performing brute-force attacks.</strong> Anyone can guess a password with enough tries. Please don't waste
@@ -50,17 +50,17 @@
   <p>
     If you've found a vulnerability, congratulations! Please follow standard Responsible Disclosure procedures for
     submitting issues to us. Put simply, please report the vulnerability to us <em>first</em> (before any sort of public
-    blog post or social media message) so that we can fix it before anyone has a chance to abuse the reported bug.
+    blog post or social media message) so that we can fix it before anyone has a chance to abuse it.
   </p>
   <p>
-    You may report the bug by sending an email to
+    You may report the vulnerability by sending an email to
     <a href="mailto:security@kazwolfe.io"><code>security@kazwolfe.io</code></a> or by DMing Kaz on Discord through his
     username, <code>kazwolfe</code>. Please be sure to include the steps to reproduce the bug, as well as your specific
-    expectations and what you saw instead. If your report includes sensitive or confidential information, please encrypt it using PGP. Kaz's PGP key has an ID
-    of <a href="https://keys.openpgp.org/vks/v1/by-fingerprint/14C529AD4BACE342F2E1AA5D258813F53A16EBB4">
-    <code>2588 13F5 3A16 EBB4</code></a>, and can also be found on most keyservers or
-    <a href="https://github.com/kazwolfe.gpg">GitHub</a>. It's okay to send content encrypted with this key to the above
-    email as well, even though it's not listed on the key.
+    expectations and what you saw instead. If your report includes sensitive or confidential information, please encrypt
+    it using PGP. Kaz's PGP key has an ID of
+    <a href="https://keys.openpgp.org/vks/v1/by-fingerprint/14C529AD4BACE342F2E1AA5D258813F53A16EBB4" class="font-monospace">2588 13F5 3A16 EBB4</a>,
+    and can also be found on most key servers or <a href="https://github.com/kazwolfe.gpg">GitHub</a>. It's okay to send
+    content encrypted with this key to the above email as well, even though it's not listed on the key.
   </p>
 
   <h4>What <em>Not</em> To Report</h4>
@@ -72,9 +72,9 @@
     <li>Any attacks that rely on social engineering, including leaked or stolen credentials.</li>
     <li>Any attacks that rely on physical or virtual access to a victim's computer or network.</li>
     <li>Any reports of publicly accessible XIVAuth API Keys.</li>
-    <li>Any CSRF issues that do not modify state (e.g. logout commands).</li>
-    <li>Any attacks that require the use of brute force, denial of service attacks, or similar.</li>
-    <li>Any security issues in a specific API client (e.g. a plugin or web service).</li>
+    <li>Any CSRF issues that do not modify state (e.g., logout commands).</li>
+    <li>Any attacks that require the use of brute force, denial-of-service attacks, or similar.</li>
+    <li>Any security issues in a specific API client (e.g., a plugin or web service).</li>
     <li>Any of the following without demonstrable widespread or significant impact:
       <ul>
         <li>Any plain text reflection, including non-persistent self-XSS.</li>
@@ -94,22 +94,22 @@
   <h4>Do I Get Rewarded?</h4>
   <p>
     Unfortunately, no. XIVAuth is an open source project and is currently run by a single person. While rewards
-    are awesome (and we'll likely make a Hall of Fame at some point), it's just not currently feasible. If we ever do
-    offer a bounty, anyone who has previously submitted a valid report will be contacted as well.
+    are awesome (and we'll likely make a Hall of Fame at some point), it's just not currently something we can commit
+    to. If we ever do offer a bounty, anyone who has previously submitted a valid report will be contacted as well.
   </p>
   <p>
     You are permitted to publish information about your findings to personal blogs or portfolios provided that
-    you have received confirmation that the bug has been fixed, and that any and all sensitive information is redacted.
-    We may request that certain security issues not be published elsewhere - if this is the case, we will communicate
+    you have received confirmation that the bug has been fixed and that any and all sensitive information is redacted.
+    We may request that certain security issues not be published elsewhere. If this is the case, we will communicate
     the exact reason and motivation behind our request to you.
   </p>
 
   <h4>Will We Be In Touch?</h4>
   <p>
-    We will follow up on any security reports as quickly as reasonably possible based on the report type and
-    severity. If we need additional information, we will reach out to discuss and ask questions; please make sure you are
-    submitting reports from a monitored mailbox. If you'd like for us to contact you over PGP as well, please ensure that
-    your public key is published or attached to your initial report.
+    We will follow up on any security reports as quickly as possible based on the report type and severity. If we need
+    additional information, we will reach out to discuss and ask questions; please make sure you are submitting reports
+    from a monitored mailbox. If you'd like for us to contact you over PGP as well, please ensure that your public key
+    is published or attached to your initial report.
   </p>
   <p>
     You will also be notified about our findings. If the report is accepted, you will be notified when the fix has been

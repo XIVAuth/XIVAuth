@@ -14,9 +14,6 @@ export default class LoginFormController extends Controller {
     private discoveryAbortController: AbortController = new AbortController();
 
     async initialize() {
-        // bind turnstile to turbo so we can update things
-        const turnstileEl = this.element.querySelector('.cf-turnstile') as HTMLElement;
-        turnstileEl.addEventListener("turbo:morph-element", this.initializeTurnstileChallenge.bind(this));
 
         this.initializeTurnstileChallenge();
     }
@@ -74,14 +71,14 @@ export default class LoginFormController extends Controller {
             if (err instanceof DOMException && err.name === "NotAllowedError") {
                 this.webauthnFeedbackTarget.innerText = "Your browser blocked an attempt to use a Passkey. " +
                     "Please make sure your security key is available and try again.";
-                this.webauthnFeedbackTarget.parentElement.classList.remove("d-none");
+                this.webauthnFeedbackTarget.parentElement?.classList.remove("d-none");
                 return;
             }
 
             if (err instanceof DOMException && err.name === "NotSupportedError") {
                 this.webauthnFeedbackTarget.innerText = "Your browser does not support WebAuthn. Please try again " +
                     "with a different browser.";
-                this.webauthnFeedbackTarget.parentElement.classList.remove("d-none");
+                this.webauthnFeedbackTarget.parentElement?.classList.remove("d-none");
                 return;
             }
             return;
@@ -143,9 +140,6 @@ export default class LoginFormController extends Controller {
         })
     }
 
-    private onTurboMorph(event: HTMLElement) {
-        this.initializeTurnstileChallenge();
-    }
 
     private async checkConditionalMediation() {
         return window.PublicKeyCredential?.isConditionalMediationAvailable ||
