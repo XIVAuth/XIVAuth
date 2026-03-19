@@ -1,7 +1,7 @@
 <h2 class="mb-4">MFA Required</h2>
 <p>Your account is protected by multifactor authentication.</p>
 
-<%= form_with(scope: "mfa", url: user_session_path, method: :post, local: true) do |f| %>
+<%= form_with(scope: "mfa", url: user_session_path, method: :post, local: true, data: { turbo: false }) do |f| %>
   <% if @user.webauthn_credentials.present? && @webauthn_challenge.present? %>
     <div data-controller="devise--webauthn--mfa" class="mb-4 d-grid">
       <%= f.hidden_field :webauthn_challenge, disabled: true, value: @webauthn_challenge.to_json,
