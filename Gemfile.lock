@@ -514,7 +514,7 @@ GEM
       concurrent-ruby (>= 1.2.0)
       redis-prescription (~> 2.2)
       sidekiq (>= 8.0)
-    sidekiq-unique-jobs (8.0.13)
+    sidekiq-unique-jobs (8.1.0)
       concurrent-ruby (~> 1.0, >= 1.0.5)
       sidekiq (>= 7.0.0, < 9.0.0)
       thor (>= 1.0, < 3.0)
@@ -654,7 +654,7 @@ DEPENDENCIES
   sidekiq (~> 8.0)
   sidekiq-cron (~> 2.3)
   sidekiq-throttled (~> 2.0)
-  sidekiq-unique-jobs (~> 8.0.10)
+  sidekiq-unique-jobs (~> 8.1)
   simplecov
   simplecov-cobertura
   stackprof (~> 0.2)
