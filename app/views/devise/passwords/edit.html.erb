@@ -4,7 +4,7 @@
   <%= render "devise/shared/error_messages", resource: resource %>
   <%= f.hidden_field :reset_password_token %>
 
-  <div data-controller="devise--password-strength" data-devise--password-strength-min-score-value="<%= User.min_password_score %>">
+  <div data-controller="devise--password-strength" data-devise--password-strength-min-score-value="<%= PasswordStrengthValidatable::MIN_PASSWORD_SCORE %>">
     <div class="form-group field mb-2">
       <%= f.label :password, class: "form-label" %>
       <div class="form-control-with-button">

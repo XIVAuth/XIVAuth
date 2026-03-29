@@ -70,7 +70,7 @@
                   <% end %>
 
                   <!-- Password strength controller wrapper -->
-                  <div data-controller="devise--password-strength" data-devise--password-strength-min-score-value="<%= User.min_password_score %>">
+                  <div data-controller="devise--password-strength" data-devise--password-strength-min-score-value="<%= PasswordStrengthValidatable::MIN_PASSWORD_SCORE %>">
                     <div class="mb-3">
                       <%= f.label :password, "New password", class: "form-label fw-semibold mb-1" %>
                       <div class="form-control-with-button">
