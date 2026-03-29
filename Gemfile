@@ -45,7 +45,7 @@ gem "sidekiq-unique-jobs", "~> 8.1"
 # Authentication / Authorization
 gem "cancancan", "~> 3.5"
 gem "devise", "~> 5.0"
-gem "devise_zxcvbn", "~> 6.0.0"
+gem "zxcvbn", "~> 1.0"
 
 # Authn (MFA)
 gem "devise-two-factor", "~> 6.1"
@@ -95,9 +95,6 @@ gem "rexml", "~> 3.4.2"
 
 # Helpers
 gem "pagy", "~> 43.0"
-
-# FIXME(DEPS): Required dep for devise-zxcvbn, see https://github.com/bitzesty/devise_zxcvbn/issues/49.
-gem 'ostruct', '~> 0.6.3'
 
 group :production do
   # Handle Cloudflare IPs in our X-Forwarded-For chain

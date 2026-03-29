@@ -2,10 +2,13 @@ class User < ApplicationRecord
   include OmniauthAuthenticable
   include SystemRoleable
   include User::TeamAssociations
+  include PasswordStrengthValidatable
+  self.zxcvbn_user_inputs = %i[email display_name]
+  self.zxcvbn_static_inputs = %w[xivauth ffxiv eorzea]
 
   devise :database_authenticatable, :registerable,
          :confirmable, :trackable, :recoverable,
-         :rememberable, :validatable, :zxcvbnable,
+         :rememberable, :validatable,
          :omniauthable
 
   validates :email, exclusion: { in: Users::SessionsHelper::RANDOM_NPC_EMAILS, message: " is an NPC's email.... Nice try." }

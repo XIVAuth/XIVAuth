@@ -180,7 +180,6 @@ Devise.setup do |config|
   # ==> Configuration for :validatable
   # Range for password length.
   config.password_length = 6..1024
-  config.min_password_score = Rails.env.production? ? 3 : 0
 
   # Email regex used to validate email formats. It simply asserts that
   # one (and only one) @ exists in the given string. This is mainly
