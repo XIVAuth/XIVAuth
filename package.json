@@ -7,7 +7,7 @@
     "@types/cloudflare-turnstile": "^0.2.2",
     "@types/zxcvbn": "^4.4.2",
     "esbuild-plugin-stimulus": "^0.2.0",
-    "typescript": "^5.8.2"
+    "typescript": "^6.0.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.0",

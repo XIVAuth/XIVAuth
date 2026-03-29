@@ -40,7 +40,7 @@ gem "rack-cors", "~> 3.0.0"
 gem "sidekiq", "~> 8.0"
 gem "sidekiq-cron", "~> 2.3"
 gem "sidekiq-throttled", "~> 2.0"
-gem "sidekiq-unique-jobs", "~> 8.0.10"
+gem "sidekiq-unique-jobs", "~> 8.1"
 
 # Authentication / Authorization
 gem "cancancan", "~> 3.5"
