@@ -38,6 +38,13 @@ en:
       profile_private: "This character's profile was private during the last refresh."
       lodestone_maintenance: "Lodestone was undergoing maintenance at the last refresh."
   activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              invalid: "could not be parsed properly."
+              unresolvable_domain: "domain does not appear valid."
     attributes:
       oauth/device_grant:
         user_code: "Pairing code"
