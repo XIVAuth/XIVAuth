@@ -15,6 +15,30 @@ RSpec.describe "Users::RegistrationsController", type: :request do
     Warden.test_reset!
   end
 
+  describe "POST /auth/register (sign up)" do
+    before do
+      Flipper.enable(:user_signups)
+    end
+
+    context "when the email domain does not resolve" do
+      before do
+        allow_any_instance_of(EmailValidator).to receive(:reachable?).and_return(false)
+      end
+
+      it "rejects the registration and sends no email" do
+        expect {
+          post user_registration_path, params: { user: {
+            email: "user@example.ocm",
+            password: password,
+            password_confirmation: password
+          }}
+        }.not_to change(ActionMailer::Base.deliveries, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+  end
+
   describe "PUT /profile (account update)" do
     context "when user is passwordless" do
       let(:user) { FactoryBot.create(:user, :passwordless) }

@@ -7,11 +7,12 @@ require "resolv"
 # is considered valid, attempt to do a DNS resolution to see if the user at least
 # entered a valid domain (stops `gmail.ocm` and the like).
 #
-# Valid DNS resolutions are cached indefinitely, invalid resolutions are cached
+# Valid DNS resolutions are cached for 14 days, invalid resolutions are cached
 # for however long the SOA says it should be.
 class EmailValidator < ActiveModel::EachValidator
   DNS_TIMEOUT          = 0.2  # 200ms
   INVALID_TTL_FALLBACK = 5.minutes
+  VALID_CACHE_TTL      = 14.days
 
   def validate_each(record, attribute, value)
     return if value.blank?
@@ -22,8 +23,6 @@ class EmailValidator < ActiveModel::EachValidator
       record.errors.add(attribute, options[:message] || :invalid)
       return
     end
-
-    return if Rails.env.test?
 
     # Check if DNS. If not, we suspect the email to be in the correct format, but
     # not a DNS name. This is the MTA's problem now.
@@ -73,7 +72,7 @@ class EmailValidator < ActiveModel::EachValidator
 
   def write_cache(dns_name, valid)
     if valid
-      Rails.cache.write(cache_key(dns_name), true)
+      Rails.cache.write(cache_key(dns_name), true, expires_in: VALID_CACHE_TTL)
     else
       Rails.cache.write(cache_key(dns_name), false, expires_in: negative_ttl(dns_name))
     end

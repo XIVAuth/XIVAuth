@@ -32,7 +32,7 @@
 en:
   character_registrations:
     refresh_fail_reasons:
-      unspecified: "An unknown error occured while refreshing."
+      unspecified: "An unknown error occurred while refreshing."
       not_found: "This character no longer exists on the Lodestone."
       hidden_character: "This character was hidden during the last refresh."
       profile_private: "This character's profile was private during the last refresh."
