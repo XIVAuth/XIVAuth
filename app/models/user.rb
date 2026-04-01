@@ -80,7 +80,7 @@ class User < ApplicationRecord
   end
 
   def gravatar_url(size = 32, fallback: "retro", rating: "pg")
-    hash = Digest::MD5.hexdigest(email.strip.downcase)
+    hash = EmailAddress.reference(email)
     "https://secure.gravatar.com/avatar/#{hash}.png?s=#{size}&d=#{fallback}&r=#{rating}"
   end
 

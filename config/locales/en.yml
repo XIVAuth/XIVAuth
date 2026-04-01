@@ -43,7 +43,7 @@ en:
         user:
           attributes:
             email:
-              invalid: "could not be parsed properly."
+              parse_error: "could not be parsed properly."
               unresolvable_domain: "domain does not appear valid."
     attributes:
       oauth/device_grant:

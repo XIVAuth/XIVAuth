@@ -20,7 +20,7 @@ class EmailValidator < ActiveModel::EachValidator
     addr = parse(value)
 
     unless addr&.valid?
-      record.errors.add(attribute, options[:message] || :invalid)
+      record.errors.add(attribute, options[:message] || :parse_error)
       return
     end
 
@@ -37,7 +37,10 @@ class EmailValidator < ActiveModel::EachValidator
   private
 
   def parse(email)
-    EmailAddress.new(email, host_validation: :syntax, host_allow_ip: true)
+    # NOTE: We're not going to enforce pure RFC compliance here, because some email providers allow
+    # some very stupid things that I don't want to bother with. I'm also not sure Postmark would be
+    # happy to handle those either, honestly...
+    EmailAddress.new(email, host_validation: :syntax, host_allow_ip: true, local_format: :relaxed)
   rescue StandardError
     nil
   end
