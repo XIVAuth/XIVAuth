@@ -12,6 +12,8 @@ class User < ApplicationRecord
          :omniauthable
 
   validates :email, exclusion: { in: Users::SessionsHelper::RANDOM_NPC_EMAILS, message: " is an NPC's email.... Nice try." }
+  validates :email, email: true
+  validates :unconfirmed_email, email: true, allow_blank: true
 
   has_many :social_identities, class_name: "User::SocialIdentity", dependent: :destroy
   has_many :character_registrations, dependent: :destroy

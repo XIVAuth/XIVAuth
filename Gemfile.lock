@@ -152,6 +152,9 @@ GEM
       base64 (~> 0.3)
     drb (2.2.3)
     ed25519 (1.4.0)
+    email_address (0.2.8)
+      base64
+      simpleidn
     erb (6.0.2)
     erubi (1.13.1)
     et-orbi (1.4.0)
@@ -523,6 +526,7 @@ GEM
       simplecov (~> 0.19)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
+    simpleidn (0.2.3)
     snaky_hash (2.0.3)
       hashie (>= 0.1.0, < 6)
       version_gem (>= 1.1.8, < 3)
@@ -605,6 +609,7 @@ DEPENDENCIES
   devise-two-factor (~> 6.1)
   doorkeeper (~> 5.9.0)
   doorkeeper-device_authorization_grant!
+  email_address (~> 0.2)
   factory_bot_rails (~> 6.5)
   faker (~> 3.4)
   faraday (~> 2.9)
