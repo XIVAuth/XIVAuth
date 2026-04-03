@@ -15,5 +15,5 @@ class PKI::IssuancePolicy::UserIdentificationPolicy < PKI::IssuancePolicy::Base
   # no key transport or agreement.
   def key_usage = %w[digitalSignature]
 
-  def extended_key_usage = %w[clientAuth]
+  def extended_key_usage = [ PKI::OID::EKU_UserIdentification ]
 end

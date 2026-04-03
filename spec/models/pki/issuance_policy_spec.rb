@@ -127,9 +127,9 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
       expect(usage).to eq(%w[digitalSignature])
     end
 
-    it "uses clientAuth EKU" do
+    it "uses XIVAuth's UserIdentification EKU" do
       eku = build_policy.signing_profile["extensions"]["extendedKeyUsage"]["usage"]
-      expect(eku).to eq(%w[clientAuth])
+      expect(eku).to eq(%w[1.3.6.1.4.1.65394.10.3.2])
     end
   end
 
@@ -152,9 +152,9 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
       expect(usage).not_to include("keyAgreement")
     end
 
-    it "uses emailProtection EKU" do
+    it "uses XIVAuth's UserIdentification EKU" do
       eku = build_cr_policy.signing_profile["extensions"]["extendedKeyUsage"]["usage"]
-      expect(eku).to eq(%w[emailProtection])
+      expect(eku).to eq(%w[1.3.6.1.4.1.65394.10.3.1])
     end
   end
 

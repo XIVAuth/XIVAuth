@@ -68,13 +68,13 @@ RSpec.describe PKI::CertificateIssuanceService, type: :service do
         end
       end
 
-      it "embeds clientAuth EKU for user certificates (RFC 5280 §4.2.1.12)" do
+      it "embeds XIVAuth UserAuthentication EKU for user certificates (RFC 5280 §4.2.1.12)" do
         result = service.issue!(csr_pem: csr_pem, certificate_authority: ca)
         cert   = OpenSSL::X509::Certificate.new(result.certificate_pem)
         eku    = cert.extensions.find { |e| e.oid == "extendedKeyUsage" }
 
         expect(eku).not_to be_nil, "extendedKeyUsage extension must be present"
-        expect(eku.value).to include("TLS Web Client Authentication")
+        expect(eku.value).to include(PKI::OID::EKU_UserIdentification)
       end
 
       it "embeds subjectAltName with user URI for user subjects (RFC 5280 §4.2.1.6)" do
@@ -100,13 +100,13 @@ RSpec.describe PKI::CertificateIssuanceService, type: :service do
       let(:cr) { FactoryBot.create(:verified_registration) }
       let(:cr_service) { described_class.new(subject: cr, certificate_type: "character_identification") }
 
-      it "embeds emailProtection EKU for character certificates" do
+      it "embeds XIVAuth CharacterIdentification EKU for character certificates" do
         result = cr_service.issue!(csr_pem: csr_pem, certificate_authority: ca)
         cert   = OpenSSL::X509::Certificate.new(result.certificate_pem)
         eku    = cert.extensions.find { |e| e.oid == "extendedKeyUsage" }
 
         expect(eku).not_to be_nil, "extendedKeyUsage extension must be present"
-        expect(eku.value).to include("E-mail Protection")
+        expect(eku.value).to include(PKI::OID::EKU_CharacterIdentification)
       end
 
       it "embeds subjectAltName with lodestone and entangled_id URIs (RFC 5280 §4.2.1.6)" do

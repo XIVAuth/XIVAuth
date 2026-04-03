@@ -18,4 +18,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "HMAC"
   inflect.acronym "ECDSA"
   inflect.acronym "PKI"
+  inflect.acronym "OID"
 end

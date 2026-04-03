@@ -14,8 +14,6 @@ class PKI::IssuancePolicy::CharacterIdentificationPolicy < PKI::IssuancePolicy::
     urn:xivauth:character:persistent_key:#{subject.entangled_id}
   ]
 
-  # Character certs support identity + E2EE - emailProtection is the closest standard
-  # EKU until XIVAuth gets its own OID. KU includes key transport/agreement per key type.
   def key_usage
     case public_key
     when OpenSSL::PKey::EC  then %w[digitalSignature keyAgreement]
@@ -24,7 +22,7 @@ class PKI::IssuancePolicy::CharacterIdentificationPolicy < PKI::IssuancePolicy::
     end
   end
 
-  def extended_key_usage = %w[emailProtection]
+  def extended_key_usage = [ PKI::OID::EKU_CharacterIdentification ]
 
   # Snapshot the stable character identity at issuance for audit purposes.
   # Survives CharacterRegistration deletion since the cert record persists.
