@@ -12,7 +12,7 @@ class User < ApplicationRecord
          :confirmable, :trackable, :recoverable,
          :rememberable, :validatable,
          :omniauthable
-  devise :pwned_password unless Rails.env.development? || Rails.env.test?
+  devise :pwned_password unless Rails.env.test?
 
   validates :email, exclusion: { in: Users::SessionsHelper::RANDOM_NPC_EMAILS, message: " is an NPC's email.... Nice try." }
   validates :email, email: true

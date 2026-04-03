@@ -1,0 +1,9 @@
+<%
+  flash_modals = {
+    password_breached_warning: "users/modals/pwned_password_modal",
+  }
+%>
+
+<% if flash[:modal] && flash_modals.key?(flash[:modal].to_sym) %>
+  <%= render partial: flash_modals[flash[:modal]&.to_sym] %>
+<% end %>

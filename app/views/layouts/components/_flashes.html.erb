@@ -1,8 +1,10 @@
-<% flash_types = {
-  notice: { alert_class: 'alert-info', icon: 'bi-info-circle-fill' } ,
-  alert: { alert_class: 'alert-warning', icon: 'bi-exclamation-triangle-fill' },
-  error: { alert_class: 'alert-danger', icon: 'bi-exclamation-octagon-fill' }
-} %>
+<%
+  flash_types = {
+    notice: { alert_class: 'alert-info', icon: 'bi-info-circle-fill' },
+    alert: { alert_class: 'alert-warning', icon: 'bi-exclamation-triangle-fill' },
+    error: { alert_class: 'alert-danger', icon: 'bi-exclamation-octagon-fill' }
+  }
+%>
 
 <% flash.keys.each do |key| %>
   <% next unless flash_types.include? key.to_sym %>

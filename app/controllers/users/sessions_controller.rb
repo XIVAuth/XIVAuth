@@ -67,6 +67,8 @@ class Users::SessionsController < Devise::SessionsController
       if self.resource&.valid_password?(user_params[:password])
         pwned = @user.respond_to?(:password_pwned?) && @user.password_pwned?(user_params[:password])
 
+        logger.error("pwn status: #{pwned}")
+
         if pwned && !self.resource.mfa_enabled?
           set_flash_message! :alert, :blocked_pwned, now: true
 
@@ -96,11 +98,6 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def after_sign_in_path_for(resource)
-    if resource.respond_to?(:pwned?) && resource.pwned?
-      logger.error("User #{resource.id} has been pwned!!")
-      set_flash_message! :alert, :warn_pwned
-    end
-
     stored_location_for(resource) || character_registrations_path
   end
 end
