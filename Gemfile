@@ -21,6 +21,8 @@ gem "propshaft"
 gem "stimulus-rails"
 gem "turbo-rails"
 
+gem "gon", "~> 7.0"
+
 # Asset management
 gem "shrine", "~> 3.6"
 
@@ -46,6 +48,7 @@ gem "sidekiq-unique-jobs", "~> 8.1"
 # Authentication / Authorization
 gem "cancancan", "~> 3.5"
 gem "devise", "~> 5.0"
+gem "devise-pwned_password", "~> 0.2.0"
 gem "zxcvbn", "~> 1.0"
 
 # Authn (MFA)
@@ -140,5 +143,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-
-gem "gon", "~> 7.0"

@@ -49,6 +49,8 @@ en:
       signed_in: "Signed in successfully."
       signed_out: "Signed out successfully."
       already_signed_out: "Signed out successfully."
+      warn_pwned: "Your password has previously appeared in a data breach and should no longer be used. Please change this password!"
+      blocked_pwned: "Your password has previously appeared in a data breach and can no longer be used. Please reset this password using the Forgot Password flow."
     unlocks:
       send_instructions: "You will receive an email with instructions for how to unlock your account in a few minutes."
       send_paranoid_instructions: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."

@@ -15,10 +15,10 @@ module Users::AuthenticatesWithMFA
     end
   end
 
-  def prompt_for_mfa(status_code: :ok)
-    session["mfa"] = {
-      user_id: @user.id,
-    }
+  def prompt_for_mfa(status_code: :ok, **extra_metadata)
+    session["mfa"] ||= {}
+    session["mfa"][:user_id] = @user.id
+    session["mfa"].merge!(extra_metadata)
 
     # webauthn
     if (@webauthn_challenge = Users::Webauthn::AuthenticateService.build_challenge_for_user(@user))
@@ -56,14 +56,18 @@ module Users::AuthenticatesWithMFA
   end
 
   private def handle_mfa_success
-    reset_mfa_attempt!
+    # Re-apply the pwned flag if MFA passed it along.
+    if session.dig("mfa", "pwned")
+      @user.instance_variable_set(:@pwned, true)
+    end
 
+    reset_mfa_attempt!
     sign_in(:user, @user)
   end
 
   private def handle_mfa_failure(method, message: nil)
     flash.now[:alert] = "MFA authentication via #{method} failed: #{message}"
-    prompt_for_mfa(status_code: :unprocessable_content )
+    prompt_for_mfa(status_code: :unprocessable_content)
   end
 
   def mfa_params

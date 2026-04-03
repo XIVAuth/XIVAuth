@@ -71,12 +71,10 @@ body > .container:not(.toast-container) {
   background-position: center center;
   z-index: -10;
 
+  background-image: url("/backgrounds/limsa_day.png");
+
   [data-bs-theme="dark"] & {
     background-image: url("/backgrounds/limsa_night.png");
-  }
-
-  [data-bs-theme="light"] & {
-    background-image: url("/backgrounds/limsa_day.png");
   }
 }
 

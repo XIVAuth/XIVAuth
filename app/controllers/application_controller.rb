@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   before_action :authenticate_user!
-  before_action :set_observability_context
+  before_action :set_observability_context, prepend: true
 
   before_action :redirect_to_new_domain
 

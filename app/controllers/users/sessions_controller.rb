@@ -4,17 +4,20 @@ class Users::SessionsController < Devise::SessionsController
 
   layout "login/signin"
 
-  prepend_before_action :reset_mfa_attempt!, only: [:new]
-  prepend_before_action :generate_discoverable_challenge, only: [:new]
+  before_action :reset_mfa_attempt!, only: [:new]
+  before_action :generate_discoverable_challenge, only: [:new]
 
-  prepend_before_action :evaluate_login_flow, only: [:create]
-  prepend_before_action :check_captcha, only: [:create]
+  before_action :evaluate_login_flow, only: [:create]
+  before_action :check_captcha, only: [:create]
 
   # From https://cheeger.com/developer/2018/09/17/enable-two-factor-authentication-for-rails.html
   # This action comes from DeviseController, but because we call `sign_in`
   # manually, not skipping this action would cause a "You are already signed
   # in." error message to be shown upon successful login.
   skip_before_action :require_no_authentication, only: [:create], raise: false
+
+  # CSRF tokens are part of the session, which we change on login. Oops!
+  skip_before_action :verify_authenticity_token, only: [:create]
 
   def create
     super do |resource|
@@ -37,7 +40,7 @@ class Users::SessionsController < Devise::SessionsController
 
     # recall all the new session things
     generate_discoverable_challenge
-    render :new, status: :unprocessable_content 
+    render :new, status: :unprocessable_content
   end
 
   def evaluate_login_flow
@@ -53,7 +56,7 @@ class Users::SessionsController < Devise::SessionsController
         self.flash.now[:alert] = "Security key presented is not registered."
 
         self.resource = resource_class.new
-        render :new, status: :unprocessable_content 
+        render :new, status: :unprocessable_content
 
         return
       end
@@ -61,9 +64,22 @@ class Users::SessionsController < Devise::SessionsController
       @user = User.find_by(email: user_params[:email])
       self.resource = @user
 
-      if self.resource&.valid_password?(user_params[:password]) && self.resource&.mfa_enabled?
-        reset_mfa_attempt!
-        prompt_for_mfa(status_code: :unprocessable_content )
+      if self.resource&.valid_password?(user_params[:password])
+        pwned = @user.respond_to?(:password_pwned?) && @user.password_pwned?(user_params[:password])
+
+        if pwned && !self.resource.mfa_enabled?
+          set_flash_message! :alert, :blocked_pwned, now: true
+
+          # generate a new page
+          self.resource = resource_class.new sign_in_params
+          generate_discoverable_challenge
+          render :new, status: :unprocessable_content
+        end
+
+        if self.resource.mfa_enabled?
+          reset_mfa_attempt!
+          prompt_for_mfa(status_code: :unprocessable_content, pwned: pwned)
+        end
       else
         # implicit; use devise default flow (password only)
       end
@@ -80,6 +96,11 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def after_sign_in_path_for(resource)
+    if resource.respond_to?(:pwned?) && resource.pwned?
+      logger.error("User #{resource.id} has been pwned!!")
+      set_flash_message! :alert, :warn_pwned
+    end
+
     stored_location_for(resource) || character_registrations_path
   end
 end

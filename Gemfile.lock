@@ -138,6 +138,9 @@ GEM
       railties (>= 7.0)
       responders
       warden (~> 1.2.3)
+    devise-pwned_password (0.2.0)
+      devise (>= 4, < 6)
+      pwned (~> 2.4)
     devise-two-factor (6.4.0)
       activesupport (>= 7.2, < 8.2)
       devise (>= 4.0, < 6.0)
@@ -340,6 +343,7 @@ GEM
     public_suffix (7.0.5)
     puma (7.2.0)
       nio4r (~> 2.0)
+    pwned (2.4.1)
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.2.6)
@@ -607,6 +611,7 @@ DEPENDENCIES
   cssbundling-rails
   debug
   devise (~> 5.0)
+  devise-pwned_password (~> 0.2.0)
   devise-two-factor (~> 6.1)
   doorkeeper (~> 5.9.0)
   doorkeeper-device_authorization_grant!
