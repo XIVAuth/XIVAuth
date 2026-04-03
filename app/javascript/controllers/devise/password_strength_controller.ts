@@ -2,7 +2,7 @@ import {Controller} from "@hotwired/stimulus"
 import zxcvbn from "zxcvbn";
 
 export default class PasswordStrengthController extends Controller {
-    static targets = ["password", "confirm", "tips", "warning", "crackTime", "meterInner", "meter", "strength"];
+    static targets = ["password", "confirm", "tips", "warning", "meterInner", "meter", "strength"];
     static values = {
         minScore: Number,
     }
@@ -11,7 +11,6 @@ export default class PasswordStrengthController extends Controller {
     declare readonly confirmTarget: HTMLInputElement;
     declare readonly tipsTarget: HTMLUListElement;
     declare readonly warningTarget: HTMLDivElement;
-    declare readonly crackTimeTarget: HTMLDivElement;
     declare readonly meterInnerTarget: HTMLDivElement;
     declare readonly meterTarget: HTMLDivElement;
     declare readonly strengthTarget: HTMLDivElement;
@@ -42,9 +41,7 @@ export default class PasswordStrengthController extends Controller {
 
         let result = zxcvbn(this.passwordTarget.value);
         let strengthValue = this.strengthPercentage(result.guesses_log10);
-
-        this.crackTimeTarget.innerText = `${result.crack_times_display["offline_slow_hashing_1e4_per_second"]}`;
-
+        
         this.strengthTarget.innerText = this.strengthName(result.score);
         this.strengthTarget.className = this.strengthTarget.className.replace(/\btext-.+\b/, this.scoreTextClass(result.score))
 
