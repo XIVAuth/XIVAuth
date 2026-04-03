@@ -2,6 +2,7 @@ module PasswordStrengthValidatable
   extend ActiveSupport::Concern
 
   MIN_PASSWORD_SCORE = Rails.env.production? ? 3 : 0
+  ZXCVBN_TESTER = Zxcvbn::Tester.new
 
   included do
     class_attribute :zxcvbn_user_inputs, default: [], instance_predicate: false
@@ -12,7 +13,7 @@ module PasswordStrengthValidatable
   private
 
   def skip_password_complexity?
-    !password_required? || Rails.env.test?
+    !password_required?
   end
 
   def strong_password
@@ -28,6 +29,6 @@ module PasswordStrengthValidatable
       [value, *value.split(/[[:^word:]_]/)]
     end + zxcvbn_static_inputs
 
-    Zxcvbn::Tester.new.test(password.to_s, weak_words.reject(&:empty?)).score
+    ZXCVBN_TESTER.test(password.to_s, weak_words.reject(&:empty?)).score
   end
 end
