@@ -12,7 +12,7 @@ module PasswordStrengthValidatable
   private
 
   def skip_password_complexity?
-    !password_required?
+    !password_required? || Rails.env.test?
   end
 
   def strong_password

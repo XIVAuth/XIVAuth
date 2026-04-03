@@ -113,6 +113,7 @@ group :development, :test do
   gem "rspec-rails", "~> 8.0"
   gem 'simplecov', require: false
   gem 'simplecov-cobertura', require: false
+  gem "test-prof", "~> 1.0"
 
   # Analysis tools
   gem "brakeman", require: false

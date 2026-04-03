@@ -40,12 +40,17 @@ class EmailValidator < ActiveModel::EachValidator
     # NOTE: We're not going to enforce pure RFC compliance here, because some email providers allow
     # some very stupid things that I don't want to bother with. I'm also not sure Postmark would be
     # happy to handle those either, honestly...
-    EmailAddress.new(email, host_validation: :syntax, host_allow_ip: true, local_format: :relaxed)
+    EmailAddress.new(email, host_validation: :syntax, host_allow_ip: true, local_format: :relaxed,
+                     host_encoding: :unicode, local_encoding: :unicode)
   rescue StandardError
     nil
   end
 
   def reachable?(dns_name)
+    # Assume everything is reachable in a test environment. If we want a failure to actually take place,
+    # we can test that by mocking this entire method out.
+    return true if Rails.env.test?
+
     cached = Rails.cache.read(cache_key(dns_name))
     return cached unless cached.nil?
 

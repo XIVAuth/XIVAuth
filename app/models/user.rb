@@ -2,6 +2,8 @@ class User < ApplicationRecord
   include OmniauthAuthenticable
   include SystemRoleable
   include User::TeamAssociations
+
+  # ZXCVBN config
   include PasswordStrengthValidatable
   self.zxcvbn_user_inputs = %i[email display_name]
   self.zxcvbn_static_inputs = %w[xivauth ffxiv eorzea]
@@ -112,11 +114,6 @@ class User < ApplicationRecord
       character_registrations.verified.exists?
     end
   end
-
-  # def skip_password_complexity?
-  #   false
-  # end
-
 
   # Get the list of providers that can be used for authentication purposes.
   def self.omniauth_login_providers
