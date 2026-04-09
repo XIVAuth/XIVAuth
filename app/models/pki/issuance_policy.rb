@@ -68,7 +68,9 @@ class PKI::IssuancePolicy
 
 
     # @return [String] The Common Name (CN) to include in the final certificate.
-    def common_name = raise NotImplementedError
+    def common_name
+      raise NotImplementedError
+    end
 
     # @return [ActiveSupport::Duration] How long the certificate should be valid for.
     def validity_period = 1.year
@@ -81,10 +83,14 @@ class PKI::IssuancePolicy
 
 
     # @return [Array<String>] keyUsage values for the issued certificate
-    def key_usage = raise NotImplementedError
+    def key_usage
+      raise NotImplementedError
+    end
 
     # @return [Array<String>] extendedKeyUsage OID short names
-    def extended_key_usage = raise NotImplementedError
+    def extended_key_usage
+      raise NotImplementedError
+    end
 
     # Return the signing profile for `.sign!` to use for cert generation.
     def signing_profile
