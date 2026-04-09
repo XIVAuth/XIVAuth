@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
@@ -35,6 +35,6 @@ jobs:
           bundle exec brakeman -f sarif -o tmp/testresults/brakeman.sarif.json .
 
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: tmp/testresults/brakeman.sarif.json
