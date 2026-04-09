@@ -147,7 +147,7 @@ RSpec.describe Team, type: :model do
       expect(c.antecedent_memberships).not_to include(c_member)
     end
 
-    it "contains duplicate memberships in the tree" do
+    it "returns inherited memberships even when they're duplicated in an antecedent" do
       grandparent, gp_admin, _ = create_root_team(u_admin)
       parent = FactoryBot.create(:team, parent: grandparent, inherit_parent_memberships: true)
       child = FactoryBot.create(:team, parent: parent, inherit_parent_memberships: true)
@@ -236,7 +236,7 @@ RSpec.describe Team, type: :model do
       expect(parent.descendant_memberships).to contain_exactly(m1, m2)
     end
     
-    it "shoud not include blocked or invited roles from descendants" do
+    it "should not include blocked or invited roles from descendants" do
       parent = FactoryBot.create(:team)
       child = FactoryBot.create(:team, parent: parent)
 
