@@ -26,8 +26,6 @@ export default class IdentitySelectDropdownController extends TomSelectControlle
     }
 
     renderOption(data: TomOption, escape: typeof escape_html): string {
-        let preferredName = data.identityDisplayName || data.identityUsername;
-
         let render = "<div>" +
             `<span><i class='fab fa-${data.identityProvider} me-1 fa-fw'></i> ${data.identityDisplayName}</span>`;
 

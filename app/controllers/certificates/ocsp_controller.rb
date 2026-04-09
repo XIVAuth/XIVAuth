@@ -42,10 +42,10 @@ class Certificates::OcspController < ActionController::Base
       serials = []
     end
 
-    ca_records = serials
-                   .map { |s| PKI::IssuedCertificate.find_by_serial(s.to_i)&.certificate_authority }
-                   .compact
-                   .uniq
+    ca_records = PKI::CertificateAuthority.where(
+      id: PKI::IssuedCertificate.where(serial: serials.map(&:to_i))
+                                .select(:certificate_authority_id)
+    ).distinct
 
     if ca_records.empty?
       response.set_header("X-OCSP-Error", "no serial numbers were recognized: could not determine issuing CA")

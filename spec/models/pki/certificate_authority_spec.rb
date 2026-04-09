@@ -135,7 +135,7 @@ RSpec.describe PKI::CertificateAuthority, type: :model do
 
   describe ".current_for" do
     it "returns the most recently created active CA for the certificate type" do
-      old_ca = FactoryBot.create(:pki_certificate_authority, created_at: 2.days.ago)
+      FactoryBot.create(:pki_certificate_authority, created_at: 2.days.ago)
       new_ca = FactoryBot.create(:pki_certificate_authority, created_at: 1.day.ago)
 
       expect(PKI::CertificateAuthority.current_for(certificate_type: "user_identification")).to eq(new_ca)

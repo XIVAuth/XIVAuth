@@ -1,6 +1,6 @@
 import {WebauthnControllerBase} from "../webauthn_base";
 import * as WebAuthnJSON from "@github/webauthn-json";
-import {PublicKeyCredentialWithAssertionJSON, PublicKeyCredentialWithAttestationJSON} from "@github/webauthn-json";
+import {PublicKeyCredentialWithAttestationJSON} from "@github/webauthn-json";
 
 
 export default class WebauthnRegistrationController extends WebauthnControllerBase {

@@ -339,7 +339,7 @@ RSpec.describe Team, type: :model do
     end
 
     it "supports activerecord chaining" do
-      parent, _, parent_owner = create_root_team
+      parent, _, _ = create_root_team
       team = FactoryBot.create(:team, parent: parent)
 
       u_2 = FactoryBot.create(:user)
