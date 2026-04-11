@@ -1,0 +1,6 @@
+<%= turbo_stream.append "body" do %>
+  <%= render 'layouts/components/remote_modal', modal_id: "sign_out_other_sessions_modal" do %>
+    <%= render 'users/sessions/destroy_others_modal', other_session_count: @other_session_count %>
+  <% end %>
+<% end %>
+

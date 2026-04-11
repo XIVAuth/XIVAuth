@@ -36,6 +36,9 @@ gem "bootsnap", require: false
 gem "postmark-rails", "~> 0.22.1"
 gem "email_address", "~> 0.2"
 
+# Session store
+gem "redis-session-store", "~> 0.11"
+
 # Internal Security
 gem "rack-cors", "~> 3.0.0"
 
