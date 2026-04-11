@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_11_044904) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -23,7 +23,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
   create_enum "team_member_roles", ["admin", "manager", "developer", "member", "invited", "blocked"]
   create_enum "user_roles", ["developer", "admin"]
 
-  create_table "character_bans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "character_bans", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "character_id"
     t.string "character_type"
     t.datetime "created_at", null: false
@@ -31,7 +31,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["character_type", "character_id"], name: "index_character_bans_on_character"
   end
 
-  create_table "character_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "character_registrations", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "character_id"
     t.datetime "created_at", null: false
     t.jsonb "extra_data", default: {}, null: false
@@ -45,7 +45,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["user_id"], name: "index_character_registrations_on_user_id"
   end
 
-  create_table "client_application_access_control_lists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "client_application_access_control_lists", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "application_id", null: false
     t.datetime "created_at", null: false
     t.boolean "deny", default: false, null: false
@@ -57,7 +57,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["principal_type", "principal_id"], name: "index_client_application_access_control_lists_on_principal"
   end
 
-  create_table "client_application_oauth_clients", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "client_application_oauth_clients", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "application_id", null: false
     t.string "client_id", null: false
     t.string "client_secret"
@@ -82,7 +82,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["authorized_party_id"], name: "idx_on_authorized_party_id_2afcfbe007"
   end
 
-  create_table "client_application_profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "client_application_profiles", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "application_id", null: false
     t.string "homepage_url"
     t.string "icon_url"
@@ -91,7 +91,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["application_id"], name: "index_client_application_profiles_on_application_id"
   end
 
-  create_table "client_applications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "client_applications", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "entitlements", default: [], null: false, array: true
     t.string "name", null: false
@@ -103,7 +103,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["owner_type", "owner_id"], name: "index_client_applications_on_owner"
   end
 
-  create_table "ffxiv_characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "ffxiv_characters", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "avatar_url", null: false
     t.string "content_id"
     t.datetime "created_at", null: false
@@ -134,7 +134,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
-  create_table "jwt_signing_keys", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "jwt_signing_keys", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.boolean "enabled", default: true, null: false
     t.datetime "expires_at"
@@ -147,7 +147,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["name"], name: "index_jwt_signing_keys_on_name", unique: true
   end
 
-  create_table "oauth_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "oauth_access_grants", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "application_id", null: false
     t.datetime "created_at", null: false
     t.integer "expires_in", null: false
@@ -164,7 +164,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
   end
 
-  create_table "oauth_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "oauth_access_tokens", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "application_id", null: false
     t.datetime "created_at", null: false
     t.integer "expires_in"
@@ -184,7 +184,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
   end
 
-  create_table "oauth_device_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "oauth_device_grants", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "application_id", null: false
     t.datetime "created_at", null: false
     t.string "device_code", null: false
@@ -202,11 +202,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["user_code"], name: "index_oauth_device_grants_on_user_code", unique: true
   end
 
-  create_table "oauth_permissible_policies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "oauth_permissible_policies", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
   end
 
-  create_table "oauth_permissible_rules", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "oauth_permissible_rules", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.boolean "deny", default: false
     t.uuid "policy_id"
@@ -216,7 +216,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["resource_type", "resource_id"], name: "index_oauth_permissible_rules_on_resource"
   end
 
-  create_table "pki_certificate_authorities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "pki_certificate_authorities", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.enum "allowed_certificate_types", default: ["user_identification", "character_identification"], null: false, array: true, enum_type: "pki_certificate_type"
     t.string "certificate_fingerprint", null: false
@@ -235,7 +235,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["slug"], name: "index_pki_certificate_authorities_on_slug", unique: true
   end
 
-  create_table "pki_issued_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "pki_issued_certificates", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "certificate_authority_id", null: false
     t.string "certificate_fingerprint", null: false
     t.text "certificate_pem", null: false
@@ -259,7 +259,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["subject_type", "subject_id"], name: "index_pki_issued_certificates_on_subject"
   end
 
-  create_table "site_announcements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "site_announcements", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "end_date"
@@ -269,7 +269,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "team_invite_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "team_invite_links", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.boolean "enabled", default: true, null: false
     t.datetime "expires_at"
@@ -283,7 +283,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["team_id"], name: "index_team_invite_links_on_team_id"
   end
 
-  create_table "team_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "team_memberships", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.enum "role", default: "member", null: false, enum_type: "team_member_roles"
     t.uuid "team_id", null: false
@@ -294,7 +294,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["user_id"], name: "index_team_memberships_on_user_id"
   end
 
-  create_table "team_profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "team_profiles", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "avatar_url"
     t.datetime "created_at", null: false
     t.uuid "team_id", null: false
@@ -303,7 +303,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["team_id"], name: "index_team_profiles_on_team_id"
   end
 
-  create_table "teams", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "teams", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.boolean "inherit_parent_memberships", default: true, null: false
     t.string "name", null: false
@@ -329,7 +329,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.datetime "updated_at"
   end
 
-  create_table "user_profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "user_profiles", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "display_name", limit: 64, null: false
     t.jsonb "preferences", default: {}
     t.uuid "user_id", null: false
@@ -337,7 +337,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["user_id"], name: "index_user_profiles_on_user_id", unique: true
   end
 
-  create_table "user_social_identities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "user_social_identities", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.string "access_token"
     t.datetime "created_at", null: false
     t.string "email"
@@ -354,7 +354,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["user_id"], name: "index_user_social_identities_on_user_id"
   end
 
-  create_table "user_totp_credentials", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "user_totp_credentials", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.decimal "consumed_timestep"
     t.datetime "created_at", null: false
     t.string "otp_backup_codes", array: true
@@ -365,7 +365,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["user_id"], name: "index_user_totp_credentials_on_user_id", unique: true
   end
 
-  create_table "user_webauthn_credentials", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "user_webauthn_credentials", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "aaguid"
     t.datetime "created_at", null: false
     t.string "external_id", null: false
@@ -383,7 +383,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["user_id"], name: "index_user_webauthn_credentials_on_user_id"
   end
 
-  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.datetime "confirmation_sent_at"
     t.string "confirmation_token"
     t.datetime "confirmed_at"
@@ -408,7 +408,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_220000) do
     t.index ["webauthn_id"], name: "index_users_on_webauthn_id", unique: true
   end
 
-  create_table "webauthn_device_classes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "webauthn_device_classes", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.text "icon_dark"
     t.text "icon_light"
     t.string "name", null: false

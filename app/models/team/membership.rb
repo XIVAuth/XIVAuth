@@ -30,15 +30,19 @@ class Team::Membership < ApplicationRecord
     # For root teams, check that there will still be at least one admin after this change
     return if team.parent_id.present?
 
-    # Count admins in the current state (including this membership's pending changes)
-    admin_count = team.direct_memberships.count do |m|
-      # If this is the membership being validated, use its updated role
-      # Otherwise, use the current database role
-      membership_role = (m.id == id) ? role : m.role
-      membership_role.to_s == "admin"
+    # Simulate the team's memberships after this change is applied.
+    # `team.direct_memberships` is a DB query and does not include unsaved records.
+    memberships = team.direct_memberships.to_a
+
+    if new_record?
+      # New record isn't in the DB yet - include it in the simulated state
+      memberships << self
+    else
+      # Existing record - swap the stale DB version with self (which has the pending role)
+      memberships.map! { |m| m.id == id ? self : m }
     end
 
-    return if admin_count > 0
+    return if memberships.any? { |m| m.role.to_s == "admin" }
 
     errors.add(:base, "Root teams must have at least one admin")
   end
