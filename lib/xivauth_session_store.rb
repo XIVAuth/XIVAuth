@@ -13,16 +13,6 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
   SESSION_KEY_PREFIX = "xivauth:sessions:v1:sid:".freeze
   USER_INDEX_PREFIX  = "xivauth:sessions:v1:usermap:".freeze
 
-  # Custom XIVAuth sessionID that doesn't include version fields - we do this at a higher point
-  # in the schema.
-  class SessionId < Rack::Session::SessionId
-    attr_reader :private_id, :public_id
-
-    def private_id
-      hash_sid(public_id)
-    end
-  end
-
   def initialize(app, options = {})
     super
     redis_config  = options.fetch(:redis, {})
@@ -162,6 +152,6 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
   end
 
   def generate_sid
-    SessionId.new(SecureRandom.urlsafe_base64(32))
+    Rack::Session::SessionId.new(SecureRandom.urlsafe_base64(32))
   end
 end
