@@ -91,11 +91,23 @@ class PKI::IssuedCertificate < ApplicationRecord
     @openssl_cert ||= OpenSSL::X509::Certificate.new(certificate_pem)
   end
 
-  # Converts a serial number back to a UUID for query purposes.
+  def serial
+    self.class.uuid_to_serial(id)
+  end
+
   def self.find_by_serial(serial_integer)
-    hex = serial_integer.to_s(16).rjust(32, "0")
-    uuid = [hex[0, 8], hex[8, 4], hex[12, 4], hex[16, 4], hex[20, 12]].join("-")
-    find_by(id: uuid)
+    find_by(id: serial_to_uuid(serial_integer))
+  end
+
+  # Converts a UUID string to its integer serial representation.
+  def self.uuid_to_serial(uuid)
+    uuid.delete("-").to_i(16)
+  end
+
+  # Converts an integer serial back to a UUID string.
+  def self.serial_to_uuid(serial)
+    hex = serial.to_i.to_s(16).rjust(32, "0")
+    [hex[0, 8], hex[8, 4], hex[12, 4], hex[16, 4], hex[20, 12]].join("-")
   end
 
   private

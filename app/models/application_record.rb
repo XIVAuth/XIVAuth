@@ -1,24 +1,16 @@
 class ApplicationRecord < ActiveRecord::Base
   primary_abstract_class
 
-  def self.inherited(child_class)
-    super
+  # Override implicit column order so we get nice formatting despite using UUIDs.
+  def self.implicit_order_column
+    original = super
+    return original if original
 
     begin
-      if child_class.column_names.include?("created_at")
-        child_class.implicit_order_column ||= "created_at"
-      end
+      "created_at" if column_names.include?("created_at")
     rescue
-      # nop - convenience function, we don't care if it fails
+      # nop - we don't care if we fail because of column_names problems.
+      nil
     end
-  end
-
-  before_create :generate_uuidv7
-
-  private def generate_uuidv7
-    return if self.class.attribute_types["id"].type != :uuid ||
-              self.class.columns_hash["id"].default_function != "gen_random_uuid()"
-
-    self.id ||= SecureRandom.uuid_v7
   end
 end

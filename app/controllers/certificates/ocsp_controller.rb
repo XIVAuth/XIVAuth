@@ -42,8 +42,10 @@ class Certificates::OcspController < ActionController::Base
       serials = []
     end
 
+    cert_ids = serials.map { |s| PKI::IssuedCertificate.serial_to_uuid(s) }
+
     ca_records = PKI::CertificateAuthority.where(
-      id: PKI::IssuedCertificate.where(serial: serials.map(&:to_i))
+      id: PKI::IssuedCertificate.where(id: cert_ids)
                                 .select(:certificate_authority_id)
     ).distinct
 
