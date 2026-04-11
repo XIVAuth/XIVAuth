@@ -67,8 +67,6 @@ class Users::SessionsController < Devise::SessionsController
       if self.resource&.valid_password?(user_params[:password])
         pwned = @user.respond_to?(:password_pwned?) && @user.password_pwned?(user_params[:password])
 
-        logger.error("pwn status: #{pwned}")
-
         if pwned && !self.resource.mfa_enabled?
           set_flash_message! :alert, :blocked_pwned, now: true
 
