@@ -30,4 +30,10 @@ RSpec.describe User, type: :model do
       expect(@user).to be_valid
     end
   end
+
+  describe "#implicit_order_column" do
+    it "uses created_at as its implicit order" do
+      expect(subject.class.implicit_order_column).to eq("created_at")
+    end
+  end
 end

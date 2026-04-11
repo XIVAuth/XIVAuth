@@ -168,4 +168,10 @@ RSpec.describe FFXIV::Character, type: :model do
       end
     end
   end
+
+  describe "#implicit_order_column" do
+    it "uses lodestone_id as its implicit order" do
+      expect(subject.class.implicit_order_column).to eq("lodestone_id")
+    end
+  end
 end
