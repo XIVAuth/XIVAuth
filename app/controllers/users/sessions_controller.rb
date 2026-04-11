@@ -1,9 +1,11 @@
 class Users::SessionsController < Devise::SessionsController
   include Users::AuthenticatesWithMFA
   include Users::AuthenticatesViaPasskey
+  include Devise::Controllers::Rememberable
 
   layout "login/signin"
 
+  before_action :authenticate_user!, only: %i[destroy_others]
   before_action :reset_mfa_attempt!, only: [:new]
   before_action :generate_discoverable_challenge, only: [:new]
 
@@ -18,6 +20,23 @@ class Users::SessionsController < Devise::SessionsController
 
   # CSRF tokens are part of the session, which we change on login. Oops!
   skip_before_action :verify_authenticity_token, only: [:create]
+
+  def destroy_others
+    if request.format.turbo_stream? && params[:confirmed].blank?
+      @other_session_count = other_sessions_list.length
+      render and return
+    end
+
+    sessions = other_sessions_list
+    current_user.destroy_sessions(sessions.map { |s| s[:sid] })
+
+    # Purge existing remember_me tokens if they exist, but allow the current session to keep it, if it's being used.
+    currently_remembered = remember_me_is_active?(current_user)
+    forget_me(current_user)
+    remember_me(current_user) if currently_remembered
+
+    redirect_to edit_user_path, notice: "Signed out of #{helpers.pluralize(sessions.length, 'other session')}."
+  end
 
   def create
     super do |resource|
@@ -89,6 +108,11 @@ class Users::SessionsController < Devise::SessionsController
 
       authenticate_with_mfa
     end
+  end
+
+  def other_sessions_list
+    current_private_id = request.env["rack.session.options"]&.[](:id)&.private_id
+    current_user.get_sessions.reject { |s| s[:sid] == current_private_id }
   end
 
   def user_params

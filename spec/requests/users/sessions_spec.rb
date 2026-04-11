@@ -347,6 +347,61 @@ RSpec.describe "Users::SessionsController", type: :request do
     end
   end
 
+  describe "DELETE /profile/other_sessions" do
+    let(:other_private_id) { SecureRandom.urlsafe_base64(32) }
+    let(:other_session) { { sid: other_private_id, expires_at: 7.days.from_now } }
+
+    before do
+      true_sign_in user, password: password
+      allow_any_instance_of(User).to receive(:get_sessions).and_return([other_session])
+      allow_any_instance_of(User).to receive(:destroy_sessions)
+    end
+
+    context "without confirmed param (first DELETE - turbo stream modal)" do
+      it "renders a turbo stream response" do
+        delete other_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+      end
+
+      it "includes the session count in the response body" do
+        delete other_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        expect(response.body).to include("1")
+      end
+
+      it "does not destroy any sessions" do
+        expect_any_instance_of(User).not_to receive(:destroy_sessions)
+        delete other_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+      end
+    end
+
+    context "with confirmed param (second DELETE - actual destruction)" do
+      it "destroys the other sessions" do
+        expect_any_instance_of(User).to receive(:destroy_sessions).with([other_private_id])
+        delete other_sessions_user_path, params: { confirmed: "1" }
+      end
+
+      it "redirects to the profile edit page" do
+        delete other_sessions_user_path, params: { confirmed: "1" }
+        expect(response).to redirect_to(edit_user_path)
+      end
+
+      it "sets a flash notice with the session count" do
+        delete other_sessions_user_path, params: { confirmed: "1" }
+        follow_redirect!
+        expect(response.body).to include("other session")
+      end
+
+      it "does not destroy the current session" do
+        delete other_sessions_user_path, params: { confirmed: "1" }
+
+        # try going to a random page and see if it still works.
+        get character_registrations_path
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
   describe "Redirect after login" do
     context "with stored location" do
       it "redirects to stored location after successful login" do

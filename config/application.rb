@@ -51,11 +51,10 @@ module App
     config.session_store XivAuthSessionStore,
       key: "_xivauth_session_v1",
       redis: {
-        url: "#{ENV.fetch('REDIS_URL', 'redis://localhost:6379')}/#{ENV.fetch('REDIS_SESSION_DB_INDEX', 2)}",
-        password: ENV.fetch("REDIS_PASSWORD", nil),
+        url:          "#{ENV.fetch('REDIS_URL', 'redis://localhost:6379')}/#{ENV.fetch('REDIS_SESSION_DB_INDEX', 2)}",
+        password:     ENV.fetch("REDIS_PASSWORD", nil),
         expire_after: 7.days,
-        key_prefix: XivAuthSessionStore::SESSION_KEY_PREFIX,
-        ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+        ssl_params:   { verify_mode: OpenSSL::SSL::VERIFY_NONE }
       }
   end
 end

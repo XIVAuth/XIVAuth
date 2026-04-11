@@ -2,6 +2,7 @@ class User < ApplicationRecord
   include OmniauthAuthenticable
   include SystemRoleable
   include User::TeamAssociations
+  include User::SessionManageable
 
   # ZXCVBN config
   include PasswordStrengthValidatable

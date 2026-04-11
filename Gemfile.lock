@@ -414,9 +414,6 @@ GEM
     redis-client (0.28.0)
       connection_pool
     redis-prescription (2.6.0)
-    redis-session-store (0.11.6)
-      actionpack (>= 5.2.4.1, < 9)
-      redis (>= 3, < 6)
     regexp_parser (2.12.0)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -645,7 +642,6 @@ DEPENDENCIES
   rails_cloudflare_turnstile (~> 0.4)
   rails_semantic_logger (~> 4.17)
   redis (~> 5.2)
-  redis-session-store (~> 0.11)
   rexml (~> 3.4.2)
   rqrcode (~> 3.2)
   rspec-rails (~> 8.0)

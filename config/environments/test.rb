@@ -28,7 +28,7 @@ Rails.application.configure do
   config.cache_store = :null_store
 
   # Use in-memory session store in tests so specs don't require a live Redis connection.
-  config.session_store :memory_store, key: "_xivauth_session_v1"
+  config.session_store :cookie_store, key: "_xivauth_session_v1"
 
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = :none
