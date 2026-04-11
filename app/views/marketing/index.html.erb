@@ -13,7 +13,7 @@
         </p>
         <div class="d-flex flex-wrap gap-3">
           <% if user_signed_in? %>
-            <%= link_to "Go to My Account", character_registrations_path, class: "btn btn-primary btn-lg" %>
+            <%= link_to "Manage My Characters", character_registrations_path, class: "btn btn-primary btn-lg" %>
           <% else %>
             <%= link_to "Create your account", new_user_registration_path, class: "btn btn-primary btn-lg" %>
             <%= link_to "Log in", new_user_session_path, class: "btn btn-outline-secondary btn-lg" %>

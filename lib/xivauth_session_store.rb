@@ -10,7 +10,7 @@ require "redis"
 # of sync if an entry is deleted in one place, but not the other.
 class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # rubocop:disable Metrics/ClassLength
   SESSION_KEY_PREFIX = "xivauth:sessions:v1:sid:".freeze
-  USER_INDEX_PREFIX  = "xivauth:sessions:v1:user:".freeze
+  USER_INDEX_PREFIX  = "xivauth:sessions:v1:usermap:".freeze
 
   def initialize(app, options = {})
     super
@@ -130,7 +130,7 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
   end
 
   def session_in_user_index?(user_id, sid_private_id)
-    @redis.zscore("#{USER_INDEX_PREFIX}#{user_id}:sessions", sid_private_id).present?
+    @redis.zscore("#{USER_INDEX_PREFIX}#{user_id}", sid_private_id).present?
   rescue Errno::ECONNREFUSED, Redis::CannotConnectError
     true
   end
@@ -138,7 +138,7 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
   def index_session!(user_id, sid_private_id, expiry)
     expiry     ||= 7.days.to_i
     expiry_score = Time.now.to_i + expiry
-    index_key    = "#{USER_INDEX_PREFIX}#{user_id}:sessions"
+    index_key    = "#{USER_INDEX_PREFIX}#{user_id}"
 
     @redis.zadd(index_key, expiry_score, sid_private_id)
     @redis.expire(index_key, expiry + 1.day.to_i)
@@ -147,7 +147,7 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
   end
 
   def unindex_session!(user_id, sid_private_id)
-    @redis.zrem("#{USER_INDEX_PREFIX}#{user_id}:sessions", sid_private_id)
+    @redis.zrem("#{USER_INDEX_PREFIX}#{user_id}", sid_private_id)
   rescue Errno::ECONNREFUSED, Redis::CannotConnectError
     nil
   end

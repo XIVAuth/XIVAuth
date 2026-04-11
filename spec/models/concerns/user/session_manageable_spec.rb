@@ -14,7 +14,7 @@ RSpec.describe User::SessionManageable, type: :model do
   let(:expiry_2) { 7.days.from_now }
 
   def index_key
-    "#{XivAuthSessionStore::USER_INDEX_PREFIX}#{user.id}:sessions"
+    "#{XivAuthSessionStore::USER_INDEX_PREFIX}#{user.id}"
   end
 
   def session_key(private_id)

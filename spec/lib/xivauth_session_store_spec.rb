@@ -23,7 +23,7 @@ RSpec.describe XivAuthSessionStore do
   end
 
   def index_key
-    "#{XivAuthSessionStore::USER_INDEX_PREFIX}#{user_id}:sessions"
+    "#{XivAuthSessionStore::USER_INDEX_PREFIX}#{user_id}"
   end
 
   describe "#write_session" do

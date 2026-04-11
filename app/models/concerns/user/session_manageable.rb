@@ -46,7 +46,7 @@ module User::SessionManageable
   private
 
   def _session_index_key
-    "#{XivAuthSessionStore::USER_INDEX_PREFIX}#{id}:sessions"
+    "#{XivAuthSessionStore::USER_INDEX_PREFIX}#{id}"
   end
 
   # Constructs the Redis key where Rack stores the session data for a given
