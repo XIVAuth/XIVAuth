@@ -626,6 +626,7 @@ DEPENDENCIES
   jsbundling-rails
   jwt (~> 3.0)
   jwt-eddsa (~> 0.9)
+  msgpack (~> 1.8)
   omniauth-github (~> 2.0)
   omniauth-oauth2 (~> 1.8)
   omniauth-rails_csrf_protection (~> 2.0)

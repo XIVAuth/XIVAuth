@@ -1,4 +1,5 @@
 require "redis"
+require "msgpack"
 
 # Derived from redis-session-store, but with more ✨magic ✨, like user bindings.
 #
@@ -98,9 +99,7 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
     raw = @redis.get(prefixed(sid.private_id))
     return nil unless raw
 
-    # rubocop:disable Security/MarshalLoad
-    Marshal.load(raw).with_indifferent_access
-    # rubocop:enable Security/MarshalLoad
+    decode(raw).with_indifferent_access
   rescue StandardError
     nil
   end
@@ -114,7 +113,16 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
   end
 
   def encode(session_data)
-    Marshal.dump(session_data)
+    MessagePack.pack(session_data)
+  end
+
+  def decode(raw)
+    MessagePack.unpack(raw)
+  rescue StandardError
+    # Backward compatibility for sessions serialized before MessagePack rollout.
+    # rubocop:disable Security/MarshalLoad
+    Marshal.load(raw)
+    # rubocop:enable Security/MarshalLoad
   end
 
   def session_default_values
@@ -150,6 +158,16 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
     @redis.zrem("#{USER_INDEX_PREFIX}#{user_id}", sid_private_id)
   rescue Errno::ECONNREFUSED, Redis::CannotConnectError
     nil
+  end
+
+  # Custom XIVAuth sessionID that doesn't include version fields - we do this at a higher point
+  # in the schema.
+  class SessionId < Rack::Session::SessionId
+    attr_reader :private_id, :public_id
+
+    def private_id
+      hash_sid(public_id)
+    end
   end
 
   def generate_sid

@@ -40,7 +40,6 @@ RSpec.describe XivAuthSessionStore do
     end
 
     it "writes without expiry when no TTL is configured" do
-      store_no_expiry = nil
       allow(Redis).to receive(:new).and_return(redis_double)
       store_no_expiry = XivAuthSessionStore.new(app, redis: {})
 
@@ -72,7 +71,7 @@ RSpec.describe XivAuthSessionStore do
   describe "#find_session" do
     context "when the session exists and passes the user index check" do
       before do
-        allow(redis_double).to receive(:get).with(session_key).and_return(Marshal.dump(session_data))
+        allow(redis_double).to receive(:get).with(session_key).and_return(MessagePack.pack(session_data))
         allow(redis_double).to receive(:zscore).with(index_key, sid.private_id).and_return(7.days.from_now.to_f)
       end
 
@@ -85,7 +84,7 @@ RSpec.describe XivAuthSessionStore do
 
     context "when the session exists but is absent from the user index" do
       before do
-        allow(redis_double).to receive(:get).with(session_key).and_return(Marshal.dump(session_data))
+        allow(redis_double).to receive(:get).with(session_key).and_return(MessagePack.pack(session_data))
         allow(redis_double).to receive(:zscore).with(index_key, sid.private_id).and_return(nil)
         allow(redis_double).to receive(:del)
       end
@@ -122,7 +121,7 @@ RSpec.describe XivAuthSessionStore do
 
     context "when session has no user data (anonymous session)" do
       before do
-        allow(redis_double).to receive(:get).with(session_key).and_return(Marshal.dump(empty_session))
+        allow(redis_double).to receive(:get).with(session_key).and_return(MessagePack.pack(empty_session))
       end
 
       it "returns the session without performing an index check" do
@@ -132,11 +131,24 @@ RSpec.describe XivAuthSessionStore do
         expect(data).to be_empty
       end
     end
+
+    context "when the session is stored in legacy Marshal format" do
+      before do
+        allow(redis_double).to receive(:get).with(session_key).and_return(Marshal.dump(session_data))
+        allow(redis_double).to receive(:zscore).with(index_key, sid.private_id).and_return(7.days.from_now.to_f)
+      end
+
+      it "reads the session successfully" do
+        returned_sid, data = store.find_session({}, sid)
+        expect(returned_sid).to eq(sid)
+        expect(data["warden.user.user.key"]).to be_present
+      end
+    end
   end
 
   describe "#delete_session" do
     before do
-      allow(redis_double).to receive(:get).with(session_key).and_return(Marshal.dump(session_data))
+      allow(redis_double).to receive(:get).with(session_key).and_return(MessagePack.pack(session_data))
       allow(redis_double).to receive(:del)
       allow(redis_double).to receive(:zrem)
     end
@@ -164,7 +176,7 @@ RSpec.describe XivAuthSessionStore do
 
     context "when the session has no user data" do
       before do
-        allow(redis_double).to receive(:get).with(session_key).and_return(Marshal.dump(empty_session))
+        allow(redis_double).to receive(:get).with(session_key).and_return(MessagePack.pack(empty_session))
       end
 
       it "deletes the key without touching the user index" do
