@@ -132,16 +132,14 @@ RSpec.describe XivAuthSessionStore do
       end
     end
 
-    context "when the session is stored in legacy Marshal format" do
+    context "when the stored payload is legacy Marshal format" do
       before do
         allow(redis_double).to receive(:get).with(session_key).and_return(Marshal.dump(session_data))
-        allow(redis_double).to receive(:zscore).with(index_key, sid.private_id).and_return(7.days.from_now.to_f)
       end
 
-      it "reads the session successfully" do
-        returned_sid, data = store.find_session({}, sid)
-        expect(returned_sid).to eq(sid)
-        expect(data["warden.user.user.key"]).to be_present
+      it "returns a new empty session" do
+        _sid, data = store.find_session({}, sid)
+        expect(data).to be_empty
       end
     end
   end
