@@ -58,7 +58,7 @@ RUN  bundle clean --force && \
 # Release Image
 FROM base AS release
 
-# Duplicated from above as the release stage doesn't inherit this.
+# Duplicated from precompile, as
 ENV BUNDLE_DEPLOYMENT="1" \
     BUNDLE_WITHOUT="development:test" \
     RAILS_ENV="production"
