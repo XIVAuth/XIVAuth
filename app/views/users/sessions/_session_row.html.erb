@@ -34,15 +34,15 @@
         <i class="bi bi-bookmark-check text-muted" title="Remembered session" aria-label="Remembered session"></i>
       <% end %>
     </div>
-    <ul class="pipe-separated-items text-muted small ps-0 mb-0">
+    <% last_seen = session.dig(:data, :auth_data, :current_at) %>
+    <div class="text-muted small">
       <% if location.present? %>
-        <li><%= [ location[:city], location[:region], location[:country] ].compact.join(", ") %></li>
+        <div><%= [ location[:city], location[:region], location[:country] ].compact.join(", ") %></div>
       <% end %>
-      <% last_seen = session.dig(:data, :auth_data, :current_at) %>
       <% if last_seen.present? %>
-        <li>Last seen <%= time_ago_in_words(Time.parse(last_seen)) %> ago</li>
+        <div>Last seen <%= time_ago_in_words(Time.parse(last_seen)) %> ago</div>
       <% end %>
-    </ul>
+    </div>
   </td>
   <td style="width: 0;" class="text-end">
     <% if is_current %>
