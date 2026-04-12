@@ -1,0 +1,5 @@
+<%= turbo_stream.append "body" do %>
+  <%= render 'layouts/components/remote_modal', modal_id: "evacuate_sessions_modal" do %>
+    <%= render 'users/sessions/evacuate_modal' %>
+  <% end %>
+<% end %>

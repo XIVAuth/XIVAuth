@@ -1,0 +1,71 @@
+<div class="col-md-6">
+  <div class="card h-100">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-display me-2 text-primary fs-5" aria-hidden="true"></i>
+        <h2 class="h5 mb-0">Active Sessions</h2>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <tbody>
+            <% sessions.each do |session| %>
+              <% is_current = session[:sid] == current_sid %>
+              <% browser = session.dig(:auth_data, :current_browser) %>
+              <% location = session.dig(:auth_data, :current_location) %>
+              <tr>
+                <td style="width: 0;">
+                  <% icon = case browser&.dig(:type)
+                             when "mobile"   then "bi-phone"
+                             when "tablet"   then "bi-tablet"
+                             when "firefox"  then "bi-browser-firefox"
+                             when "chrome"   then "bi-browser-chrome"
+                             when "safari"   then "bi-browser-safari"
+                             when "edge"     then "bi-browser-edge"
+                             else                 "bi-laptop"
+                             end %>
+                  <i class="bi <%= icon %> mx-2 fs-1 text-muted" aria-hidden="true"></i>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <% if browser.present? %>
+                      <span class="fw-semibold"><%= browser[:name] %><%= " #{browser[:version]}" if browser[:version].present? %></span>
+                      <% if browser[:device].present? && browser[:device] != "Unknown" %>
+                        <span class="text-muted small">on <%= browser[:device] %></span>
+                      <% elsif browser[:os].present? %>
+                        <span class="text-muted small">on <%= browser[:os] %><%= " #{browser[:os_version]}" if browser[:os_version].present? %></span>
+                      <% end %>
+                    <% else %>
+                      <span class="fw-semibold text-muted">Unknown browser</span>
+                    <% end %>
+                    <% if is_current %>
+                      <span class="badge bg-success">This device</span>
+                    <% end %>
+                  </div>
+                  <ul class="pipe-separated-items text-muted small ps-0 mb-0">
+                    <% if location.present? %>
+                      <li><%= [ location[:city], location[:region], location[:country] ].compact.join(", ") %></li>
+                    <% end %>
+                    <% last_seen = session.dig(:auth_data, :current_at) %>
+                    <% if last_seen.present? %>
+                      <li>Last seen <%= time_ago_in_words(Time.parse(last_seen)) %> ago</li>
+                    <% end %>
+                  </ul>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% other_count = sessions.count { |s| s[:sid] != current_sid } %>
+    <div class="card-footer bg-transparent d-flex justify-content-end">
+      <%= button_to "Sign Out Other Sessions", all_sessions_user_path,
+                    method: :delete,
+                    class: "btn btn-warning #{'disabled' if other_count == 0}",
+                    disabled: other_count == 0,
+                    data: { turbo_stream: true } %>
+    </div>
+  </div>
+</div>

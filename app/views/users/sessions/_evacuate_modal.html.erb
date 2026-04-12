@@ -1,0 +1,26 @@
+<%= form_with(url: evacuate_sessions_user_path, method: :post) do |f| %>
+  <%= f.hidden_field :confirmed, value: "1" %>
+  <div class="modal-header">
+    <h5 class="modal-title text-danger"><i class="bi bi-shield-exclamation me-2"></i>Emergency Session Evacuation</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <p>
+      This will immediately sign you out of <strong>all devices</strong> (including this one)
+      and revoke <strong>all permissions</strong> granted to third-party applications.
+      <strong class="text-danger">This action is irreversible.</strong>
+    </p>
+    <% if current_user.pki_issued_certificates.any? || true %>
+      <div class="form-check mb-3">
+        <%= f.check_box :revoke_certificates, { class: "form-check-input", id: "evacuate_revoke_certificates" }, "1", "0" %>
+        <%= f.label :revoke_certificates, "Also revoke all issued certificates", class: "form-check-label", for: "evacuate_revoke_certificates" %>
+      </div>
+    <% end %>
+    <p class="mb-0">You will need to sign in again and reauthorize any applications you use.  Are you
+      sure?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    <%= f.submit "Evacuate", class: "btn btn-danger" %>
+  </div>
+<% end %>
