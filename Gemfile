@@ -99,6 +99,7 @@ gem "stackprof", "~> 0.2"
 gem "rexml", "~> 3.4.2"
 
 # Helpers
+gem "browser", "~> 6.0"
 gem "pagy", "~> 43.0"
 
 group :production do

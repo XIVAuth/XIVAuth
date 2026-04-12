@@ -5,7 +5,7 @@ module User::SessionManageable
   # Redis. Entries in the user index that have expired or whose session key no
   # longer exists (e.g. explicit logout without a clean ZREM) are excluded.
   #
-  # Each entry: { sid: String, expires_at: Time }
+  # Each entry: { sid: String, expires_at: Time, auth_data: Hash | nil }
   # The +sid+ is the private session ID (the Redis key suffix, a SHA-based digest).
   def get_sessions
     XivAuthSessionStore.with_index_redis do |r|
@@ -13,13 +13,25 @@ module User::SessionManageable
       entries = r.zrange(_session_index_key, 0, -1, with_scores: true)
       next [] if entries.empty?
 
-      # Verify each SID exists in the canonical Redis session store.
-      exists_results = r.pipelined do |pipe|
+      n = entries.length
+      results = r.pipelined do |pipe|
+        entries.each { |private_id, _| pipe.get(_canonical_session_key(private_id)) }
         entries.each { |private_id, _| pipe.exists(_canonical_session_key(private_id)) }
       end
 
-      entries.zip(exists_results).filter_map do |(private_id, score), exists|
-        { sid: private_id, expires_at: Time.at(score.to_i) } if exists > 0
+      get_results    = results[0...n]
+      exists_results = results[n..]
+
+      entries.zip(get_results, exists_results).filter_map do |(private_id, score), raw_data, exists|
+        next unless exists > 0
+
+        auth_data = begin
+          MessagePack.unpack(raw_data)&.dig("auth_data")&.with_indifferent_access
+        rescue StandardError
+          nil
+        end
+
+        { sid: private_id, expires_at: Time.at(score.to_i), auth_data: auth_data }
       end
     end
   end

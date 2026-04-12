@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_observability_context, prepend: true
+  before_action :update_session_metadata, prepend: true
 
   before_action :redirect_to_new_domain
 
@@ -10,11 +11,23 @@ class ApplicationController < ActionController::Base
     @current_ability ||= Abilities::UserAbility.new(current_user)
   end
 
+  private def update_session_metadata
+    return unless user_signed_in?
+
+    auth_data = session[:auth_data] || {}
+    auth_data.merge!(helpers.build_auth_data("current"))
+    if auth_data.dig(:current_browser, :user_agent) != request.user_agent
+      auth_data[:current_browser] = helpers.parse_user_agent(request.user_agent)
+    end
+
+    session[:auth_data] = auth_data
+  end
+
   private def set_observability_context
     sentry_frontend_data = {
       environment: ENV["APP_ENV"] || Rails.env,
       dsn: Rails.application.credentials.dig(:sentry, :dsn, :frontend),
-      user: { }
+      user: {}
     }
 
     if user_signed_in?

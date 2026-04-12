@@ -1,4 +1,4 @@
-<%= form_with(url: other_sessions_user_path, method: :delete) do |f| %>
+<%= form_with(url: all_sessions_user_path, method: :delete) do |f| %>
   <%= f.hidden_field :confirmed, value: "1" %>
   <div class="modal-header">
     <h5 class="modal-title">Sign Out Other Devices</h5>
@@ -8,8 +8,7 @@
     <% if other_session_count > 0 %>
       <p>
         Continuing will sign you out of <%= pluralize(other_session_count, 'other active session') %> and disable
-        Remember Me for all browsers or devices except this one. Authorized applications will not be affected by this
-        action.
+        Remember Me for all browsers or devices except this one. Any authorized applications will not be affected.
       </p>
       <p>Are you sure?</p>
     <% else %>

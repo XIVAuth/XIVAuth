@@ -5,7 +5,7 @@ class Users::SessionsController < Devise::SessionsController
 
   layout "login/signin"
 
-  before_action :authenticate_user!, only: %i[destroy_others]
+  before_action :authenticate_user!, only: %i[destroy_others destroy_all evacuate]
   before_action :reset_mfa_attempt!, only: [:new]
   before_action :generate_discoverable_challenge, only: [:new]
 
@@ -36,6 +36,43 @@ class Users::SessionsController < Devise::SessionsController
     remember_me(current_user) if currently_remembered
 
     redirect_to edit_user_path, notice: "Signed out of #{helpers.pluralize(sessions.length, 'other session')}."
+  end
+
+  def destroy_all
+    if request.format.turbo_stream? && params[:confirmed].blank?
+      @other_session_count = other_sessions_list.length
+      render and return
+    end
+
+    sessions = other_sessions_list
+    current_user.destroy_sessions(sessions.map { |s| s[:sid] })
+
+    currently_remembered = remember_me_is_active?(current_user)
+    forget_me(current_user)
+    remember_me(current_user) if currently_remembered
+
+    redirect_to edit_user_path, notice: "Signed out of #{helpers.pluralize(sessions.length, 'other session')}."
+  end
+
+  def evacuate
+    if request.format.turbo_stream? && params[:confirmed].blank?
+      render and return
+    end
+
+    OAuth::AccessToken.where(resource_owner: current_user, revoked_at: nil).update_all(revoked_at: Time.now.utc)
+    OAuth::AccessGrant.where(resource_owner: current_user, revoked_at: nil).update_all(revoked_at: Time.now.utc)
+
+    if params.dig(:evacuate, :revoke_certificates) == "1"
+      current_user.pki_issued_certificates.active.find_each { |c| c.revoke!(reason: "cessation_of_operation") }
+    end
+
+    all_sids = current_user.get_sessions.map { |s| s[:sid] }
+    current_user.destroy_sessions(all_sids)
+
+    forget_me(current_user)
+    sign_out(current_user)
+
+    redirect_to new_user_session_path, notice: "All sessions and OAuth authorizations have been revoked."
   end
 
   def create
@@ -120,6 +157,14 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def after_sign_in_path_for(resource)
+    auth_data = session[:auth_data] || {}
+
+    auth_data[:created_at] = Time.now.utc.iso8601
+    auth_data[:initial_ip] = request.remote_ip
+    auth_data[:initial_ua] = request.user_agent
+
+    session[:auth_data] = auth_data
+
     stored_location_for(resource) || character_registrations_path
   end
 end

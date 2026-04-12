@@ -97,6 +97,7 @@ GEM
       msgpack (~> 1.2)
     brakeman (8.0.4)
       racc
+    browser (6.2.0)
     builder (3.3.0)
     cancancan (3.6.1)
     capybara (3.40.0)
@@ -603,6 +604,7 @@ DEPENDENCIES
   amazing_print
   bootsnap
   brakeman
+  browser (~> 6.0)
   cancancan (~> 3.5)
   capybara
   certificate_authority (~> 1.1)
