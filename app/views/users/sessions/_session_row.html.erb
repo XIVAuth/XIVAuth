@@ -1,0 +1,60 @@
+<% is_current = session[:sid] == current_sid %>
+<% browser = session.dig(:data, :auth_data, :current_browser) %>
+<% location = session.dig(:data, :auth_data, :current_location) %>
+<% remembered = session.dig(:data, :remembered) %>
+<% session_suffix = session[:sid].last(24) %>
+<tr id="<%= "session_row_#{session_suffix}" %>">
+  <td style="width: 0;">
+    <% icon = case browser&.dig(:type)
+               when "mobile"   then "bi bi-phone"
+               when "tablet"   then "bi bi-tablet"
+               when "firefox"  then "bi bi-browser-firefox"
+               when "chrome"   then "bi bi-browser-chrome"
+               when "safari"   then "bi bi-browser-safari"
+               when "edge"     then "bi bi-browser-edge"
+               when "opera"    then "fab fa-opera"
+               when "brave"    then "fab fa-brave"
+               else                 "bi bi-laptop"
+               end %>
+    <i class="<%= icon %> mx-2 fs-1 text-muted" aria-hidden="true"></i>
+  </td>
+  <td>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <% if browser.present? %>
+        <span class="fw-semibold"><%= browser[:name] %><%= " #{browser[:version]}" if browser[:version].present? %></span>
+        <% if browser[:device].present? && browser[:device] != "Unknown" %>
+          <span class="text-muted small">on <%= browser[:device] %></span>
+        <% elsif browser[:os].present? %>
+          <span class="text-muted small">on <%= browser[:os] %><%= " #{browser[:os_version]}" if browser[:os_version].present? %></span>
+        <% end %>
+      <% else %>
+        <span class="fw-semibold text-muted">Unknown browser</span>
+      <% end %>
+      <% if remembered %>
+        <i class="bi bi-bookmark-check text-muted" title="Remembered session" aria-label="Remembered session"></i>
+      <% end %>
+    </div>
+    <ul class="pipe-separated-items text-muted small ps-0 mb-0">
+      <% if location.present? %>
+        <li><%= [ location[:city], location[:region], location[:country] ].compact.join(", ") %></li>
+      <% end %>
+      <% last_seen = session.dig(:data, :auth_data, :current_at) %>
+      <% if last_seen.present? %>
+        <li>Last seen <%= time_ago_in_words(Time.parse(last_seen)) %> ago</li>
+      <% end %>
+    </ul>
+  </td>
+  <td style="width: 0;" class="text-end">
+    <% if is_current %>
+      <span class="badge bg-success">This device</span>
+    <% else %>
+      <%= button_to session_user_path(session_id: session_suffix),
+                    method: :delete,
+                    class: "btn btn-sm btn-outline-danger",
+                    title: "End session",
+                    data: { turbo_stream: true } do %>
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  </td>
+</tr>

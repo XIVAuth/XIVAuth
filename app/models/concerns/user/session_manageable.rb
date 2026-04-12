@@ -5,8 +5,9 @@ module User::SessionManageable
   # Redis. Entries in the user index that have expired or whose session key no
   # longer exists (e.g. explicit logout without a clean ZREM) are excluded.
   #
-  # Each entry: { sid: String, expires_at: Time, auth_data: Hash | nil }
+  # Each entry: { sid: String, expires_at: Time, data: Hash | nil }
   # The +sid+ is the private session ID (the Redis key suffix, a SHA-based digest).
+  # +data+ is the full deserialized session hash.
   def get_sessions
     XivAuthSessionStore.with_index_redis do |r|
       r.zremrangebyscore(_session_index_key, 0, Time.now.to_i)
@@ -25,19 +26,26 @@ module User::SessionManageable
       entries.zip(get_results, exists_results).filter_map do |(private_id, score), raw_data, exists|
         next unless exists > 0
 
-        auth_data = begin
-          MessagePack.unpack(raw_data)&.dig("auth_data")&.with_indifferent_access
+        data = begin
+          MessagePack.unpack(raw_data)&.with_indifferent_access
         rescue StandardError
           nil
         end
 
-        { sid: private_id, expires_at: Time.at(score.to_i), auth_data: auth_data }
+        { sid: private_id, expires_at: Time.at(score.to_i), data: data }
       end
     end
   end
 
   def active_session_count
     get_sessions.length
+  end
+
+  # Destroys all sessions except the one identified by +except_sid+.
+  # Pass nil to destroy all sessions.
+  def destroy_sessions_except(except_sid)
+    sids = get_sessions.filter_map { |s| s[:sid] unless s[:sid] == except_sid }
+    destroy_sessions(sids)
   end
 
   # Destroys specific sessions by their private IDs, removing them from both

@@ -166,8 +166,8 @@ Rails.application.routes.draw do
     resource :profile, as: "user", only: %i[update destroy], controller: "users/registrations" do
       get "/", to: "users/registrations#edit", as: :edit
 
-      delete "sessions/all", to: "users/sessions#destroy_all", as: :all_sessions
-      post   "sessions/evacuate", to: "users/sessions#evacuate", as: :evacuate_sessions
+      delete "sessions/all",         to: "users/sessions#destroy_all",     as: :all_sessions
+      delete "sessions/:session_id", to: "users/sessions#destroy_session", as: :session
 
       resources :social_identities, path: "identities", controller: "users/social_identities", only: [:destroy]
       resources :webauthn_credentials, path: "webauthn", controller: "users/webauthn_credentials",

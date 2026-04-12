@@ -36,7 +36,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # PUT /resource
   def update
-    super
+    super do |resource|
+      if resource.errors.empty? && resource.saved_change_to_encrypted_password?
+        current_sid = request.env["rack.session.options"]&.[](:id)&.private_id
+        resource.destroy_sessions_except(current_sid)
+      end
+    end
   end
 
   # DELETE /resource

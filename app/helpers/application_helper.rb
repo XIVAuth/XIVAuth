@@ -23,6 +23,8 @@ module ApplicationHelper
       when "Chrome"  then "chrome"
       when "Safari"  then "safari"
       when "Edge"    then "edge"
+      when "Opera"   then "opera"
+      when "Brave"   then "brave"
       else                "unknown"
       end
     end

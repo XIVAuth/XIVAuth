@@ -43,25 +43,23 @@ class Users::SessionsController < Devise::SessionsController
     redirect_to edit_user_path, notice: "Signed out of #{helpers.pluralize(sessions.length, 'other session')}."
   end
 
-  def evacuate
-    if request.format.turbo_stream? && params[:confirmed].blank?
-      render and return
+  def destroy_session
+    suffix  = params[:session_id]
+    matches = current_user.get_sessions.select { |s| s[:sid].end_with?(suffix) }
+
+    head :not_found and return unless matches.length == 1
+
+    target_sid  = matches.first[:sid]
+    current_sid = request.env["rack.session.options"]&.[](:id)&.private_id
+
+    head :forbidden and return if target_sid == current_sid
+
+    current_user.destroy_sessions([target_sid])
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to edit_user_path, notice: "Session ended." }
     end
-
-    OAuth::AccessToken.where(resource_owner: current_user, revoked_at: nil).update_all(revoked_at: Time.now.utc)
-    OAuth::AccessGrant.where(resource_owner: current_user, revoked_at: nil).update_all(revoked_at: Time.now.utc)
-
-    if params.dig(:evacuate, :revoke_certificates) == "1"
-      current_user.pki_issued_certificates.active.find_each { |c| c.revoke!(reason: "cessation_of_operation") }
-    end
-
-    all_sids = current_user.get_sessions.map { |s| s[:sid] }
-    current_user.destroy_sessions(all_sids)
-
-    session.delete(:remembered)
-    sign_out(current_user)
-
-    redirect_to new_user_session_path, notice: "All sessions and OAuth authorizations have been revoked."
   end
 
   def create

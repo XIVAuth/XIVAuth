@@ -9,7 +9,12 @@ class Users::PasswordsController < Devise::PasswordsController
 
   # PUT /resource/password
   def update
-    super
+    super do |resource|
+      if resource.errors.empty?
+        current_sid = request.env["rack.session.options"]&.[](:id)&.private_id
+        resource.destroy_sessions_except(current_sid)
+      end
+    end
   end
 
   # protected
