@@ -1,8 +1,6 @@
 class Users::SessionsController < Devise::SessionsController
   include Users::AuthenticatesWithMFA
   include Users::AuthenticatesViaPasskey
-  include Devise::Controllers::Rememberable
-
   layout "login/signin"
 
   before_action :authenticate_user!, only: %i[destroy_others destroy_all evacuate]
@@ -30,11 +28,6 @@ class Users::SessionsController < Devise::SessionsController
     sessions = other_sessions_list
     current_user.destroy_sessions(sessions.map { |s| s[:sid] })
 
-    # Purge existing remember_me tokens if they exist, but allow the current session to keep it, if it's being used.
-    currently_remembered = remember_me_is_active?(current_user)
-    forget_me(current_user)
-    remember_me(current_user) if currently_remembered
-
     redirect_to edit_user_path, notice: "Signed out of #{helpers.pluralize(sessions.length, 'other session')}."
   end
 
@@ -46,10 +39,6 @@ class Users::SessionsController < Devise::SessionsController
 
     sessions = other_sessions_list
     current_user.destroy_sessions(sessions.map { |s| s[:sid] })
-
-    currently_remembered = remember_me_is_active?(current_user)
-    forget_me(current_user)
-    remember_me(current_user) if currently_remembered
 
     redirect_to edit_user_path, notice: "Signed out of #{helpers.pluralize(sessions.length, 'other session')}."
   end
@@ -69,7 +58,7 @@ class Users::SessionsController < Devise::SessionsController
     all_sids = current_user.get_sessions.map { |s| s[:sid] }
     current_user.destroy_sessions(all_sids)
 
-    forget_me(current_user)
+    session.delete(:remembered)
     sign_out(current_user)
 
     redirect_to new_user_session_path, notice: "All sessions and OAuth authorizations have been revoked."
@@ -101,6 +90,7 @@ class Users::SessionsController < Devise::SessionsController
 
   def evaluate_login_flow
     if user_params[:webauthn_response].present?
+      session[:remembered] = true if user_params[:remember_me] == "1"
       cred = WebAuthn::Credential.from_get(JSON.parse(user_params[:webauthn_response]))
       @user = User.find_by_webauthn_id(cred.user_handle)
       self.resource = @user
@@ -121,6 +111,7 @@ class Users::SessionsController < Devise::SessionsController
       self.resource = @user
 
       if self.resource&.valid_password?(user_params[:password])
+        session[:remembered] = true if user_params[:remember_me] == "1"
         pwned = @user.respond_to?(:password_pwned?) && @user.password_pwned?(user_params[:password])
 
         if pwned && !self.resource.mfa_enabled?

@@ -39,12 +39,10 @@
   <% end %>
 
   <div class="d-flex justify-content-between">
-    <% if devise_mapping.rememberable? %>
-      <div class="form-check">
-        <%= f.check_box :remember_me, class: "form-check-input" %>
-        <%= f.label :remember_me, class: "form-check-label" %>
-      </div>
-    <% end %>
+    <div class="form-check">
+      <%= check_box_tag "user[remember_me]", "1", false, class: "form-check-input", id: "user_remember_me" %>
+      <%= label_tag "user_remember_me", "Remember me", class: "form-check-label" %>
+    </div>
     <%- if devise_mapping.recoverable? %>
       <%= link_to "Problem signing in?", user_recovery_path, class: "ms-auto" %><br/>
     <% end %>

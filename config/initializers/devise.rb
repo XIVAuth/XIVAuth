@@ -163,21 +163,7 @@ Devise.setup do |config|
   # Defines which key will be used when confirming an account
   # config.confirmation_keys = [:email]
 
-  # ==> Configuration for :rememberable
-  # The time the user will be remembered without asking for credentials again.
-  config.remember_for = 3.months
-
-  # Invalidates all the remember me tokens when the user signs out.
-  config.expire_all_remember_me_on_sign_out = true
-
-  # If true, extends the user's remember period when remembered via cookie.
-  # config.extend_remember_period = false
-
-  # Options to be passed to the created cookie. For instance, you can set
-  # secure: true in order to force SSL only cookies.
-  # config.rememberable_options = {}
-
-  # ==> Configuration for :validatable
+  #==> Configuration for :validatable
   # Range for password length.
   config.password_length = 6..1024
 

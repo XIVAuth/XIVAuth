@@ -5,7 +5,7 @@ module ApplicationHelper
       "#{prefix}_at":       Time.now.utc.iso8601,
       "#{prefix}_location": {
         country: request.headers["CF-IPCountry"],
-        region:  request.headers["CF-IPRegion"],
+        region:  request.headers["CF-Region"],
         city:    request.headers["CF-IPCity"]
       }.compact.presence
     }

@@ -15,10 +15,11 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
 
   def initialize(app, options = {})
     super
-    redis_config  = options.fetch(:redis, {})
-    @expire_after = redis_config[:expire_after]
-    conn_options  = redis_config.reject { |k, _| %i[expire_after key_prefix].include?(k) }
-    @redis        = Redis.new(conn_options)
+    redis_config    = options.fetch(:redis, {})
+    @expire_after   = redis_config[:expire_after].to_i
+    @remembered_ttl = redis_config[:remembered_ttl].to_i
+    conn_options    = redis_config.reject { |k, _| %i[expire_after remembered_ttl key_prefix].include?(k) }
+    @redis          = Redis.new(conn_options)
   end
 
   # Yields a thread-local Redis connection to the session DB.
@@ -53,14 +54,12 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
     session_default_values
   end
 
-  def write_session(_env, sid, session_data, options = nil)
-    expiry = expiry_for(options)
+  def write_session(env, sid, session_data, options = nil)
+    remembered = session_data['remembered']
+    expiry     = remembered ? @remembered_ttl : @expire_after
 
-    if expiry
-      @redis.setex(prefixed(sid.private_id), expiry, encode(session_data))
-    else
-      @redis.set(prefixed(sid.private_id), encode(session_data))
-    end
+    @redis.setex(prefixed(sid.private_id), expiry, encode(session_data))
+    env.session_options[:expire_after] = expiry if remembered
 
     user_id = extract_devise_user_id(session_data)
     index_session!(user_id, sid.private_id, expiry) if user_id
@@ -120,10 +119,6 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
     [generate_sid, { }.with_indifferent_access]
   end
 
-  def expiry_for(options)
-    (options&.[](:ttl) || options&.[](:expire_after) || @expire_after)&.to_i
-  end
-
   def extract_devise_user_id(session)
     session&.dig("warden.user.user.key")&.first&.first
   end
@@ -135,12 +130,12 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
   end
 
   def index_session!(user_id, sid_private_id, expiry)
-    expiry     ||= 7.days.to_i
-    expiry_score = Time.now.to_i + expiry
-    index_key    = "#{USER_INDEX_PREFIX}#{user_id}"
+    expiry_score     = Time.now.to_i + expiry
+    index_key        = "#{USER_INDEX_PREFIX}#{user_id}"
+    new_index_expiry = Time.now.to_i + expiry + 1.day.to_i
 
     @redis.zadd(index_key, expiry_score, sid_private_id)
-    @redis.expire(index_key, expiry + 1.day.to_i)
+    @redis.expireat(index_key, new_index_expiry) if @redis.expiretime(index_key) < new_index_expiry
   rescue Errno::ECONNREFUSED, Redis::CannotConnectError
     nil
   end
