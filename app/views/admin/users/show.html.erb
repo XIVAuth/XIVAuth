@@ -99,6 +99,10 @@
                         disabled: !@user.mfa_enabled?, title: 'Remove MFA' do %>
             <i class="bi bi-unlock"></i> Remove MFA
           <% end %>
+          <%= button_to all_sessions_admin_user_path(@user), method: :delete, class: 'btn btn-outline-danger', form_class: 'd-inline-block',
+                        title: 'Force Log Out', data: { turbo_confirm: "This will immediately terminate all active sessions for #{@user.email}. Continue?" } do %>
+            <i class="bi bi-box-arrow-right"></i> Force Log Out
+          <% end %>
         </div>
         <div class="mb-4">
           <h6 class="fw-semibold mb-2">Multi-Factor Authentication (MFA)</h6>

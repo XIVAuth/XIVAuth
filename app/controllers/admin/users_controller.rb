@@ -57,6 +57,12 @@ class Admin::UsersController < Admin::AdminController
     end
   end
 
+  def destroy_all_sessions
+    # Note: will not terminate own current session.
+    @user.destroy_sessions(@user.get_sessions.map { |s| s[:sid] })
+    redirect_back_or_to admin_user_path(@user), notice: "All sessions for #{@user.email} have been terminated."
+  end
+
   def confirm
     if @user.confirm
       flash[:notice] = "The user was successfully confirmed."

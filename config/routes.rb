@@ -81,9 +81,10 @@ Rails.application.routes.draw do
       root to: "dashboard#index"
 
       resources :users, controller: "users" do
-        delete :mfa, on: :member, to: "users#destroy_mfa"
+        delete :mfa,      on: :member, to: "users#destroy_mfa"
+        delete "sessions/all", on: :member, to: "users#destroy_all_sessions", as: :all_sessions
         post :reset_password, on: :member, to: "users#send_password_reset"
-        post :confirm, on: :member, to: "users#confirm"
+        post :confirm,        on: :member, to: "users#confirm"
       end
       resources :characters, controller: "characters", param: :lodestone_id do
         post :refresh, on: :member
