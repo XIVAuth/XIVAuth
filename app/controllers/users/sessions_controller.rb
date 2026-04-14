@@ -75,7 +75,7 @@ class Users::SessionsController < Devise::SessionsController
 
   def check_captcha
     # only check captcha if this is a first-level login attempt
-    return unless user_params[:webauthn_response].present? || user_params[:password].present?
+    return unless params[:webauthn_response].present? || user_params[:password].present?
     return if cloudflare_turnstile_ok?
 
     self.flash.now[:alert] = "CAPTCHA verification failed. Please try again."
@@ -87,14 +87,14 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def evaluate_login_flow
-    if user_params[:webauthn_response].present?
-      session[:remembered] = true if user_params[:remember_me] == "1"
-      cred = WebAuthn::Credential.from_get(JSON.parse(user_params[:webauthn_response]))
+    if params[:webauthn_response].present?
+      session[:remembered] = true if params[:remember_me] == "1"
+      cred = WebAuthn::Credential.from_get(JSON.parse(params[:webauthn_response]))
       @user = User.find_by_webauthn_id(cred.user_handle)
       self.resource = @user
 
       if self.resource
-        authenticate_via_passkey(user_params[:webauthn_response])
+        authenticate_via_passkey(params[:webauthn_response])
       else
         logger.warn("WebAuthn login attempt with an unknown user_handle.")
         self.flash.now[:alert] = "Security key presented is not registered."
@@ -109,7 +109,7 @@ class Users::SessionsController < Devise::SessionsController
       self.resource = @user
 
       if self.resource&.valid_password?(user_params[:password])
-        session[:remembered] = true if user_params[:remember_me] == "1"
+        session[:remembered] = true if params[:remember_me] == "1"
         pwned = @user.respond_to?(:password_pwned?) && @user.password_pwned?(user_params[:password])
 
         if pwned && !self.resource.mfa_enabled?
@@ -142,7 +142,7 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def user_params
-    params.permit(user: [:email, :password, :webauthn_response, :remember_me]).fetch(:user, {})
+    params.fetch(:user, {}).permit(:email, :password)
   end
 
   def after_sign_in_path_for(resource)

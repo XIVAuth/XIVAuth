@@ -32,7 +32,8 @@ RSpec.describe User::SessionManageable, type: :model do
           [private_id_1, expiry_1.to_f],
           [private_id_2, expiry_2.to_f]
         ])
-        allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([1, 1])
+        allow(redis_double).to receive(:get)
+        allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([nil, nil, 1, 1])
         allow(redis_double).to receive(:exists)
       end
 
@@ -56,7 +57,8 @@ RSpec.describe User::SessionManageable, type: :model do
           [private_id_2, expiry_2.to_f]
         ])
         # private_id_2 no longer exists
-        allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([1, 0])
+        allow(redis_double).to receive(:get)
+        allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([nil, nil, 1, 0])
         allow(redis_double).to receive(:exists)
       end
 
@@ -93,7 +95,8 @@ RSpec.describe User::SessionManageable, type: :model do
         [private_id_1, expiry_1.to_f],
         [private_id_2, expiry_2.to_f]
       ])
-      allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([1, 0])
+      allow(redis_double).to receive(:get)
+      allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([nil, nil, 1, 0])
       allow(redis_double).to receive(:exists)
 
       expect(user.active_session_count).to eq(1)

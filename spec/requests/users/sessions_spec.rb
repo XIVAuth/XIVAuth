@@ -110,10 +110,16 @@ RSpec.describe "Users::SessionsController", type: :request do
     end
 
     context "with remember me" do
-      it "sets remember me cookie when requested" do
-        post user_session_path, params: login_params(remember_me: "1")
+      it "sets remembered flag in session when requested" do
+        post user_session_path, params: login_params.merge(remember_me: "1")
 
-        expect(response.cookies["remember_user_token"]).to be_present
+        expect(session[:remembered]).to be true
+      end
+
+      it "does not set remembered flag when not requested" do
+        post user_session_path, params: login_params
+
+        expect(session[:remembered]).to be_nil
       end
     end
   end
@@ -242,7 +248,7 @@ RSpec.describe "Users::SessionsController", type: :request do
         user_verified: true
       )
 
-      post user_session_path, params: { user: { webauthn_response: assertion_response.to_json } }
+      post user_session_path, params: { webauthn_response: assertion_response.to_json }
 
       expect(response).to redirect_to(character_registrations_path)
       expect(session["webauthn_discoverable_challenge"]).to be_nil
@@ -257,26 +263,21 @@ RSpec.describe "Users::SessionsController", type: :request do
         user_verified: false
       )
 
-      post user_session_path, params: { user: { webauthn_response: assertion_response.to_json } }
+      post user_session_path, params: { webauthn_response: assertion_response.to_json }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("WebAuthn::UserVerifiedVerificationError")
     end
 
     it "rejects passkey with wrong challenge" do
-      # Use a different challenge
       wrong_challenge = Base64.urlsafe_encode64(SecureRandom.random_bytes(32), padding: false)
 
       assertion_response = fake_client.get(
         challenge: wrong_challenge,
-        user_handle: Base64.urlsafe_decode64(user.webauthn_id),
-        )
+        user_handle: Base64.urlsafe_decode64(user.webauthn_id)
+      )
 
-      post user_session_path, params: {
-        user: {
-          webauthn_response: assertion_response.to_json
-        }
-      }
+      post user_session_path, params: { webauthn_response: assertion_response.to_json }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("WebAuthn::ChallengeVerificationError")
@@ -292,7 +293,7 @@ RSpec.describe "Users::SessionsController", type: :request do
         user_verified: true
       )
 
-      post user_session_path, params: { user: { webauthn_response: assertion_response.to_json } }
+      post user_session_path, params: { webauthn_response: assertion_response.to_json }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("Security key presented is not registered.")
@@ -301,14 +302,14 @@ RSpec.describe "Users::SessionsController", type: :request do
     it "rejects an unregistered passkey" do
       unregistered_client = build_fake_webauthn(origin)
 
-      assertion_response =  unregistered_client.get(
+      assertion_response = unregistered_client.get(
         challenge: challenge,
         user_handle: "A_Fake_User_Handle",
         sign_count: 0,
         user_verified: true
       )
 
-      post user_session_path, params: { user: { webauthn_response: assertion_response.to_json } }
+      post user_session_path, params: { webauthn_response: assertion_response.to_json }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("Security key presented is not registered.")
@@ -324,10 +325,10 @@ RSpec.describe "Users::SessionsController", type: :request do
         user_verified: true
       )
 
-      post user_session_path, params: { user: {
+      post user_session_path, params: {
         webauthn_response: assertion_response.to_json,
-        email: secondary_user.email
-      } }
+        user: { email: secondary_user.email }
+      }
 
       expect(response).to redirect_to(character_registrations_path)
       expect(session["webauthn_discoverable_challenge"]).to be_nil
@@ -359,41 +360,41 @@ RSpec.describe "Users::SessionsController", type: :request do
 
     context "without confirmed param (first DELETE - turbo stream modal)" do
       it "renders a turbo stream response" do
-        delete other_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        delete all_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
         expect(response).to have_http_status(:ok)
         expect(response.media_type).to eq("text/vnd.turbo-stream.html")
       end
 
       it "includes the session count in the response body" do
-        delete other_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        delete all_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
         expect(response.body).to include("1")
       end
 
       it "does not destroy any sessions" do
         expect_any_instance_of(User).not_to receive(:destroy_sessions)
-        delete other_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        delete all_sessions_user_path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
       end
     end
 
     context "with confirmed param (second DELETE - actual destruction)" do
       it "destroys the other sessions" do
         expect_any_instance_of(User).to receive(:destroy_sessions).with([other_private_id])
-        delete other_sessions_user_path, params: { confirmed: "1" }
+        delete all_sessions_user_path, params: { confirmed: "1" }
       end
 
       it "redirects to the profile edit page" do
-        delete other_sessions_user_path, params: { confirmed: "1" }
+        delete all_sessions_user_path, params: { confirmed: "1" }
         expect(response).to redirect_to(edit_user_path)
       end
 
       it "sets a flash notice with the session count" do
-        delete other_sessions_user_path, params: { confirmed: "1" }
+        delete all_sessions_user_path, params: { confirmed: "1" }
         follow_redirect!
         expect(response.body).to include("other session")
       end
 
       it "does not destroy the current session" do
-        delete other_sessions_user_path, params: { confirmed: "1" }
+        delete all_sessions_user_path, params: { confirmed: "1" }
 
         # try going to a random page and see if it still works.
         get character_registrations_path

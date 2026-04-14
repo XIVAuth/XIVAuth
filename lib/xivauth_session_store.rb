@@ -58,7 +58,11 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
     remembered = session_data['remembered']
     expiry     = remembered ? @remembered_ttl : @expire_after
 
-    @redis.setex(prefixed(sid.private_id), expiry, encode(session_data))
+    if expiry > 0
+      @redis.setex(prefixed(sid.private_id), expiry, encode(session_data))
+    else
+      @redis.set(prefixed(sid.private_id), encode(session_data))
+    end
     env.session_options[:expire_after] = expiry if remembered
 
     user_id = extract_devise_user_id(session_data)

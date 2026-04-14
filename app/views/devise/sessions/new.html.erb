@@ -32,16 +32,16 @@
   </div>
 
   <% if @discoverable_challenge %>
-    <%= f.hidden_field :webauthn_challenge, value: @discoverable_challenge.to_json,
-                       data: { "devise--login-form-target": "webauthnChallenge" } %>
-    <%= f.hidden_field :webauthn_response, value: "",
-                       data: { "devise--login-form-target": "webauthnResponse" } %>
+    <%= hidden_field_tag :webauthn_challenge, @discoverable_challenge.to_json,
+                         data: { "devise--login-form-target": "webauthnChallenge" } %>
+    <%= hidden_field_tag :webauthn_response, "",
+                         data: { "devise--login-form-target": "webauthnResponse" } %>
   <% end %>
 
   <div class="d-flex justify-content-between">
     <div class="form-check">
-      <%= check_box_tag "user[remember_me]", "1", false, class: "form-check-input", id: "user_remember_me" %>
-      <%= label_tag "user_remember_me", "Remember me", class: "form-check-label" %>
+      <%= check_box_tag :remember_me, "1", params[:remember_me] == "1", class: "form-check-input", id: "remember_me" %>
+      <%= label_tag :remember_me, "Remember me", class: "form-check-label" %>
     </div>
     <%- if devise_mapping.recoverable? %>
       <%= link_to "Problem signing in?", user_recovery_path, class: "ms-auto" %><br/>

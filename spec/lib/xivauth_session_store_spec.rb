@@ -31,7 +31,8 @@ RSpec.describe XivAuthSessionStore do
       allow(redis_double).to receive(:setex)
       allow(redis_double).to receive(:set)
       allow(redis_double).to receive(:zadd)
-      allow(redis_double).to receive(:expire)
+      allow(redis_double).to receive(:expiretime).and_return(-1)
+      allow(redis_double).to receive(:expireat)
     end
 
     it "writes session data to Redis with TTL when ttl option is given" do
@@ -53,7 +54,7 @@ RSpec.describe XivAuthSessionStore do
     end
 
     it "sets the sorted set expiry slightly longer than the session TTL" do
-      expect(redis_double).to receive(:expire).with(index_key, be > 7.days.to_i)
+      expect(redis_double).to receive(:expireat).with(index_key, be_within(5).of(Time.now.to_i + 7.days.to_i + 1.day.to_i))
       store.write_session({}, sid, session_data, { ttl: 7.days.to_i })
     end
 
