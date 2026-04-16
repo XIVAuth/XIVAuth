@@ -1,6 +1,9 @@
 <nav class="offcanvas-xl offcanvas-start bg-dark sidebar" id="sidebar" tabindex="-1" aria-labelledby="sidebarLabel">
-  <div class="offcanvas-header sidebar-header">
-    <a class="pride-brand <%= current_pride_flag_class %>" href="/" id="sidebarLabel">XIVAuth</a>
+  <div class="offcanvas-header sidebar-header justify-content-center">
+    <div class="pride-logo-container">
+      <%= image_tag asset_path('logos/xivauth-logo-45.svg') %>
+      <a class="pride-logo-icon <%= current_pride_flag_class %> pride-logo-mask" href="/" id="sidebarLabel"></a>
+    </div>
     <button type="button" class="btn-close btn-close-white d-xl-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body sidebar-body">

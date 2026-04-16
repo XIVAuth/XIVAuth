@@ -10,7 +10,10 @@
       <% else %>
         <nav class="navbar navbar-expand-xl navbar-light">
           <div class="container-fluid navbar-inner">
-            <a class="navbar-brand pride-brand <%= current_pride_flag_class %> m-0 d-xl-flex d-none" href="/">XIVAuth</a>
+            <div class="navbar-brand pride-logo-container">
+              <%= image_tag asset_path('logos/xivauth-logo-45.svg'), style: "height: 1.5em;" %>
+              <a class="pride-logo-icon <%= current_pride_flag_class %> pride-logo-mask" href="/" id="sidebarLabel"></a>
+            </div>
             <ul class="navbar-nav align-items-center navbar-list d-none d-xl-flex">
               <li class="nav-item">
                 <%= link_to new_user_registration_path, class: "nav-link" do %>

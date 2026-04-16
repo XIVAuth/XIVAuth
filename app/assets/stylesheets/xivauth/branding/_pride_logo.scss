@@ -92,19 +92,41 @@ $pride-gradients: (
 
 $default-pride-gradient: pride-flag-gradient(map-get($pride-gradients, "rainbow"));
 
-.pride-brand {
+.pride-logo-container {
+  position: relative;
+  display: inline-block;
+
+  // Image control for sizing only.
+  & img {
+    display: block;
+    visibility: hidden;
+  }
+}
+
+.pride-logo-icon {
   --pride-gradient: #{$default-pride-gradient};
+
   background-image: var(--pride-gradient);
-  background-clip: text;
-  -webkit-background-clip: text;
   background-size: 200% 100%;
-  color: transparent;
+
   animation: pride-gradient 5s linear infinite;
   animation-play-state: paused;
 
   &:hover {
-    color: transparent;
     animation-play-state: running;
+  }
+}
+
+.pride-logo-mask {
+  mask-image: url("/logos/xivauth-logo-45.svg");
+  mask-size: 100% 100%;
+
+  position: absolute;
+  inset: 0; /* stretches to match the img */
+
+  & img {
+    display: block;
+    visibility: hidden;
   }
 }
 

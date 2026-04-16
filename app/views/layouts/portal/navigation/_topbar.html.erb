@@ -5,7 +5,10 @@
       <i class="bi bi-list"></i>
     </button>
 
-    <a class="navbar-brand pride-brand <%= current_pride_flag_class %>" href="/">XIVAuth</a>
+    <div class="navbar-brand pride-logo-container">
+      <%= image_tag asset_path('logos/xivauth-logo-45.svg'), style: "height: 1.5em;" %>
+      <a class="pride-logo-icon <%= current_pride_flag_class %> pride-logo-mask" href="/" id="sidebarLabel"></a>
+    </div>
 
     <ul class="navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
       <li class="nav-item dropdown">
