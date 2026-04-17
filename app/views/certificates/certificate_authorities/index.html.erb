@@ -9,10 +9,12 @@
     <i class="bi bi-exclamation-triangle-fill me-2"></i>
     <div>
       <p class="my-0">
-        <strong>Warning:</strong> These certificates are intended for developers building on top of XIVAuth, not for general users. If you are simply using XIVAuth to log in to applications, you do not need these.
+        <strong>Warning:</strong> These certificates are intended for developers building on top of XIVAuth and should
+        not be used by general users. If you are simply using XIVAuth to log in to applications, you do not need these.
       </p>
       <p class="mb-0 mt-1">
-        Do <strong>not</strong> install these CA certificates into a system or browser trust store, as doing so could weaken your computer's security.
+        Do <strong>not</strong> install these CA certificates into a system or browser trust store, as doing so could
+        weaken your computer's security.
       </p>
     </div>
   </div>
@@ -33,7 +35,8 @@
 <p class="mb-3">
   The XIVAuth Root CA is the root of trust for all certificates issued by XIVAuth. It signs all intermediate CAs used
   by this service, but never issues end-entity certificates directly. The Root CA private key is stored offline across
-  two Yubikeys, with encrypted key material stored on an M-Disc <abbr title="It may or may not be buried underground.">in a secure location</abbr>.
+  two Yubikeys, with encrypted key material stored on an M-Disc
+  <abbr title="It may or may not be buried underground.">in a secure location</abbr>.
 </p>
 
 <p>Verify the certificate using the fingerprints below before using it.</p>
@@ -71,9 +74,9 @@
 
 <h3 class="mb-3">Issuing CAs</h3>
 <p>
-  XIVAuth issues end-entity certificates from intermediate CAs, which are signed by XIVAuth's Root CA.
-  Intermediate CA certificates are embedded in AIA extensions on all issued certificates, but are also available
-  for direct download below.
+  XIVAuth issues end-entity certificates from intermediate CAs, which are signed by XIVAuth's Root CA. Intermediate CA
+  references are embedded in AIA extensions on all issued certificates, but are also available for direct download
+  below.
 </p>
 
 <% if @certificate_authorities.empty? %>

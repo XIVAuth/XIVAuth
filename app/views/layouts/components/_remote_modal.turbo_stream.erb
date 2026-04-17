@@ -1,5 +1,5 @@
 <%= turbo_frame_tag (local_assigns[:modal_id] || "remote_modal"), target: "_top" do %>
-  <%= render "layouts/components/remote_modal_raw", formats: [:html] do %>
+  <%= render "layouts/components/remote_modal_raw", formats: [:html], **local_assigns do %>
     <%= yield %>
   <% end %>
 <% end %>
