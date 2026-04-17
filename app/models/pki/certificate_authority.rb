@@ -140,7 +140,7 @@ class PKI::CertificateAuthority < ApplicationRecord
       return
     end
 
-    unless cert.verify(key)
+    unless cert.check_private_key(key)
       errors.add(:private_key, "does not match certificate public key")
     end
   end
