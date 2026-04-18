@@ -38,6 +38,8 @@ Rails.application.routes.draw do
     resource :onboarding, controller: "onboarding", only: [:show] do
       post "enable", to: "onboarding#enable"
     end
+
+    get "docs", to: "developer_portal#docs"
   end
 
   # Top-level /certificates (UI + PKI infrastructure)

@@ -43,10 +43,10 @@
           badge_html: "<span class='badge bg-warning'><span class='bi bi-flask'></i> Beta</span>"
         } %>
         <li class="nav-item">
-          <a href="https://kazwolfe.notion.site/Documentation-128e77f0016c4901888ea1234678c37d?pvs=4" target="_blank" class="nav-link">
+          <%= link_to developer_docs_path, class: 'nav-link' do %>
             <i class="bi bi-book"></i>
             <span class="item-name">API Documentation</span>
-          </a>
+          <% end %>
         </li>
       <% else %>
         <%= render partial: 'layouts/portal/navigation/sidebar_entry', locals: {

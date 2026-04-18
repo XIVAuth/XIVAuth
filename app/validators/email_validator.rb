@@ -49,7 +49,7 @@ class EmailValidator < ActiveModel::EachValidator
   def reachable?(dns_name)
     # Assume everything is reachable in a test environment. If we want a failure to actually take place,
     # we can test that by mocking this entire method out.
-    return true if Rails.env.test?
+    return true if Rails.env.test? || Rails.env.development?
 
     cached = Rails.cache.read(cache_key(dns_name))
     return cached unless cached.nil?

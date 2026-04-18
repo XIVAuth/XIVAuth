@@ -74,3 +74,21 @@ section#developers {
 .marketing-dna-buff {
   height: 2rem;
 }
+
+@keyframes cursor-blink-animation {
+  0%, 40% {
+    opacity: 1;
+  }
+
+  50%, 90% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.cursor-blink {
+  animation: cursor-blink-animation 1s linear infinite;
+}
