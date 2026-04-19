@@ -73,6 +73,7 @@ section#developers {
 
 .marketing-dna-buff {
   height: 2rem;
+  vertical-align: baseline -2px;
 }
 
 @keyframes cursor-blink-animation {
@@ -89,6 +90,17 @@ section#developers {
   }
 }
 
+.code-ps1 {
+  color: var(--bs-gray);
+  word-spacing: -0.3em;
+}
+
 .cursor-blink {
   animation: cursor-blink-animation 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-blink {
+    animation: none;
+  }
 }

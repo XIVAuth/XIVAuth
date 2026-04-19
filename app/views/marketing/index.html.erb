@@ -76,13 +76,16 @@
   <div class="container">
     <div class="d-flex mb-4 align-items-center justify-content-between">
       <div class="flex-grow-1">
-        <h2 class="h1 fw-bold font-monospace"># Built for devs<span class="cursor-blink">_</span></h2>
+        <h2 class="h1 fw-bold font-monospace">
+          <span class="user-select-none code-ps1"># </span>
+          Built for devs<span class="cursor-blink user-select-none">_</span>
+        </h2>
         <p class="lead mb-1 font-monospace">A turnkey authentication platform for FFXIV tools and websites.</p>
         <div class="small mt-2">
           <a href="https://github.com/XIVAuth/XIVAuth"><i class="bi bi-github me-1" aria-hidden="true"></i>Open source</a>
           and committed to transparency.</div>
       </div>
-      <div>
+      <div class="d-none d-lg-block">
         <%= link_to developer_docs_path, class: "btn btn-primary" do %>
           <i class="bi bi-book"></i> Developer Docs
         <% end %>
@@ -96,7 +99,7 @@
           </div>
           <h3 class="h5 mb-2 mt-3">Simple API</h3>
           <p class="mb-0">
-            Leverage a handcrafted API designed to make developers happy. Work comfortably in native, web, and whatever
+            Leverage a handcrafted artisanal API designed to make developers happy. Work comfortably in native, web, and whatever
             else you can imagine.
           </p>
         </div>
@@ -151,8 +154,7 @@
         <h2 class="h1 fw-bold">
           Security is in our
           <img src="<%= image_path("marketing/dna_buff.png") %>" alt="DNA buff icon from P8S"
-               class="marketing-dna-buff">
-          DNA
+               class="marketing-dna-buff">DNA
         </h2>
         <p class="lead">
           XIVAuth is designed from the ground up to be secure. With a security engineer at the helm, we
@@ -171,21 +173,21 @@
               <i class="bi bi-check-circle-fill text-success me-3" aria-hidden="true"></i>
               <div>
                 <strong>Battle-tested tooling</strong>
-                <div class="text-muted">Security-related components are mature and well-defined.</div>
+                <div class="text-muted">Security-related components are mature and well-known.</div>
               </div>
             </li>
             <li class="d-flex align-items-start mb-3">
               <i class="bi bi-check-circle-fill text-success me-3" aria-hidden="true"></i>
               <div>
-                <strong>Design best practices</strong>
-                <div class="text-muted">Default-deny and fail-fast design minimizes attack surface.</div>
+                <strong>Security-by-design</strong>
+                <div class="text-muted">Fail-fast and default-deny design at every level of the stack.</div>
               </div>
             </li>
             <li class="d-flex align-items-start mb-3">
               <i class="bi bi-check-circle-fill text-success me-3" aria-hidden="true"></i>
               <div>
-                <strong>Transparent processes</strong>
-                <div class="text-muted">Open code and accessible devs mean internals are easy to inspect.</div>
+                  <strong>Surprise-Free Guarantee</strong>
+                <div class="text-muted">Open-source code means everything is transparent and auditable.</div>
               </div>
             </li>
             <li class="d-flex align-items-start">
