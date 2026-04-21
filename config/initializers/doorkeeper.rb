@@ -529,4 +529,8 @@ Doorkeeper.configure do
   # WWW-Authenticate Realm (default: "Doorkeeper").
   #
   realm "XIVAuth"
+
+  # Enable PKCE
+  force_pkce
+  pkce_code_challenge_methods %w[S256]
 end
