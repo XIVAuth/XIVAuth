@@ -12,7 +12,7 @@ Rails.application.configure do
     policy.font_src    :self, :https, :data
     policy.img_src     :self, :https, :data, :blob
     policy.object_src  :none
-    policy.script_src  :self, "https://challenges.cloudflare.com/", "https://static.cloudflareinsights.com/"
+    policy.script_src  :self, "https://challenges.cloudflare.com/", "https://*.cloudflareinsights.com/"
     policy.style_src   :self, :https, :unsafe_inline
 
     if (csp_base_uri = Rails.application.credentials.dig(:sentry, :csp_report_uri))
