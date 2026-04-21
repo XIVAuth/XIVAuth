@@ -33,19 +33,17 @@ jobs:
         with:
           bundler-cache: true
 
+      # Set up NodeJS and dependencies
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-          cache: 'yarn'
-
-      - name: Install JS dependencies & build frontend
-        env:
-          RAILS_ENV: test
-        run: |
-          corepack enable
-          corepack prepare yarn@1.22.22 --activate
-          yarn install --frozen-lockfile
+          cache: 'pnpm'
+      - name: Install JS dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Precompile assets
         env:

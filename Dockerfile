@@ -20,14 +20,14 @@ RUN apk add --no-cache curl jemalloc postgresql-client tzdata libsodium libpq
 # Dev and Builder Stage
 FROM base AS dev
 
-RUN apk add --no-cache build-base gcompat git postgresql-dev nodejs yarn npm libsodium-dev yaml-dev
+RUN apk add --no-cache build-base gcompat git postgresql-dev nodejs pnpm npm libsodium-dev yaml-dev
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
-COPY package.json yarn.lock ./
-RUN yarn install
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
 
 COPY . .
 

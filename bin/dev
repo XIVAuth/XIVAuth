@@ -6,6 +6,6 @@ if ! gem list foreman -i --silent; then
 fi
 
 # auto-install Yarn dependencies just to make sure everything is happy. Not great but I'm lazy.
-yarn install
+pnpm install
 
 exec foreman start -f Procfile.dev "$@"
