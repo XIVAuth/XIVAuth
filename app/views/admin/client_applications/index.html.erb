@@ -47,7 +47,9 @@
                   <span class="text-muted"><i class="bi bi-patch-exclamation"></i> Unverified</span>
                 <% end %>
               </td>
-              <td><%= app.created_at.strftime('%Y-%m-%d') %></td>
+              <td><span data-controller="utilities--hover-dt"
+                        data-utilities--hover-dt-ts-value="<%= app.created_at.to_i %>"
+                        data-utilities--hover-dt-format-value="short"><%= app.created_at.strftime('%Y-%m-%d') %></span></td>
             </tr>
           <% end %>
           </tbody>

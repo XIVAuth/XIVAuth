@@ -21,7 +21,9 @@
           <%= authorization.application.application.name %><br>
           <small>via <%= authorization.application.name %></small>
         </td>
-        <td><%= authorization.created_at.strftime("%b %d, %Y") %></td>
+        <td><span data-controller="utilities--hover-dt"
+              data-utilities--hover-dt-ts-value="<%= authorization.created_at.to_i %>"
+              data-utilities--hover-dt-format-value="short"><%= authorization.created_at.strftime("%b %d, %Y") %></span></td>
         <td>
           <%= link_to "Revoke", user_oauth_authorization_path(authorization), method: :delete, data: { confirm: "Are you sure?" } %>
         </td>

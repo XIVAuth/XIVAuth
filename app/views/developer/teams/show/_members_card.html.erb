@@ -67,9 +67,9 @@
                       <% if link.expired? %>
                         <span class="text-danger">Expired</span>
                       <% else %>
-                          <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= link.expires_at.to_i %>">
-                            expires in <%= distance_of_time_in_words_to_now(link.expires_at) %>
-                          </span>
+                          expires <span data-controller="utilities--hover-dt"
+                              data-utilities--hover-dt-ts-value="<%= link.expires_at.to_i %>"
+                              data-utilities--hover-dt-format-value="dotiw">in <%= distance_of_time_in_words_to_now(link.expires_at) %></span>
                       <% end %>
                     <% end %>
                   </small>

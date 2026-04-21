@@ -30,8 +30,12 @@
 
       <div class="small">
         <p class="d-flex mb-1 text-muted justify-content-between">
-          <span><i class="bi bi-calendar3"></i> Issued <%= certificate.issued_at.strftime("%Y-%m-%d %H:%M") %></span>
-          <span><i class="bi bi-calendar-x"></i> Expires <%= certificate.expires_at.strftime("%Y-%m-%d %H:%M") %></span>
+          <span><i class="bi bi-calendar3"></i> Issued <span data-controller="utilities--hover-dt"
+              data-utilities--hover-dt-ts-value="<%= certificate.issued_at.to_i %>"
+              data-utilities--hover-dt-format-value="short"><%= certificate.issued_at.strftime("%Y-%m-%d %H:%M") %></span></span>
+          <span><i class="bi bi-calendar-x"></i> Expires <span data-controller="utilities--hover-dt"
+              data-utilities--hover-dt-ts-value="<%= certificate.expires_at.to_i %>"
+              data-utilities--hover-dt-format-value="short"><%= certificate.expires_at.strftime("%Y-%m-%d %H:%M") %></span></span>
         </p>
         <p class="mb-1 text-muted">
           <i class="bi bi-key"></i> Type:

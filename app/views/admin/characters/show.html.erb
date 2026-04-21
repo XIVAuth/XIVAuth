@@ -32,7 +32,9 @@
             <div class="mb-1">This character may not be registered by end users without admin authorization.</div>
             <div class="mb-0">
               <strong>Ban Reason:</strong> <%= @character.ban.reason %><br>
-              <strong>Ban Time:</strong> <%= @character.ban.created_at %>
+              <strong>Ban Time:</strong> <span data-controller="utilities--hover-dt"
+                data-utilities--hover-dt-ts-value="<%= @character.ban.created_at.to_i %>"
+                data-utilities--hover-dt-format-value="datetime"><%= @character.ban.created_at %></span>
             </div>
           </div>
         <% end %>
@@ -85,11 +87,15 @@
               <% end %>
               <tr>
                 <th scope="row">Creation Date</th>
-                <td><%= @character.created_at %></td>
+                <td><span data-controller="utilities--hover-dt"
+                      data-utilities--hover-dt-ts-value="<%= @character.created_at.to_i %>"
+                      data-utilities--hover-dt-format-value="datetime"><%= @character.created_at %></span></td>
               </tr>
               <tr>
                 <th scope="row">Last Updated (Lodestone Sync)</th>
-                <td><%= @character.updated_at %></td>
+                <td><span data-controller="utilities--hover-dt"
+                      data-utilities--hover-dt-ts-value="<%= @character.updated_at.to_i %>"
+                      data-utilities--hover-dt-format-value="datetime"><%= @character.updated_at %></span></td>
               </tr>
               </tbody>
             </table>
@@ -128,7 +134,9 @@
                     <% end %>
                   </td>
                   <td class="font-monospace"><%= registration.verification_key %></td>
-                  <td><%= registration.created_at %></td>
+                  <td><span data-controller="utilities--hover-dt"
+                        data-utilities--hover-dt-ts-value="<%= registration.created_at.to_i %>"
+                        data-utilities--hover-dt-format-value="short"><%= registration.created_at %></span></td>
                   <td class="d-flex flex-wrap gap-1">
                     <%= button_to admin_character_registration_path(registration), method: :delete, form_class: "d-inline-block", class: "btn btn-outline-danger btn-sm", title: "Delete Registration" do %>
                       <i class="bi bi-trash"></i>

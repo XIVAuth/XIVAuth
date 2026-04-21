@@ -48,10 +48,14 @@
           </dd>
 
           <dt class="col-sm-4">Issued At</dt>
-          <dd class="col-sm-8"><%= @certificate.issued_at.to_fs(:long) %></dd>
+          <dd class="col-sm-8"><span data-controller="utilities--hover-dt"
+              data-utilities--hover-dt-ts-value="<%= @certificate.issued_at.to_i %>"
+              data-utilities--hover-dt-format-value="datetime"><%= @certificate.issued_at.to_fs(:long) %></span></dd>
 
           <dt class="col-sm-4">Expires At</dt>
-          <dd class="col-sm-8"><%= @certificate.expires_at.to_fs(:long) %></dd>
+          <dd class="col-sm-8"><span data-controller="utilities--hover-dt"
+              data-utilities--hover-dt-ts-value="<%= @certificate.expires_at.to_i %>"
+              data-utilities--hover-dt-format-value="datetime"><%= @certificate.expires_at.to_fs(:long) %></span></dd>
 
           <% if @certificate.revoked? %>
             <dt class="col-sm-4">Revoked At</dt>

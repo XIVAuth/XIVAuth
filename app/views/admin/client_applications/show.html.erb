@@ -57,7 +57,9 @@
             <td>
               <% if @client_application.verified? %>
                 <span class="text-success"><i class="bi bi-patch-check-fill"></i> Verified</span>
-                <span class="text-muted">at</span> <%= @client_application.verified_at %>
+                <span class="text-muted">at</span> <span data-controller="utilities--hover-dt"
+                  data-utilities--hover-dt-ts-value="<%= @client_application.verified_at.to_i %>"
+                  data-utilities--hover-dt-format-value="datetime"><%= @client_application.verified_at %></span>
               <% else %>
                 <span class="text-muted">Not Verified</span>
               <% end %>
@@ -65,11 +67,15 @@
           </tr>
           <tr>
             <th scope="row">Created</th>
-            <td><%= @client_application.created_at %></td>
+            <td><span data-controller="utilities--hover-dt"
+                  data-utilities--hover-dt-ts-value="<%= @client_application.created_at.to_i %>"
+                  data-utilities--hover-dt-format-value="datetime"><%= @client_application.created_at %></span></td>
           </tr>
           <tr>
             <th scope="row">Last Updated</th>
-            <td><%= @client_application.updated_at %></td>
+            <td><span data-controller="utilities--hover-dt"
+                  data-utilities--hover-dt-ts-value="<%= @client_application.updated_at.to_i %>"
+                  data-utilities--hover-dt-format-value="datetime"><%= @client_application.updated_at %></span></td>
           </tr>
           </tbody>
         </table>
@@ -180,8 +186,12 @@
                     <span class="text-muted">-</span>
                   <% end %>
                 </td>
-                <td><%= oc.expires_at || '-' %></td>
-                <td><%= oc.created_at %></td>
+                <td><% if oc.expires_at %><span data-controller="utilities--hover-dt"
+                      data-utilities--hover-dt-ts-value="<%= oc.expires_at.to_i %>"
+                      data-utilities--hover-dt-format-value="datetime"><%= oc.expires_at %></span><% else %>-<% end %></td>
+                <td><span data-controller="utilities--hover-dt"
+                      data-utilities--hover-dt-ts-value="<%= oc.created_at.to_i %>"
+                      data-utilities--hover-dt-format-value="datetime"><%= oc.created_at %></span></td>
               </tr>
             <% end %>
             </tbody>
@@ -238,7 +248,9 @@
                     <span class="text-muted">N/A</span>
                   <% end %>
                 </td>
-                <td><%= acl.created_at %></td>
+                <td><span data-controller="utilities--hover-dt"
+                      data-utilities--hover-dt-ts-value="<%= acl.created_at.to_i %>"
+                      data-utilities--hover-dt-format-value="datetime"><%= acl.created_at %></span></td>
               </tr>
             <% end %>
             </tbody>

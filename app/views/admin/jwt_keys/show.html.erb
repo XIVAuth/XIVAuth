@@ -38,12 +38,16 @@
 
           <tr>
             <th scope="row">Creation Date</th>
-            <td><%= @key.created_at %></td>
+            <td><span data-controller="utilities--hover-dt"
+                  data-utilities--hover-dt-ts-value="<%= @key.created_at.to_i %>"
+                  data-utilities--hover-dt-format-value="datetime"><%= @key.created_at %></span></td>
           </tr>
 
           <tr>
             <th scope="row">Expiration Date</th>
-            <td><%= @key.expires_at || "None" %></td>
+            <td><% if @key.expires_at %><span data-controller="utilities--hover-dt"
+                  data-utilities--hover-dt-ts-value="<%= @key.expires_at.to_i %>"
+                  data-utilities--hover-dt-format-value="datetime"><%= @key.expires_at %></span><% else %>None<% end %></td>
           </tr>
           </tbody>
         </table>

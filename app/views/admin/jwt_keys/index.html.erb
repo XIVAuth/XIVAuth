@@ -28,8 +28,12 @@
           (<span class="font-monospace"><%= key.curve %></span>)
         <% end %>
       </td>
-      <td><%= distance_of_time_in_words(key.created_at, Time.now) %></td>
-      <td><%= key.expires_at || "None" %></td>
+      <td><span data-controller="utilities--hover-dt"
+            data-utilities--hover-dt-ts-value="<%= key.created_at.to_i %>"
+            data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words(key.created_at, Time.now) %></span></td>
+      <td><% if key.expires_at %><span data-controller="utilities--hover-dt"
+            data-utilities--hover-dt-ts-value="<%= key.expires_at.to_i %>"
+            data-utilities--hover-dt-format-value="datetime"><%= key.expires_at %></span><% else %>None<% end %></td>
     </tr>
   <% end %>
   </tbody>

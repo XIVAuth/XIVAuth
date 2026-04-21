@@ -40,7 +40,9 @@
         <div><%= [ location[:city], location[:region], location[:country] ].compact.join(", ") %></div>
       <% end %>
       <% if last_seen.present? %>
-        <div>Last seen <%= time_ago_in_words(Time.parse(last_seen)) %> ago</div>
+        <div>Last seen <span data-controller="utilities--hover-dt"
+                               data-utilities--hover-dt-ts-value="<%= Time.parse(last_seen).to_i %>"
+                               data-utilities--hover-dt-format-value="dotiw"><%= time_ago_in_words(Time.parse(last_seen)) %> ago</span></div>
       <% end %>
     </div>
   </td>

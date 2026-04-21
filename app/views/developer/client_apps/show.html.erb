@@ -79,23 +79,23 @@
                   <strong>Client Secret:</strong> <span class="font-monospace">REDACTED</span>
                 </td>
                 <td>
-                  <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= client.created_at.to_i %>">
-                    <%= distance_of_time_in_words_to_now(client.created_at).capitalize %>
-                  </span> <br/>
+                  <span data-controller="utilities--hover-dt"
+                        data-utilities--hover-dt-ts-value="<%= client.created_at.to_i %>"
+                        data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words_to_now(client.created_at).capitalize %></span> <br/>
 
                   <% if client.expires_at.present? && !client.expired? %>
                     <small class="text-muted">
                       Expires
-                      <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= client.expires_at.to_i %>">
-                        in <%= distance_of_time_in_words_to_now(client.expires_at) %>
-                      </span>
+                      <span data-controller="utilities--hover-dt"
+                            data-utilities--hover-dt-ts-value="<%= client.expires_at.to_i %>"
+                            data-utilities--hover-dt-format-value="dotiw">in <%= distance_of_time_in_words_to_now(client.expires_at) %></span>
                     </small>
                   <% elsif client.expires_at.present? && client.expired? %>
                     <small class="text-warning">
                       Expired
-                      <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= client.expires_at.to_i %>">
-                        <%= distance_of_time_in_words_to_now(client.expires_at) %> ago
-                      </span>
+                      <span data-controller="utilities--hover-dt"
+                            data-utilities--hover-dt-ts-value="<%= client.expires_at.to_i %>"
+                            data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words_to_now(client.expires_at) %> ago</span>
                     </small>
                   <% else %>
                     <small class="text-muted">Never expires</small>

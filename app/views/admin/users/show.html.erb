@@ -59,11 +59,15 @@
           <% end %>
           <tr>
             <th scope="row">Creation Date</th>
-            <td><%= l(@user.created_at, format: :long) %></td>
+            <td><span data-controller="utilities--hover-dt"
+                  data-utilities--hover-dt-ts-value="<%= @user.created_at.to_i %>"
+                  data-utilities--hover-dt-format-value="datetime"><%= l(@user.created_at, format: :long) %></span></td>
           </tr>
           <tr>
             <th scope="row">Last Edit Date</th>
-            <td><%= l(@user.updated_at, format: :long) %></td>
+            <td><span data-controller="utilities--hover-dt"
+                  data-utilities--hover-dt-ts-value="<%= @user.updated_at.to_i %>"
+                  data-utilities--hover-dt-format-value="datetime"><%= l(@user.updated_at, format: :long) %></span></td>
           </tr>
           </tbody>
         </table>
@@ -167,15 +171,15 @@
                   <td><%= ident.friendly_name %></td>
                   <td><code><%= ident.external_id %></code></td>
                   <td>
-                    <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= ident.created_at.to_i %>">
-                      <%= distance_of_time_in_words_to_now(ident.created_at) %> ago
-                    </span>
+                    <span data-controller="utilities--hover-dt"
+                          data-utilities--hover-dt-ts-value="<%= ident.created_at.to_i %>"
+                          data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words_to_now(ident.created_at) %> ago</span>
                   </td>
                   <td>
                     <% if ident.last_used_at.present? %>
-                      <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= ident.last_used_at.to_i %>">
-                        <%= distance_of_time_in_words_to_now(ident.last_used_at) %> ago
-                      </span>
+                      <span data-controller="utilities--hover-dt"
+                            data-utilities--hover-dt-ts-value="<%= ident.last_used_at.to_i %>"
+                            data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words_to_now(ident.last_used_at) %> ago</span>
                     <% else %>
                       <span>Never</span>
                     <% end %>
@@ -236,7 +240,9 @@
                 <td><%= character.home_with_datacenter %></td>
                 <td>
                   <% if registration.verified_at %>
-                    <span class="badge bg-success"><%= l(registration.verified_at, format: :short) %></span>
+                    <span class="badge bg-success"><span data-controller="utilities--hover-dt"
+                      data-utilities--hover-dt-ts-value="<%= registration.verified_at.to_i %>"
+                      data-utilities--hover-dt-format-value="adaptive"><%= l(registration.verified_at, format: :short) %></span></span>
                   <% elsif character.verified? %>
                     <span class="badge bg-secondary">Verified by <%= link_to character.verified_owner.profile.display_name, admin_user_path(character.verified_owner) %></span>
                   <% else %>

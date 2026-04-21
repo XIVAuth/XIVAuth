@@ -56,9 +56,9 @@
   </td>
   <td class="align-middle">
     <small class="text-muted">
-      <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= membership.created_at.to_i %>">
-        <%= distance_of_time_in_words_to_now(membership.created_at) %> ago
-      </span>
+      <span data-controller="utilities--hover-dt"
+            data-utilities--hover-dt-ts-value="<%= membership.created_at.to_i %>"
+            data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words_to_now(membership.created_at) %> ago</span>
     </small>
   </td>
   <td class="align-middle text-end">

@@ -81,9 +81,9 @@
                   <div class="small">
                     <% if cred.last_used_at.present? %>
                       Last used:
-                      <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= cred.last_used_at.to_i %>">
-                        <%= distance_of_time_in_words_to_now(cred.last_used_at) %> ago
-                      </span>
+                      <span data-controller="utilities--hover-dt"
+                            data-utilities--hover-dt-ts-value="<%= cred.last_used_at.to_i %>"
+                            data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words_to_now(cred.last_used_at) %> ago</span>
                     <% else %>
                       <span>Last used: never</span>
                     <% end %>

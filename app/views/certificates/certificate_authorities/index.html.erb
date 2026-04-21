@@ -108,7 +108,9 @@
             <% end %>
           </td>
           <td><%= ca.allowed_certificate_types.map(&:titleize).join(", ") %></td>
-          <td><%= ca.expires_at&.strftime("%Y-%m-%d %H:%M") || "-" %></td>
+          <td><% if ca.expires_at %><span data-controller="utilities--hover-dt"
+                data-utilities--hover-dt-ts-value="<%= ca.expires_at.to_i %>"
+                data-utilities--hover-dt-format-value="datetime"><%= ca.expires_at.strftime("%Y-%m-%d %H:%M") %></span><% else %>-<% end %></td>
           <td>
             <% hex = ca.certificate_fingerprint.sub(/^\w+:/, "") %>
             <code class="small" title="<%= hex.scan(/../).join(":") %>">

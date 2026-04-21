@@ -39,8 +39,12 @@
               </td>
               <td><%= character.home_with_datacenter %></td>
               <td><%= character.character_registrations.size %></td>
-              <td><%= character.created_at %></td>
-              <td><%= character.updated_at %></td>
+              <td><span data-controller="utilities--hover-dt"
+                    data-utilities--hover-dt-ts-value="<%= character.created_at.to_i %>"
+                    data-utilities--hover-dt-format-value="short"><%= character.created_at %></span></td>
+              <td><span data-controller="utilities--hover-dt"
+                    data-utilities--hover-dt-ts-value="<%= character.updated_at.to_i %>"
+                    data-utilities--hover-dt-format-value="short"><%= character.updated_at %></span></td>
             </tr>
           <% end %>
           </tbody>
