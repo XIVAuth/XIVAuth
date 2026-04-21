@@ -12,10 +12,8 @@ type DynamicFormatType = "dotiw" | "adaptive";
 //   adaptive – time (HH:MM) if today, short date otherwise; good for compact badges
 type FormatType = StaticFormatType | DynamicFormatType;
 
-// How often to refresh relative (dotiw) timestamps, in ms.
 const DOTIW_REFRESH_MS = 30_000;
 
-// The full tooltip format — always shown regardless of display format.
 const FULL_FORMAT: Intl.DateTimeFormatOptions = {
     weekday: "long",
     month: "long",
@@ -89,10 +87,10 @@ export default class HoverDateTimeController extends Controller<HTMLElement> {
     private render() {
         const date = new Date(this.tsValue * 1000);
 
-        // Always set the tooltip to the full localized datetime.
-        this.element.title = date.toLocaleString(undefined, FULL_FORMAT);
+        if (this.formatValue != "datetime") {
+            this.element.title = date.toLocaleString(undefined, FULL_FORMAT);
+        }
 
-        // Only update display text when a format has been explicitly specified.
         if (!this.hasFormatValue) return;
 
         this.element.textContent = this.formatDate(date, this.formatValue as FormatType);
