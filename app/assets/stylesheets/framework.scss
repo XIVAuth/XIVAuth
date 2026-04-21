@@ -45,3 +45,6 @@
 @import 'tom-select/src/scss/tom-select';
 @import 'tom-select/src/scss/tom-select.bootstrap5';
 @import 'components/tom-select-dark';
+
+// cache buster because things are annoying
+$cache-buster: "2026-04-20 23:24:38 PDT";
