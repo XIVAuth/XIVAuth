@@ -38,7 +38,7 @@ class Api::V1::CharactersController < Api::V1::ApiController
 
     case registration_request.process!
     when :success
-      @registration = registration_request.created_character
+      @registration = registration_request.created_registration
       render :show, status: :created, location: @registration
     when :confirm
       # For API, return candidates for the client to choose from

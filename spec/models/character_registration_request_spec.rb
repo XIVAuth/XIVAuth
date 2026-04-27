@@ -113,7 +113,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
         }.not_to change { CharacterRegistration.count }
       end
 
-      it "returns :invalid and adds error for hidden character" do
+      it "returns :failed and adds error for hidden character" do
         mock_lodestone_profile("88888888", "hidden.json")
 
         request = CharacterRegistrationRequest.new(
@@ -123,10 +123,10 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
 
         expect {
           result = request.process!
-          expect(result).to eq(:invalid)
-          # Hidden character is not a user input error - goes to :base
-          expect(request.errors[:base]).to be_present
-          expect(request.errors[:base].first).to include("hidden")
+          expect(result).to eq(:failed)
+          # Hidden character is a character-origin error, not a user input error
+          expect(request.errors[:character]).to be_present
+          expect(request.errors[:character].first).to include("hidden")
           expect(request.errors[:lodestone_url]).to be_empty
         }.not_to change(CharacterRegistration, :count)
       end
@@ -151,7 +151,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
     end
 
     context "with service errors" do
-      it "adds error to :base when Lodestone is under maintenance" do
+      it "returns :failed and adds error to :character when Lodestone is under maintenance" do
         mock_lodestone_profile("77777777", "maintenance.json")
 
         request = CharacterRegistrationRequest.new(
@@ -161,11 +161,10 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
 
         result = request.process!
 
-        expect(result).to eq(:invalid)
-        # Service errors should be on :base, not the field
-        # The user's input was correct, the problem is with the external service
-        expect(request.errors[:base]).to be_present
-        expect(request.errors[:base].first).to include("maintenance")
+        expect(result).to eq(:failed)
+        # Service errors are character-origin errors, not user input errors
+        expect(request.errors[:character]).to be_present
+        expect(request.errors[:character].first).to include("maintenance")
         expect(request.errors[:lodestone_url]).to be_empty
       end
     end
@@ -289,7 +288,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
     end
 
     context "with search API errors" do
-      it "returns :invalid when search service has error" do
+      it "returns :failed when search service has error" do
         mock_search_results(
           name: "Any Name",
           world: "Gilgamesh",
@@ -305,7 +304,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
 
         result = request.process!
 
-        expect(result).to eq(:invalid)
+        expect(result).to eq(:failed)
         expect(request.errors[:character_search]).to be_present
       end
     end
@@ -364,7 +363,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
       expect(request.errors[:base]).to be_empty
     end
 
-    it "maps hidden character errors to :base regardless of input method" do
+    it "maps hidden character errors to :character regardless of input method" do
       mock_lodestone_profile("88888888", "hidden.json")
       mock_search_results(
         name: "Hidden Character",
@@ -382,9 +381,9 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
 
       request.process!
 
-      # Hidden character errors go to :base (not user's fault)
-      expect(request.errors[:base]).to be_present
-      expect(request.errors[:base].first).to include("hidden")
+      # Hidden character errors are character-origin, not user input errors
+      expect(request.errors[:character]).to be_present
+      expect(request.errors[:character].first).to include("hidden")
       expect(request.errors[:search_name]).to be_empty
     end
   end

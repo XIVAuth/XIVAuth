@@ -31,6 +31,9 @@ class FFXIV::LodestoneProfile
       request = requestor.get("#{flarestone_base_url}/character/#{lodestone_id}")
       json_object = JSON.parse(request.body)
       self.flarestone_statuscode = request.status
+
+      Rails.logger.debug("Got response from Flarestone.", lodestone_id: lodestone_id, status: request.status,
+                         meta: json_object["_meta"])
     end
 
     self.raw_data = json_object

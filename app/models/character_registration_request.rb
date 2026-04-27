@@ -12,7 +12,8 @@ class CharacterRegistrationRequest
   attr_accessor :character_search # NOTE: fake attribute for search feedback.
   attr_accessor :from_search
 
-  attr_reader :created_character
+  attr_reader :created_registration
+  delegate :character, to: :created_registration, allow_nil: true
 
 
   # Provide either a valid Lodestone URL/ID, or both name and world.
@@ -29,7 +30,7 @@ class CharacterRegistrationRequest
   end
 
   # Orchestrates the registration flow, attaching errors to field-level inputs when needed.
-  # Returns :success, :invalid, or :confirm
+  # Returns :success, :confirm, :invalid (bad user input), or :failed (system/external failure).
   def process!
     if ref_present?
       process_ref_path
@@ -64,7 +65,7 @@ class CharacterRegistrationRequest
     if search.error?
       errors.add(:character_search, search.error)
 
-      :invalid
+      :failed
     elsif @candidates.empty?
       errors.add(:character_search, :no_results,
                  message: "could not find '#{search_name.titleize}' on '#{search_world}'.")
@@ -90,25 +91,28 @@ class CharacterRegistrationRequest
   # @param lodestone_id [String, Integer] The Lodestone character ID
   # @param region [String, nil] Optional region (na/eu/jp) extracted from URL
   # @param field_for_character_error [Symbol] Which field to attach character validation errors to
-  # @return [Symbol] :success or :invalid
+  # @return [Symbol] :success, :invalid, or :failed
   def create_registration(lodestone_id, region: nil, field_for_character_error: :search_name)
     extra_data = region.present? ? { region: region } : {}
-    @created_character = CharacterRegistration.build_from_lodestone(
+    @created_registration = CharacterRegistration.build_from_lodestone(
       user: user,
       lodestone_id: lodestone_id,
       extra_data: extra_data
     )
 
-    if @created_character.save
+    if @created_registration.save
       :success
     else
-      attach_registration_errors(@created_character, field_for_character_error: field_for_character_error)
-      :invalid
+      attach_registration_errors(@created_registration, field_for_character_error: field_for_character_error)
+      errors.any? { |e| %i[character base].include?(e.attribute) } ? :failed : :invalid
     end
   end
 
-  # Routes CharacterRegistration errors to the appropriate field or base.
-  # Character validation errors go to the provided field; registration/user errors go to base.
+  # Routes CharacterRegistration errors to the appropriate semantic attribute on this object.
+  # - :character errors (all from FFXIV::Character via validate_linked_character):
+  #     :not_found → input field (user's input caused it)
+  #     all others → :character (problem is with the character itself, not the input)
+  # - All other CR-native errors (:base, :character_id, :user) → :base
   def attach_registration_errors(registration, field_for_character_error: :search_name)
     registration.errors.each do |error|
       case error.attribute
@@ -116,12 +120,10 @@ class CharacterRegistrationRequest
         if error.type == :not_found
           errors.add(field_for_character_error, error.type, message: error.message)
         else
-          errors.add(:base, "Character #{error.message}")
+          errors.add(:character, error.type, message: error.message)
         end
-      when :character_id
-        errors.add(:base, error.full_message)
       else
-        errors.add(:base, error.full_message)
+        errors.add(:base, error.type, message: error.full_message)
       end
     end
   end

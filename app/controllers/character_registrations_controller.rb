@@ -20,10 +20,12 @@ class CharacterRegistrationsController < ApplicationController
   def create
     @character_registration = CharacterRegistrationRequest.new(character_registration_params.merge(user: current_user))
 
-    case @character_registration.process!
+    process_result = @character_registration.process!
+
+    case process_result
     when :success
       redirect_to character_registrations_path, notice: "Character successfully registered."
-      record_create_analytics(@character_registration.created_character)
+      record_create_analytics(@character_registration, result: process_result)
     when :confirm
       respond_to do |format|
         format.html { render :confirm }
@@ -35,8 +37,9 @@ class CharacterRegistrationsController < ApplicationController
           )
         end
       end
-    else
+    when :invalid, :failed
       render_new_form_again
+      record_create_analytics(@character_registration, result: process_result)
     end
   end
 
@@ -107,12 +110,7 @@ class CharacterRegistrationsController < ApplicationController
                                              locals: { character_registration: @character_registration })
   end
 
-  private def record_create_analytics(registration)
-    if registration.nil?
-      logger.warn("Attempted to record analytics for a failed registration. Wut?")
-      return
-    end
-
+  private def record_create_analytics(registration_request, result:)
     analytics_type = if character_registration_params[:from_search].present?
                        :search_result
                      elsif character_registration_params[:search_name].present?
@@ -125,20 +123,31 @@ class CharacterRegistrationsController < ApplicationController
                        :lodestone_id
                      end
 
+    attributes = {
+      "registration.search_type": analytics_type.to_s,
+      "registration.result": result.to_s,
+
+      # FIXME(DEPS): https://github.com/getsentry/sentry-ruby/issues/2842
+      "user.id": current_user.id,
+    }
+
+    if (character = registration_request.character)
+      attributes.merge!({
+        "registration.is_first": (character.character_registrations.count <= 1).to_s,
+        "character.lodestone_id": character.lodestone_id,
+        "character.home_world": character.home_world,
+        "character.data_center": character.data_center
+      })
+    end
+
+    if registration_request.errors.present?
+      attributes["registration.errors"] = registration_request.errors.map { |e| "#{e.attribute}:#{e.type}" }
+    end
+
     Sentry.metrics.count(
       "xivauth.character.register",
       value: 1,
-      attributes: {
-        "registration.search_type": analytics_type.to_s,
-        "registration.is_first": (registration.character.character_registrations.count <= 1),
-
-        "character.lodestone_id": registration.character.lodestone_id,
-        "character.home_world": registration.character.home_world,
-        "character.data_center": registration.character.data_center,
-
-        # FIXME(DEPS): https://github.com/getsentry/sentry-ruby/issues/2842
-        "user.id": current_user.id,
-      }
+      attributes: attributes
     )
   end
 end

@@ -5,9 +5,10 @@
   </div>
 
   <div class="modal-body">
-    <% if character_registration.errors[:base].present? %>
+    <% alert_errors = character_registration.errors.reject { |e| %i[lodestone_url character_search].include?(e.attribute) } %>
+    <% if alert_errors.any? %>
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <% character_registration.errors.full_messages_for(:base).each do |message| %>
+        <% alert_errors.map(&:full_message).each do |message| %>
           <div><%= message %></div>
         <% end %>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

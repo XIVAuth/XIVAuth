@@ -139,7 +139,7 @@ class CharacterRegistration < ApplicationRecord
   private def owner_can_create
     return unless user.character_registrations.unverified.count >= user.unverified_character_allowance
 
-    errors.add(:user, :too_many_unverified, message: "has too many unverified characters.")
+    errors.add(:base, :too_many_unverified, message: "You have too many unverified characters.")
   end
 
   private def character_not_banned
@@ -150,8 +150,8 @@ class CharacterRegistration < ApplicationRecord
     # The character ban system *may* also be used for fraud and abuse, but that is not its primary purpose.
     return unless character.ban.present? && !skip_ban_check
 
-    errors.add(:character, :banned,
-               message: "cannot be registered directly. Please contact an XIVAuth developer.")
+    errors.add(:base, :banned,
+               message: "Character cannot be registered directly. Please contact an XIVAuth developer.")
   end
 
   private def validate_linked_character
