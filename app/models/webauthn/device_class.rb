@@ -10,6 +10,7 @@ class Webauthn::DeviceClass < ApplicationRecord
     raise "Failed to fetch AAGUID dataset: #{response.code}" unless response.is_a?(Net::HTTPSuccess)
 
     data = JSON.parse(response.body)
+    where(manual: true).pluck(:id).each { |id| data.delete(id) }
 
     transaction do
       # Mark timestamp before upserts
@@ -19,9 +20,9 @@ class Webauthn::DeviceClass < ApplicationRecord
       records = data.map do |aaguid, attributes|
         {
           id: aaguid,
-          name: attributes['name'],
-          icon_dark: attributes['icon_dark'],
-          icon_light: attributes['icon_light'],
+          name: attributes["name"],
+          icon_dark: attributes["icon_dark"],
+          icon_light: attributes["icon_light"],
           updated_at: sync_time
         }
       end
@@ -32,7 +33,8 @@ class Webauthn::DeviceClass < ApplicationRecord
       end
 
       # Delete AAGUIDs that weren't updated in this sync (i.e., no longer in dataset)
-      where('updated_at < ?', sync_time).delete_all
+      # Ignore manual records.
+      where("updated_at < ? AND manual = false", sync_time).delete_all
     end
   end
 end
