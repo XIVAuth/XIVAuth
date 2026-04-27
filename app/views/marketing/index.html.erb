@@ -1,5 +1,5 @@
 <% content_for :head_extensions do %>
-   <%= stylesheet_link_tag "special/marketing" %>
+  <%= stylesheet_link_tag "special/marketing" %>
 <% end %>
 
 <section id="hero" class="py-5">
@@ -82,8 +82,10 @@
         </h2>
         <p class="lead mb-1 font-monospace">A turnkey authentication platform for FFXIV tools and websites.</p>
         <div class="small mt-2">
-          <a href="https://github.com/XIVAuth/XIVAuth"><i class="bi bi-github me-1" aria-hidden="true"></i>Open source</a>
-          and committed to transparency.</div>
+          <a href="https://github.com/XIVAuth/XIVAuth"><i class="bi bi-github me-1" aria-hidden="true"></i>Open
+            source</a>
+          and committed to transparency.
+        </div>
       </div>
       <div class="d-none d-lg-block">
         <%= link_to developer_docs_path, class: "btn btn-primary" do %>
@@ -99,7 +101,8 @@
           </div>
           <h3 class="h5 mb-2 mt-3">Simple API</h3>
           <p class="mb-0">
-            Leverage a handcrafted artisanal API designed to make developers happy. Work comfortably in native, web, and whatever
+            Leverage a handcrafted artisanal API designed to make developers happy. Work comfortably in native, web, and
+            whatever
             else you can imagine.
           </p>
         </div>
@@ -142,7 +145,8 @@
       </div>
     </div>
     <div class="mt-4">
-      <small class="text-muted">By using XIVAuth, you agree to our <%= link_to "Developer Agreement", legal_devagreement_path %>.</small>
+      <small class="text-muted">By using XIVAuth, you agree to
+        our <%= link_to "Developer Agreement", legal_devagreement_path %>.</small>
     </div>
   </div>
 </section>
@@ -186,7 +190,7 @@
             <li class="d-flex align-items-start mb-3">
               <i class="bi bi-check-circle-fill text-success me-3" aria-hidden="true"></i>
               <div>
-                  <strong>Surprise-Free Guarantee</strong>
+                <strong>Surprise-Free Guarantee</strong>
                 <div class="text-muted">Open-source code means everything is transparent and auditable.</div>
               </div>
             </li>
@@ -204,47 +208,49 @@
   </div>
 </section>
 
-<section id="counters" class="py-5 marketing-section">
-  <div class="container">
-    <div class="row">
-      <div class="col-12 col-lg-6">
-        <div class="row g-3">
-          <div class="col-6">
-            <div class="p-4 border rounded-3 marketing-card">
-              <div class="display-5 fw-bold text-primary"><%= number_with_delimiter(@counts[:users]) %></div>
-              <div class="fw-semibold">Registered <%= "Player".pluralize(@counts[:users]) %></div>
+<% if Flipper.enabled? :homepage_counters %>
+  <section id="counters" class="py-5 marketing-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="p-4 border rounded-3 marketing-card">
+                <div class="display-5 fw-bold text-primary"><%= number_with_delimiter(@counts[:users]) %></div>
+                <div class="fw-semibold">Registered <%= "Player".pluralize(@counts[:users]) %></div>
+              </div>
             </div>
-          </div>
-          <div class="col-6">
-            <div class="p-4 border rounded-3 marketing-card">
-              <div class="display-5 fw-bold text-success"><%= number_with_delimiter(@counts[:characters]) %></div>
-              <div class="fw-semibold">Verified <%= "Character".pluralize(@counts[:characters]) %></div>
+            <div class="col-6">
+              <div class="p-4 border rounded-3 marketing-card">
+                <div class="display-5 fw-bold text-success"><%= number_with_delimiter(@counts[:characters]) %></div>
+                <div class="fw-semibold">Verified <%= "Character".pluralize(@counts[:characters]) %></div>
+              </div>
             </div>
-          </div>
-          <div class="col-6">
-            <div class="p-4 border rounded-3 marketing-card">
-              <div class="display-5 fw-bold text-info"><%= number_with_delimiter(@counts[:applications]) %></div>
-              <div class="fw-semibold">Connected <%= "App".pluralize(@counts[:applications]) %></div>
+            <div class="col-6">
+              <div class="p-4 border rounded-3 marketing-card">
+                <div class="display-5 fw-bold text-info"><%= number_with_delimiter(@counts[:applications]) %></div>
+                <div class="fw-semibold">Connected <%= "App".pluralize(@counts[:applications]) %></div>
+              </div>
             </div>
-          </div>
-          <div class="col-6">
-            <div class="p-4 border rounded-3 marketing-card">
-              <div class="display-5 fw-bold text-warning"><%= @counts[:verification_rate] %>%</div>
-              <div class="fw-semibold">Verification Rate</div>
+            <div class="col-6">
+              <div class="p-4 border rounded-3 marketing-card">
+                <div class="display-5 fw-bold text-warning"><%= @counts[:verification_rate] %>%</div>
+                <div class="fw-semibold">Verification Rate</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-12 col-lg-6">
-        <h2 class="h1 fw-bold">Numbers say it all</h2>
-        <p class="lead">
-          Thousands of users and characters later, we're still going strong. XIVAuth is proud to provide trusted
-          identity services to the Final Fantasy XIV community.
-        </p>
+        <div class="col-12 col-lg-6">
+          <h2 class="h1 fw-bold">Numbers say it all</h2>
+          <p class="lead">
+            Thousands of users and characters later, we're still going strong. XIVAuth is proud to provide trusted
+            identity services to the Final Fantasy XIV community.
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+<% end %>
 
 <div class="container mt-auto">
   <%= render 'layouts/footer' %>
