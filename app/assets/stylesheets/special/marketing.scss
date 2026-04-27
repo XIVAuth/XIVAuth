@@ -13,6 +13,10 @@ section#developers {
   @include frosted-bg("/backgrounds/s9_workstation.png", "/backgrounds/s9_workstation.png", 2px, 0.8, 0.65);
 }
 
+section#counters {
+  @include frosted-bg("/backgrounds/labyrin_day.png", "/backgrounds/labyrin_night.png", 2px, 0.8, 0.65);
+}
+
 .marketing-card {
   position: relative;
   isolation: isolate;

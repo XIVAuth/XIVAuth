@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_21_022628) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_27_205216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -412,6 +412,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_21_022628) do
   create_table "webauthn_device_classes", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.text "icon_dark"
     t.text "icon_light"
+    t.boolean "manual", default: false
     t.string "name", null: false
     t.datetime "updated_at", null: false
   end

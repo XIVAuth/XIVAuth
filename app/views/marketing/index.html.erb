@@ -204,6 +204,48 @@
   </div>
 </section>
 
+<section id="counters" class="py-5 marketing-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-6">
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="p-4 border rounded-3 marketing-card">
+              <div class="display-5 fw-bold text-primary"><%= number_with_delimiter(@counts[:users]) %></div>
+              <div class="fw-semibold">Registered <%= "Player".pluralize(@counts[:users]) %></div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-4 border rounded-3 marketing-card">
+              <div class="display-5 fw-bold text-success"><%= number_with_delimiter(@counts[:characters]) %></div>
+              <div class="fw-semibold">Verified <%= "Character".pluralize(@counts[:characters]) %></div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-4 border rounded-3 marketing-card">
+              <div class="display-5 fw-bold text-info"><%= number_with_delimiter(@counts[:applications]) %></div>
+              <div class="fw-semibold">Connected <%= "App".pluralize(@counts[:applications]) %></div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-4 border rounded-3 marketing-card">
+              <div class="display-5 fw-bold text-warning"><%= @counts[:verification_rate] %>%</div>
+              <div class="fw-semibold">Verification Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <h2 class="h1 fw-bold">Numbers say it all</h2>
+        <p class="lead">
+          Thousands of users and characters later, we're still going strong. XIVAuth is proud to provide trusted
+          identity services to the Final Fantasy XIV community.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="container mt-auto">
   <%= render 'layouts/footer' %>
 </div>

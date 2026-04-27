@@ -2,7 +2,16 @@ class MarketingController < ApplicationController
   skip_before_action :authenticate_user!
   layout "marketing/base"
 
-  def index; end
+  def index
+    @counts = {
+      users: User.count,
+      characters: CharacterRegistration.verified.count,
+      applications: ClientApplication.count,
+      verification_rate: CharacterRegistration.verified.count.to_f / FFXIV::Character.count * 100
+    }
+
+    render :index
+  end
 
   def flarestone; end
 
