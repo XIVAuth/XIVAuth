@@ -17,6 +17,10 @@ class MarketingController < ApplicationController
              with: -> { render_pet_cooldown },
              only: :headpat
 
+  rate_limit to: 1, within: 1.minute, by: -> { session.id.to_s },
+             with: -> { render_pet_cooldown },
+             only: :headpat
+
   def headpat
     count = Rails.cache.increment("marketing:headpats")
 
@@ -32,7 +36,7 @@ class MarketingController < ApplicationController
       partial: "layouts/components/toasts/toast",
       locals: {
         title: "Headpat delivered!",
-        message: "You've pet the cat! Thanks for the love! Feel free to pet them again after a little while.",
+        message: "You've given our Miqo a headpat! She says thank you~",
         color: "success",
         notification_icon_class: "fa-solid fa-cat text-success",
         toast_id: "marketing_headpat_d3592386-79df-478e-8e2b-8f8bc35a8b66",
@@ -53,7 +57,7 @@ class MarketingController < ApplicationController
       partial: "layouts/components/toasts/toast",
       locals: {
         title: "Too many headpats!",
-        message: "The Miqo'te is still enjoying your last headpat. Give it a little bit before petting them again!",
+        message: "Our Miqo is still enjoying your last headpat. Give it a little bit before petting them again!",
         color: "warning",
         notification_icon_class: "fa-solid fa-cat text-warning",
         toast_id: "marketing_headpat_d3592386-79df-478e-8e2b-8f8bc35a8b66",
