@@ -2,6 +2,11 @@ import {Controller} from "@hotwired/stimulus";
 import { Toast } from 'bootstrap';
 
 export default class ToastController extends Controller {
+    static values = { toastId: String };
+
+    declare toastIdValue: string;
+    declare hasToastIdValue: boolean;
+
     timeToClose = 15_000; // millis
     updateInterval = 100;
 
@@ -13,6 +18,14 @@ export default class ToastController extends Controller {
     timeElapsed = 0;
 
     connect() {
+        if (this.hasToastIdValue) {
+            document.querySelectorAll(`[data-toasts--toast-toast-id-value="${this.toastIdValue}"]`).forEach(el => {
+                if (el === this.element) return;
+                const other = this.application.getControllerForElementAndIdentifier(el, "toasts--toast") as ToastController | null;
+                other?.bootstrapToast?.hide();
+            });
+        }
+
         this.bootstrapToast = Toast.getOrCreateInstance(this.element, {
             autohide: false,
             delay: this.timeToClose

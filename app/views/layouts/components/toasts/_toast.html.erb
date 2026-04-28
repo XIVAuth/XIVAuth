@@ -2,7 +2,10 @@
     partial: "layouts/components/toasts/toast",
     locals: { title: "A Title", message: "A Body" }) %>
 <% color ||= nil %>
-<div data-controller="toasts--toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+<% toast_id ||= nil %>
+<div data-controller="toasts--toast"
+     <%= "data-toasts--toast-toast-id-value=#{toast_id}" if toast_id %>
+     class="toast" role="alert" aria-live="assertive" aria-atomic="true">
   <div class="toast-header <%= color ? "text-#{color}" : "" %>">
     <% if defined?(notification_icon_url) %>
       <img class="rounded me-2" width="20" height="20" src="<%= notification_icon_url %>" aria-hidden="true" alt="Notification icon">
@@ -13,7 +16,10 @@
       <strong class="me-auto" data-toast-target="title"><%= title %></strong>
     <% end %>
     <% if defined?(timestamp) %>
-      <small class="text-muted"><%= time_ago_in_words(timestamp, include_seconds: true) %> ago</small>
+      <small class="text-muted"
+             data-controller="utilities--hover-dt"
+             data-utilities--hover-dt-ts-value="<%= timestamp.to_i %>"
+             data-utilities--hover-dt-format-value="dotiw">time_ago_in_words(timestamp, include_seconds: true)</small>
     <% end %>
     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
   </div>

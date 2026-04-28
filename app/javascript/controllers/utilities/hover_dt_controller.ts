@@ -12,7 +12,7 @@ type DynamicFormatType = "dotiw" | "adaptive";
 //   adaptive – time (HH:MM) if today, short date otherwise; good for compact badges
 type FormatType = StaticFormatType | DynamicFormatType;
 
-const DOTIW_REFRESH_MS = 30_000;
+const DOTIW_REFRESH_MS = 1_000;
 
 const FULL_FORMAT: Intl.DateTimeFormatOptions = {
     weekday: "long",
