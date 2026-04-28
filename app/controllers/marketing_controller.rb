@@ -8,7 +8,7 @@ class MarketingController < ApplicationController
       characters: CharacterRegistration.verified.count,
       applications: ClientApplication.count,
       verification_rate: (CharacterRegistration.verified.count.to_f / FFXIV::Character.count * 100).round(1),
-      headpats: Rails.cache.read("marketing:headpats").to_i,
+      headpats: Rails.cache.read("marketing:headpats", raw: true).to_i,
     }
 
     render :index
