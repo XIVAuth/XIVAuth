@@ -209,6 +209,7 @@
 </section>
 
 <% if Flipper.enabled? :homepage_counters %>
+  <%= turbo_stream_from "marketing" %>
   <section id="counters" class="py-5 marketing-section">
     <div class="container">
       <div class="row g-4 align-items-center">
@@ -233,10 +234,7 @@
               </div>
             </div>
             <div class="col-6">
-              <div class="p-4 border rounded-3 marketing-card">
-                <div class="display-5 fw-bold text-warning"><%= @counts[:verification_rate] %>%</div>
-                <div class="fw-semibold">Verification Rate</div>
-              </div>
+              <%= render "marketing/headpats_card", count: @counts[:headpats] %>
             </div>
           </div>
         </div>
@@ -246,6 +244,7 @@
             Thousands of users and characters later, we're still going strong. XIVAuth is proud to provide trusted
             identity services to the Final Fantasy XIV community.
           </p>
+          <%= button_to "Pet a cat!", marketing_cat_path, class: "btn btn-warning mt-2" %>
         </div>
       </div>
     </div>

@@ -76,9 +76,9 @@ class Api::V1::CharactersController < Api::V1::ApiController
     authorize! :update, @registration
 
     if FFXIV::VerifyCharacterRegistrationJob.perform_later @registration
-      head status: :created
+      head :created
     else
-      head status: :internal_server_error
+      head :internal_server_error
     end
   end
 
@@ -88,7 +88,7 @@ class Api::V1::CharactersController < Api::V1::ApiController
     @registration.unverify
 
     if @registration.save
-      head status: :no_content
+      head :no_content
     else
       render json: { errors: @registration.errors.full_messages }, status: :unprocessable_content
     end

@@ -119,6 +119,7 @@ Rails.application.routes.draw do
   # static page routes
   get "/discord", to: "marketing#discord"
   get "/flarestone", to: "marketing#flarestone"
+  post "/cat", to: "marketing#headpat", as: :marketing_cat
   # end static page routes
 
   if Rails.env.development? || ENV["APP_ENV"].present? && ENV["APP_ENV"] != "production"
