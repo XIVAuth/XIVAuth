@@ -43,6 +43,16 @@ class MarketingController < ApplicationController
         timestamp: Time.current.to_i,
       }
     )
+
+    Sentry.metrics.count(
+      "xivauth.headpat",
+      value: 1,
+      attributes: {
+        "user.authenticated": current_user.present?,
+        "user.id": current_user&.id,
+        "network.ip": request.remote_ip
+      }
+    )
   end
 
   def flarestone; end
