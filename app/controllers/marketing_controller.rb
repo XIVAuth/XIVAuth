@@ -40,7 +40,7 @@ class MarketingController < ApplicationController
         color: "success",
         notification_icon_class: "fa-solid fa-cat text-success",
         toast_id: "marketing_headpat_d3592386-79df-478e-8e2b-8f8bc35a8b66",
-        timestamp: Time.current.to_i,
+        timestamp: Time.current.to_i
       }
     )
 
@@ -67,11 +67,11 @@ class MarketingController < ApplicationController
       partial: "layouts/components/toasts/toast",
       locals: {
         title: "Too many headpats!",
-        message: "Our Miqo is still enjoying your last headpat. Give it a little bit before petting them again!",
+        message: "Our Miqo is still enjoying your last headpat. Give her a little bit before petting her again!",
         color: "warning",
         notification_icon_class: "fa-solid fa-cat text-warning",
         toast_id: "marketing_headpat_d3592386-79df-478e-8e2b-8f8bc35a8b66",
-        timestamp: Time.current.to_i,
+        timestamp: Time.current.to_i
       }
     )
   end
