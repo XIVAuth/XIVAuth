@@ -83,7 +83,7 @@ class User < ApplicationRecord
   end
 
   def gravatar_url(size = 32, fallback: "retro", rating: "pg")
-    hash = EmailAddress.reference(email)
+    hash = EmailAddress::Address.new(email).sha256
     "https://secure.gravatar.com/avatar/#{hash}.png?s=#{size}&d=#{fallback}&r=#{rating}"
   end
 
