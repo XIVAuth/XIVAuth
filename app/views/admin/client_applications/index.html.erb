@@ -24,9 +24,7 @@
           <% @client_applications.each do |app| %>
             <tr>
               <td>
-                <% if app.profile&.icon_url.present? %>
-                  <%= image_tag app.profile.icon_url, class: "rounded", size: 28, alt: "App Icon" %>
-                <% end %>
+                <%= image_tag app.icon_url, class: "rounded", width: 28, height: 28, alt: "App Icon" %>
               </td>
               <td class="font-monospace"><%= app.id[-8..] %></td>
               <td><%= link_to app.name, admin_client_application_path(app) %></td>

@@ -1,4 +1,10 @@
 class ClientApplication < ApplicationRecord
+  include HasUploadAttachment
+
+  has_upload_attachment :icon,
+    content_types: %w[image/png image/jpeg image/webp image/gif],
+    max_size:      2.megabytes
+
   belongs_to :owner, polymorphic: true, optional: true
 
   has_one :profile, class_name: "ClientApplication::Profile", dependent: :destroy, required: true, autosave: true,
@@ -28,6 +34,10 @@ class ClientApplication < ApplicationRecord
 
   def profile
     super || build_profile
+  end
+
+  def icon_url(derivative: nil)
+    icon&.url(derivative: derivative) || "https://api.dicebear.com/9.x/initials/png?seed=#{self.name}&backgroundType=gradientLinear"
   end
 
   def verified?

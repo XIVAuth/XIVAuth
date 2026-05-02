@@ -7,6 +7,15 @@
         <div class="form-text">The name of your app as it appears to users.</div>
       </div>
 
+      <div class="mb-3">
+        <%= f.label :icon, "App Icon", class: "form-label fw-semibold" %>
+        <div class="mb-2">
+          <%= image_tag @application.icon_url, class: "rounded", style: "width: 64px; height: 64px; object-fit: cover;", alt: "Current icon" %>
+        </div>
+        <%= f.file_field :icon, class: "form-control", accept: "image/png,image/jpeg,image/webp,image/gif" %>
+        <div class="form-text">PNG, JPG, WebP or GIF. Max 2 MB.</div>
+      </div>
+
       <% if @application.persisted? %>
         <div class="mb-3">
           <label class="form-label fw-semibold">App Owner</label>

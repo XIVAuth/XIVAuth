@@ -5,8 +5,4 @@ class ClientApplication::Profile < ApplicationRecord
     with: URI::DEFAULT_PARSER.make_regexp(["https"]),
     message: "must be a valid HTTPS URL"
   }, allow_blank: true
-
-  def icon_url
-    super || "https://api.dicebear.com/9.x/initials/png?seed=#{application.name}&backgroundType=gradientLinear"
-  end
 end

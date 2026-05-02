@@ -30,7 +30,7 @@
       <div class="card-header">
         <h3 class="mb-0"><i class="bi bi-file-text"></i> App Profile</h3>
       </div>
-      <%= form_for @application, url: developer_application_path(@application), method: :patch do |f| %>
+      <%= form_for @application, url: developer_application_path(@application), method: :patch, html: { multipart: true } do |f| %>
         <%= render 'app_profile_form', f: f %>
 
         <div class="card-footer bg-transparent d-flex justify-content-end">

@@ -78,6 +78,9 @@ Rails.application.configure do
     Rails.application.credentials.dig(:active_record_encryption, :key_derivation_salt) ||
     "EvBsq2idg2gdUs1NULVhV2ocWFdcKrzn"
 
+  # Serve Shrine local file uploads from storage/ (not served as static assets like public/ would be)
+  config.middleware.use Rack::Static, urls: ["/uploads"], root: Rails.root.join("storage").to_s
+
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 

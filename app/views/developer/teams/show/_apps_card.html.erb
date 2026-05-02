@@ -16,7 +16,7 @@
         <% @team.client_applications.each do |app| %>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-2">
-              <img src="<%= app.profile.icon_url %>" class="rounded" alt="<%= app.name %>" width="32" height="32">
+              <%= image_tag app.icon_url, class: "rounded flex-shrink-0", alt: app.name, width: 32, height: 32 %>
               <div>
                 <%= link_to app.name, developer_application_path(app) %>
                 <% if app.private? %>

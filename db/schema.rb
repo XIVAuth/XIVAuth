@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_27_205216) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_01_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -22,6 +22,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_205216) do
   create_enum "pki_revocation_reason", ["unspecified", "key_compromise", "ca_compromise", "affiliation_changed", "superseded", "cessation_of_operation", "certificate_hold", "privilege_withdrawn", "aa_compromise"]
   create_enum "team_member_roles", ["admin", "manager", "developer", "member", "invited", "blocked"]
   create_enum "user_roles", ["developer", "admin"]
+
+  create_table "attachments", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "file_data"
+    t.string "name", null: false
+    t.uuid "record_id", null: false
+    t.string "record_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_attachments_on_record_type_and_record_id_and_name"
+  end
 
   create_table "character_bans", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
     t.uuid "character_id"

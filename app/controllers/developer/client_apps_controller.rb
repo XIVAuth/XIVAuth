@@ -156,12 +156,12 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
 
   private def application_params
     params.require(:client_application)
-          .permit(:name, :private, profile_attributes: [:homepage_url, :privacy_policy_url, :terms_of_service_url])
+          .permit(:name, :private, :icon, profile_attributes: [:homepage_url, :privacy_policy_url, :terms_of_service_url])
   end
 
   private def create_application_params
     params.require(:client_application)
-          .permit(:name, :private, :owner_id,
+          .permit(:name, :private, :owner_id, :icon,
                   profile_attributes: [:homepage_url, :privacy_policy_url, :terms_of_service_url])
   end
 

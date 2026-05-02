@@ -1,8 +1,8 @@
 <div class="card card-animated" id="<%= dom_id application %>">
   <div class="card-body">
     <div class="d-flex align-items-center">
-      <img src="<%= application.profile.icon_url %>" class="rounded m-2"
-           alt="Icon for <%= application.name %>" width="96" height="96">
+      <%= image_tag application.icon_url, class: "rounded m-2 flex-shrink-0",
+                   alt: "Icon for #{application.name}", width: 96, height: 96 %>
       <div class="ps-2">
         <h5 class="card-title">
           <%= application.name %>

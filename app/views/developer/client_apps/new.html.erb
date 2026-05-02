@@ -6,7 +6,7 @@
 <% end %>
 
 <div class="card mb-4">
-  <%= form_for @application, url: app_submit_path(@application), as: :client_application, html: { role: 'form' } do |f| %>
+  <%= form_for @application, url: app_submit_path(@application), as: :client_application, html: { role: 'form', multipart: true } do |f| %>
     <% if @application.errors.any? %>
       <div class="alert alert-danger m-3"><p><%= t('doorkeeper.applications.form.error') %></p></div>
     <% end %>

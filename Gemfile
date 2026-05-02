@@ -26,6 +26,8 @@ gem "gon", "~> 7.0"
 
 # Asset management
 gem "shrine", "~> 3.6"
+gem "aws-sdk-s3", "~> 1.0", require: false
+gem "marcel", "~> 1.0"
 
 # JSON API
 gem "jbuilder"

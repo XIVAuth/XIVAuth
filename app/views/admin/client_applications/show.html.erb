@@ -1,9 +1,7 @@
 <% content_for(:page_header) do %>
   <div class="d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center">
-      <% if @client_application.profile&.icon_url.present? %>
-        <%= image_tag(@client_application.profile.icon_url, alt: 'App Icon', class: 'rounded me-3', width: 96, height: 96) %>
-      <% end %>
+      <%= image_tag @client_application.icon_url, alt: "App Icon", class: "rounded me-3", width: 96, height: 96 %>
       <h1 class="mb-0">Edit Application: <%= @client_application.name %></h1>
     </div>
     <div>
