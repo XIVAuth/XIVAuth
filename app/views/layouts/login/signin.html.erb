@@ -9,6 +9,14 @@
         <div class="col-md-6 align-self-center">
           <div class="row justify-content-center">
             <div class="col-md-10">
+              <div class="text-center mb-4">
+                <%= link_to root_path do %>
+                  <div class="pride-logo-container d-inline-flex">
+                    <%= image_tag asset_path('logos/xivauth-logo-45.svg'), style: "height: 3rem;", alt: "XIVAuth" %>
+                    <span class="pride-logo-icon <%= current_pride_flag_class %> pride-logo-mask"></span>
+                  </div>
+                <% end %>
+              </div>
               <%= render 'layouts/components/flashes' %>
               <%= yield %>
             </div>
