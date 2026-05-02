@@ -3,6 +3,8 @@
 <head>
   <title><%= yield(:title).presence || 'XIVAuth' %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= render partial: "layouts/seo_metadata" %>
+
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
