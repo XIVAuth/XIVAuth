@@ -96,7 +96,7 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
       end
     else
       respond_to do |format|
-        format.html { render :edit }
+        format.html { render :show, status: :unprocessable_content }
         format.json do
           errors = @application.errors.full_messages
 
