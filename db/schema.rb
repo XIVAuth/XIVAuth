@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_01_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_02_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -29,8 +29,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_01_120000) do
     t.string "name", null: false
     t.uuid "record_id", null: false
     t.string "record_type", null: false
+    t.string "sha256", limit: 64
     t.datetime "updated_at", null: false
     t.index ["record_type", "record_id", "name"], name: "index_attachments_on_record_type_and_record_id_and_name"
+    t.index ["sha256"], name: "index_attachments_on_sha256"
   end
 
   create_table "character_bans", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|

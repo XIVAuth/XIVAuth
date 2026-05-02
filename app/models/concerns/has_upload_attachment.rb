@@ -5,7 +5,25 @@ module HasUploadAttachment
     has_many :attachments, as: :record, class_name: "Attachment",
              dependent: :destroy, autosave: true
 
-    validates_associated :attachments
+    before_save :destroy_replaced_attachments
+    validate :propagate_attachment_errors
+  end
+
+  private
+
+  def propagate_attachment_errors
+    attachments.each do |attachment|
+      next if attachment.valid?
+
+      attachment.errors.each do |error|
+        errors.add(attachment.name.to_sym, error.message)
+      end
+    end
+  end
+
+  def destroy_replaced_attachments
+    (@_attachments_to_replace || []).each(&:destroy)
+    @_attachments_to_replace = nil
   end
 
   class_methods do
@@ -35,7 +53,18 @@ module HasUploadAttachment
       end
 
       define_method(:"#{name}=") do |file|
-        attachment = attachments.find_or_initialize_by(name: name.to_s)
+        return if file.blank? || file.respond_to?(:original_filename) && file.original_filename.blank?
+
+        incoming_sha256 = Digest::SHA256.hexdigest(file.read).tap { file.rewind }
+        old = attachments.find_by(name: name.to_s)
+        return if old&.sha256 == incoming_sha256
+
+        if old
+          @_attachments_to_replace ||= []
+          @_attachments_to_replace << old
+          attachments.target.delete(old)
+        end
+        attachment = attachments.build(name: name.to_s, sha256: incoming_sha256)
         attachment.file = file
       end
     end

@@ -1,7 +1,7 @@
 require "shrine"
+require "shrine/storage/memory"
 
 if Rails.env.test?
-  require "shrine/storage/memory"
 
   Shrine.storages = {
     cache: Shrine::Storage::Memory.new,
@@ -25,7 +25,7 @@ elsif Rails.application.credentials.dig(:storage, :uploads, :bucket)
   end
 
   Shrine.storages = {
-    cache: s3_storage_from_credentials(:uploads_cache),
+    cache: Shrine::Storage::Memory.new,
     store: s3_storage_from_credentials(:uploads)
   }
 
@@ -34,14 +34,14 @@ else
   require "shrine/storage/file_system"
 
   Shrine.storages = {
-    cache: Shrine::Storage::FileSystem.new("storage", prefix: "cache"),
+    cache: Shrine::Storage::Memory.new,
     store: Shrine::Storage::FileSystem.new("storage", prefix: "uploads")
   }
 end
 
 Shrine.plugin :activerecord
 Shrine.plugin :cached_attachment_data
-Shrine.plugin :restore_cached_data
 Shrine.plugin :determine_mime_type, analyzer: :marcel
+Shrine.plugin :validation
 Shrine.plugin :validation_helpers
 Shrine.plugin :derivatives
