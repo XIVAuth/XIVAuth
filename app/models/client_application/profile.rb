@@ -1,4 +1,6 @@
 class ClientApplication::Profile < ApplicationRecord
+  self.primary_key = :application_id
+
   belongs_to :application, class_name: "ClientApplication", touch: true
 
   validates :homepage_url, :privacy_policy_url, :terms_of_service_url, format: {

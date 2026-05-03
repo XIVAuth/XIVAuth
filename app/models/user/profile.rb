@@ -1,4 +1,6 @@
 class User::Profile < ApplicationRecord
+  self.primary_key = :user_id
+
   belongs_to :user, class_name: "User", touch: true
 
   # TODO: maybe this should be a database table...

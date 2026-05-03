@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_02_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_03_021946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -94,13 +94,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_120000) do
     t.index ["authorized_party_id"], name: "idx_on_authorized_party_id_2afcfbe007"
   end
 
-  create_table "client_application_profiles", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
-    t.uuid "application_id", null: false
+  create_table "client_application_profiles", primary_key: "application_id", id: :uuid, default: nil, force: :cascade do |t|
     t.string "homepage_url"
     t.string "icon_url"
     t.string "privacy_policy_url"
     t.string "terms_of_service_url"
-    t.index ["application_id"], name: "index_client_application_profiles_on_application_id"
   end
 
   create_table "client_applications", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -308,13 +306,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_120000) do
     t.index ["user_id"], name: "index_team_memberships_on_user_id"
   end
 
-  create_table "team_profiles", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+  create_table "team_profiles", primary_key: "team_id", id: :uuid, default: nil, force: :cascade do |t|
     t.string "avatar_url"
     t.datetime "created_at", null: false
-    t.uuid "team_id", null: false
     t.datetime "updated_at", null: false
     t.string "website_url"
-    t.index ["team_id"], name: "index_team_profiles_on_team_id"
   end
 
   create_table "teams", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
@@ -343,12 +339,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_120000) do
     t.datetime "updated_at"
   end
 
-  create_table "user_profiles", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
+  create_table "user_profiles", primary_key: "user_id", id: :uuid, default: nil, force: :cascade do |t|
     t.string "display_name", limit: 64, null: false
     t.jsonb "preferences", default: {}
-    t.uuid "user_id", null: false
     t.index ["preferences"], name: "index_user_profiles_on_preferences", using: :gin
-    t.index ["user_id"], name: "index_user_profiles_on_user_id", unique: true
   end
 
   create_table "user_social_identities", id: :uuid, default: -> { "uuidv7()" }, force: :cascade do |t|
