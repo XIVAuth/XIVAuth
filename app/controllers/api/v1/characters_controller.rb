@@ -109,15 +109,12 @@ class Api::V1::CharactersController < Api::V1::ApiController
   def lodestone
     character = @registration.character
     force_fresh = params[:force_fresh].present? && current_client_app.has_entitlement?(:internal)
-    cached_profile = Flarestone::CachedProfile.new(character.lodestone_id)
-    json = cached_profile.fetch(force_fresh: force_fresh)
+    profile = FFXIV::LodestoneProfile.new(character.lodestone_id, force_fresh: force_fresh)
 
-    if cached_profile.fresh?
-      character.refresh_from_lodestone(FFXIV::LodestoneProfile.new(character.lodestone_id, json_object: json))
-      character.save
-    end
+    character.refresh_from_lodestone(profile)
+    character.save
 
-    render json: json
+    render json: profile.raw_data
   end
 
   def jwt

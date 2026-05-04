@@ -76,6 +76,7 @@ class FFXIV::Character < ApplicationRecord
 
     # clear or otherwise handle non-"critical" cases
     self.refresh_fail_reason = @lodestone_data.failure_reason
+    self.updated_at = @lodestone_data.last_parsed if @lodestone_data.last_parsed.present?
   end
 
   def self.for_lodestone_id(lodestone_id)

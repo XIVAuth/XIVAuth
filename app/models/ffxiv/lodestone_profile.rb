@@ -14,19 +14,27 @@ class FFXIV::LodestoneProfile
   validate :validate_lodestone_response
 
   # Create a LodestoneProfile for the given character ID.
-  # Fetches via Flarestone::CachedProfile unless json_object is injected (e.g. in tests).
+  # Supports injecting raw JSON for tests to avoid network I/O.
   #
   # @param lodestone_id [Integer,String]
   # @param json_object [Hash, nil] inject raw JSON to skip network I/O
-  # @param force_fresh [Boolean] bypass cache and fetch directly from Flarestone
+  # @param force_fresh [Boolean] pass ?fresh=true to Flarestone to bypass its cache
   def initialize(lodestone_id, json_object: nil, force_fresh: false)
     super()
 
-    json_object ||= Flarestone::CachedProfile.fetch(lodestone_id, force_fresh: force_fresh)
+    if json_object.nil?
+      params = force_fresh ? { fresh: true } : {}
+      request = connection.get("#{flarestone_base_url}/character/#{lodestone_id}", params)
+      json_object = JSON.parse(request.body)
+
+      Rails.logger.debug("Fetched character from Flarestone.", lodestone_id: lodestone_id,
+                         status: request.status, meta: json_object["_meta"])
+
+      self.last_parsed = request.headers["Last-Modified"].then { |h| h ? Time.httpdate(h) : Time.current }
+    end
 
     self.raw_data = json_object
     self.id = lodestone_id
-    self.last_parsed = Time.now
   end
 
   # The name of this character.
@@ -78,6 +86,14 @@ class FFXIV::LodestoneProfile
   # A false value does not indicate that this is a free trial character.
   def paid_character?
     free_company&.present? || class_levels.values.any? { |x| x > FREE_TRIAL_LEVEL_CAP }
+  end
+
+  private def flarestone_base_url
+    Rails.application.credentials.dig(:flarestone, :host) || "https://flarestone.xivauth.net"
+  end
+
+  private def connection
+    Faraday.new(headers: { "X-API-Key": Rails.application.credentials.dig(:flarestone, :api_key) })
   end
 
   # Visibility and existence checks (also validations)
