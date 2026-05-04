@@ -9,32 +9,20 @@ class FFXIV::LodestoneProfile
   FREE_TRIAL_LEVEL_CAP = 70
   FAILURE_REASONS = %i[unspecified hidden_character profile_private not_found lodestone_maintenance].freeze
 
-  attr_accessor :id, :last_parsed, :raw_data, :failure_reason, :flarestone_statuscode
+  attr_accessor :id, :last_parsed, :raw_data, :failure_reason
 
   validate :validate_lodestone_response
 
   # Create a LodestoneProfile for the given character ID.
-  # Supports injecting raw JSON for tests to avoid network I/O.
+  # Fetches via Flarestone::CachedProfile unless json_object is injected (e.g. in tests).
   #
   # @param lodestone_id [Integer,String]
-  # @param json_object
-  def initialize(lodestone_id, json_object: nil)
+  # @param json_object [Hash, nil] inject raw JSON to skip network I/O
+  # @param force_fresh [Boolean] bypass cache and fetch directly from Flarestone
+  def initialize(lodestone_id, json_object: nil, force_fresh: false)
     super()
 
-    if json_object.nil?
-      requestor = Faraday.new(headers: {
-        "X-API-Key": Rails.application.credentials.dig(:flarestone, :api_key)
-      })
-
-      flarestone_base_url = Rails.application.credentials.dig(:flarestone, :host) || "https://flarestone.xivauth.net"
-
-      request = requestor.get("#{flarestone_base_url}/character/#{lodestone_id}")
-      json_object = JSON.parse(request.body)
-      self.flarestone_statuscode = request.status
-
-      Rails.logger.debug("Got response from Flarestone.", lodestone_id: lodestone_id, status: request.status,
-                         meta: json_object["_meta"])
-    end
+    json_object ||= Flarestone::CachedProfile.fetch(lodestone_id, force_fresh: force_fresh)
 
     self.raw_data = json_object
     self.id = lodestone_id

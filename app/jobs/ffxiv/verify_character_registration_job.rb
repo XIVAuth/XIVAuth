@@ -64,7 +64,7 @@ wait: 2.minutes) do |job, _error|
       return
     end
 
-    lodestone_data = FFXIV::LodestoneProfile.new(character.lodestone_id)
+    lodestone_data = FFXIV::LodestoneProfile.new(character.lodestone_id, force_fresh: true)
     lodestone_data.validate
 
     # Save the latest data from Lodestone so we at least have a record.

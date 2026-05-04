@@ -2,7 +2,7 @@ class Api::V1::CharactersController < Api::V1::ApiController
   include Api::FiltersAuthorizedCharacters
 
   before_action { doorkeeper_authorize! "character", "character:all", "character:manage", "character:jwt" }
-  before_action(except: %i[index show jwt]) { doorkeeper_authorize! "character:manage" }
+  before_action(except: %i[index show jwt lodestone refresh]) { doorkeeper_authorize! "character:manage" }
   before_action(only: %i[jwt]) { doorkeeper_authorize! "character:jwt", "character:manage" }
 
   before_action :check_resource_owner_presence
@@ -92,6 +92,32 @@ class Api::V1::CharactersController < Api::V1::ApiController
     else
       render json: { errors: @registration.errors.full_messages }, status: :unprocessable_content
     end
+  end
+
+  def refresh
+    character = @registration.character
+
+    unless character.stale?
+      head :no_content
+      return
+    end
+
+    FFXIV::RefreshCharactersJob.perform_later(character)
+    head :accepted
+  end
+
+  def lodestone
+    character = @registration.character
+    force_fresh = params[:force_fresh].present? && current_client_app.has_entitlement?(:internal)
+    cached_profile = Flarestone::CachedProfile.new(character.lodestone_id)
+    json = cached_profile.fetch(force_fresh: force_fresh)
+
+    if cached_profile.fresh?
+      character.refresh_from_lodestone(FFXIV::LodestoneProfile.new(character.lodestone_id, json_object: json))
+      character.save
+    end
+
+    render json: json
   end
 
   def jwt

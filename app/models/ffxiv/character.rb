@@ -60,7 +60,7 @@ class FFXIV::Character < ApplicationRecord
   def refresh_from_lodestone(lodestone_data = nil)
     return if lodestone_id.nil? && lodestone_data.nil?
 
-    @lodestone_data = lodestone_data || FFXIV::LodestoneProfile.new(lodestone_id)
+    @lodestone_data = lodestone_data || FFXIV::LodestoneProfile.new(lodestone_id, force_fresh: true)
     unless @lodestone_data.valid?
       self.refresh_fail_reason = @lodestone_data.failure_reason
       return
