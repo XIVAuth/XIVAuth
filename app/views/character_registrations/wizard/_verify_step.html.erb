@@ -1,0 +1,44 @@
+<%# locals: character_registration, character %>
+<div class="modal-header">
+  <div class="d-block">
+    <%= render 'character_registrations/wizard/step_indicator', current: 1 %>
+    <h5 class="modal-title">Verify <%= character.name %></h5>
+  </div>
+  <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+  <p>
+    To verify ownership of <strong><%= character.name %></strong>, add the code below to the character's
+    <%= link_to "Lodestone profile", character_registration.lodestone_url, target: "_blank", rel: "noreferrer noopener" %>.
+    You can remove it once verification is complete.
+  </p>
+  <div class="input-group mb-3" data-controller="utilities--copy-code">
+    <input type="text" data-utilities--copy-code-target="source" readonly
+           class="form-control text-center font-monospace"
+           value="<%= character_registration.verification_key %>"
+           aria-label="Verification code">
+    <button class="btn btn-outline-secondary" type="button"
+            data-action="utilities--copy-code#copy"
+            data-utilities--copy-code-target="button">
+      <i class="bi bi-clipboard"></i> Copy
+    </button>
+  </div>
+  <p class="mb-1">To add this code:</p>
+  <ol class="mb-0">
+    <li>Open your <%= link_to "Lodestone profile", character_registration.lodestone_url, target: "_blank", rel: "noreferrer noopener" %>.</li>
+    <li>
+      Click the pencil icon next to <em>Character Profile</em>. Make sure you're logged in and have selected
+      the right character.
+    </li>
+    <li>Paste the code anywhere in the text box, on its own line, exactly as shown above.</li>
+    <li>Save your changes, then click <strong>Verify</strong> below.</li>
+  </ol>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Not Now</button>
+  <%= form_with url: character_registration_verify_path(character_registration), method: :post do %>
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-patch-check"></i> Verify
+    </button>
+  <% end %>
+</div>

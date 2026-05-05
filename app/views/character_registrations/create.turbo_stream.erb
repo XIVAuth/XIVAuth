@@ -1,0 +1,9 @@
+<%= turbo_stream.append "character_registrations" do %>
+  <%= render 'character_registrations/character_card', character_registration: @created_registration %>
+<% end %>
+
+<%= turbo_stream.update "character_wizard_modal-content" do %>
+  <%= render 'character_registrations/wizard/verify_step',
+             character_registration: @created_registration,
+             character: @created_registration.character %>
+<% end %>

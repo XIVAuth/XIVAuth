@@ -1,10 +1,6 @@
-<%= turbo_stream.append "character-verification-modal:#{@character_registration.id}" do %>
-  <%= turbo_stream_from "VerifyCharacterRegistrationJob:#{@job.job_id}" %>
-<% end %>
-
-<%= turbo_stream.replace "character-verification-modal:#{@character_registration.id}:content" do %>
-  <div class="modal-content" id="character-registration-job:<%= @job.job_id %>:content">
-    <%= render partial: 'character_registrations/verifications/modals/verification_pending',
-               locals: { registration: @character_registration, character: @character, job: @job } %>
-  </div>
+<%= turbo_stream.update "character_wizard_modal-content" do %>
+  <%= render 'character_registrations/wizard/pending_step',
+             registration: @character_registration,
+             character: @character,
+             job: @job %>
 <% end %>

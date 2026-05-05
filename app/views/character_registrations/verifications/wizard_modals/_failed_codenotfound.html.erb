@@ -1,13 +1,17 @@
+<%# locals: registration, character, job %>
 <div class="modal-header">
-  <h5 class="modal-title text-danger" id="verifyLabel">Couldn't Verify <%= character.name %></h5>
-  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="d-block">
+    <%= render 'character_registrations/wizard/step_indicator', current: 1, step_state: :failed %>
+    <h5 class="modal-title text-danger">Couldn't Verify <%= character.name %></h5>
+  </div>
+  <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
   <p>
     XIVAuth was unable to find the verification code on the Lodestone profile for <%= character.name %>. This
     likely means that the verification code was not placed on the correct
-    <%= link_to "Lodestone profile", registration.lodestone_url, target: "_blank" %>, was not
-    applied correctly, or Square Enix is taking unusually long to update a Lodestone profile.
+    <%= link_to "Lodestone profile", registration.lodestone_url, target: "_blank", rel: "noreferrer noopener" %>, was not
+    applied correctly, or the Lodestone is taking unusually long to update.
   </p>
   <p>
     You may re-attempt verification by selecting the <strong>Verify</strong> button on the character's card.
@@ -17,6 +21,7 @@
   <div class="me-auto">
     <div class="text-secondary very-small align-middle">
       Job ID: <span class="font-monospace"><%= job.job_id %></span>
-    </div>  </div>
+    </div>
+  </div>
   <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Rats.</button>
 </div>

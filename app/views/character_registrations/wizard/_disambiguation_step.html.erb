@@ -1,0 +1,41 @@
+<%# locals: candidates, name, world %>
+<div class="modal-header">
+  <div class="d-block">
+    <%= render 'character_registrations/wizard/step_indicator', current: 0 %>
+    <h5 class="modal-title">Select a Character</h5>
+  </div>
+  <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+  <p>
+    Multiple characters named <strong><%= name %></strong> were found on <strong><%= world %></strong>.
+    Choose the one you want to register.
+  </p>
+  <ul class="list-group mb-0">
+    <% candidates.each do |c| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+          <% if c[:avatar_url].present? %>
+            <%= image_tag c[:avatar_url], alt: c[:name], class: "rounded", style: "width: 48px; height: 48px;" %>
+          <% end %>
+          <div>
+            <div class="fw-bold"><%= c[:name] %></div>
+            <small class="text-muted"><%= c[:world] %> [<%= c[:datacenter] %>]</small>
+          </div>
+        </div>
+        <%= button_to "Select",
+                      character_registrations_path,
+                      method: :post,
+                      params: { character_registration: { lodestone_url: c[:lodestone_id], from_search: true } },
+                      class: "btn btn-primary btn-sm" %>
+      </li>
+    <% end %>
+  </ul>
+  <div class="mt-3 text-center">
+    <%= button_to "None of these match - search again", character_registrations_path,
+                  params: { _back: true }, class: "btn btn-link btn-sm text-muted" %>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+</div>

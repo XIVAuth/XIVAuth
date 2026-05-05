@@ -1,0 +1,49 @@
+<%# locals: current (Integer, 0-indexed: 0=Find Character, 1=Verify, 2=Done), step_state: :current %>
+<%# step_state values: :current (awaiting user action), :pending (server working), :success (step done), :failed (step failed, stay here) %>
+<% steps = ["Find Character", "Verify", "Done"] %>
+<% step_state ||= :current %>
+<nav aria-label="Progress" class="me-2">
+  <ol class="list-unstyled d-flex align-items-center mb-0 small">
+    <% steps.each_with_index do |name, i| %>
+      <li class="d-flex align-items-center">
+        <% if i < current %>
+          <span class="text-success d-flex align-items-center gap-1">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline"><%= name %></span>
+          </span>
+        <% elsif i == current %>
+          <% case step_state %>
+          <% when :success %>
+            <span class="text-success fw-semibold d-flex align-items-center gap-1" aria-current="step">
+              <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+              <span><%= name %></span>
+            </span>
+          <% when :pending %>
+            <span class="text-muted fw-semibold d-flex align-items-center gap-1" aria-current="step">
+              <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+              <span><%= name %></span>
+            </span>
+          <% when :failed %>
+            <span class="text-danger fw-semibold d-flex align-items-center gap-1" aria-current="step">
+              <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
+              <span><%= name %></span>
+            </span>
+          <% else %>
+            <span class="text-muted fw-semibold d-flex align-items-center gap-1" aria-current="step">
+              <i class="bi bi-record-circle" aria-hidden="true"></i>
+              <span><%= name %></span>
+            </span>
+          <% end %>
+        <% else %>
+          <span class="text-muted d-flex align-items-center gap-1">
+            <i class="bi bi-circle" aria-hidden="true"></i>
+            <span class="d-none d-sm-inline"><%= name %></span>
+          </span>
+        <% end %>
+        <% unless i == steps.length - 1 %>
+          <i class="bi bi-chevron-right text-muted mx-2" aria-hidden="true"></i>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</nav>

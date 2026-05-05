@@ -1,6 +1,10 @@
+<%# locals: registration, character, job %>
 <div class="modal-header">
-  <h5 class="modal-title text-danger" id="verifyLabel">Couldn't Verify <%= character.name %></h5>
-  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="d-block">
+    <%= render 'character_registrations/wizard/step_indicator', current: 1, step_state: :failed %>
+    <h5 class="modal-title text-danger">Couldn't Verify <%= character.name %></h5>
+  </div>
+  <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
   <p>
@@ -8,7 +12,7 @@
   </p>
   <p>
     Please navigate to the
-    <a href="https://<%= registration.extra_data.fetch(:region, "na") %>.finalfantasyxiv.com/lodestone/my/setting/account/" target="_blank">Character
+    <a href="https://<%= registration.extra_data.fetch("region", "na") %>.finalfantasyxiv.com/lodestone/my/setting/account/" target="_blank">Character
       Privacy Settings</a> page and ensure that the <em>Profile</em> setting in the <em>Character Information</em>
     section is set to <em>Public</em>. You may set your profile back to private after verification is completed.
   </p>

@@ -1,6 +1,10 @@
+<%# locals: registration, character, job %>
 <div class="modal-header">
-  <h5 class="modal-title text-danger" id="verifyLabel">Verification Error</h5>
-  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="d-block">
+    <%= render 'character_registrations/wizard/step_indicator', current: 1, step_state: :failed %>
+    <h5 class="modal-title text-danger">Verification Error</h5>
+  </div>
+  <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
   <p>
@@ -12,9 +16,12 @@
     so that we can help you out. Include the following job ID in your message to help us track down the issue:
   </p>
   <div class="input-group mb-3" data-controller="utilities--copy-code">
-    <input type="text" data-utilities--copy-code-target="source" readonly class="form-control text-center font-monospace"
-           value="<%= job.job_id %>" aria-label="Verification code">
-    <button class="btn btn-outline-secondary" type="button" data-action="utilities--copy-code#copy" data-utilities--copy-code-target="button">
+    <input type="text" data-utilities--copy-code-target="source" readonly
+           class="form-control text-center font-monospace"
+           value="<%= job.job_id %>" aria-label="Job ID">
+    <button class="btn btn-outline-secondary" type="button"
+            data-action="utilities--copy-code#copy"
+            data-utilities--copy-code-target="button">
       <i class="bi bi-clipboard"></i> Copy
     </button>
   </div>

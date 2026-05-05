@@ -1,0 +1,41 @@
+<%# locals: registration, character, job %>
+<div class="modal-header">
+  <div class="d-block">
+    <%= render 'character_registrations/wizard/step_indicator', current: 1, step_state: :pending %>
+    <h5 class="modal-title">Verifying <%= character.name %></h5>
+  </div>
+  <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+  <p>
+    XIVAuth did not detect the verification code on your character page. Since this can be caused by Lodestone update
+    lag, we'll try again in about a couple of minutes.
+  </p>
+  <p>
+    To successfully verify, please make sure the below code is located on <%= character.name %>'s
+    <%= link_to "Lodestone profile", registration.lodestone_url, target: "_blank", rel: "noreferrer noopener" %>, and
+    appears exactly as it does below.
+  </p>
+  <div class="input-group mb-3" data-controller="utilities--copy-code">
+    <input type="text" data-utilities--copy-code-target="source" readonly
+           class="form-control text-center font-monospace"
+           value="<%= registration.verification_key %>" aria-label="Verification code">
+    <button class="btn btn-outline-secondary" type="button"
+            data-action="utilities--copy-code#copy"
+            data-utilities--copy-code-target="button">
+      <i class="bi bi-clipboard"></i> Copy
+    </button>
+  </div>
+  <p>
+    This dialog will automatically refresh with status updates.
+  </p>
+</div>
+<div class="modal-footer">
+  <div class="me-auto">
+    <div class="text-secondary very-small align-middle">
+      Job ID: <span class="font-monospace"><%= job.job_id %></span><br>
+      Attempt <%= job.executions + 1 %> of <%= job.class::MAX_RETRY_ATTEMPTS %>
+    </div>
+  </div>
+  <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Got it.</button>
+</div>

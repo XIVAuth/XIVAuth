@@ -18,22 +18,35 @@ class CharacterRegistrationsController < ApplicationController
 
   # POST /character_registrations or /character_registrations.json
   def create
-    @character_registration = CharacterRegistrationRequest.new(character_registration_params.merge(user: current_user))
+    if params[:_back]
+      @character_registration = CharacterRegistrationRequest.new
+      render_new_form_again(status: :ok)
+      return
+    end
 
+    @character_registration = CharacterRegistrationRequest.new(character_registration_params.merge(user: current_user))
     process_result = @character_registration.process!
 
     case process_result
     when :success
-      redirect_to character_registrations_path, notice: "Character successfully registered."
+      @created_registration = @character_registration.created_registration
+      respond_to do |format|
+        format.html { redirect_to character_registrations_path, notice: "Character successfully registered." }
+        format.turbo_stream
+      end
       record_create_analytics(@character_registration, result: process_result)
     when :confirm
       respond_to do |format|
         format.html { render :confirm }
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
-            "register_character_modal-content",
-            partial: "character_registrations/confirm",
-            locals: { candidates: @character_registration.candidates, name: @character_registration.search_name, world: @character_registration.search_world }
+            "character_wizard_modal-content",
+            partial: "character_registrations/wizard/disambiguation_step",
+            locals: {
+              candidates: @character_registration.candidates,
+              name: @character_registration.search_name,
+              world: @character_registration.search_world
+            }
           )
         end
       end
@@ -105,9 +118,11 @@ class CharacterRegistrationsController < ApplicationController
 
   private def render_new_form_again(status: :unprocessable_content)
     render status: status,
-           turbo_stream: turbo_stream.update("register_character_modal-content",
-                                             partial: "character_registrations/registration_form_modal",
-                                             locals: { character_registration: @character_registration })
+           turbo_stream: turbo_stream.update(
+             "character_wizard_modal-content",
+             partial: "character_registrations/wizard/search_step",
+             locals: { character_registration: @character_registration }
+           )
   end
 
   private def record_create_analytics(registration_request, result:)

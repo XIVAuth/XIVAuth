@@ -247,6 +247,9 @@ Build outputs: `app/javascript/*.* → app/assets/builds/`
 3. **Security & privacy by default** - Review all data handling for privacy implications
 4. **Maintainability & auditability** - Code should be easy to read and audit
 5. **Ask before major changes** - If a request conflicts with design philosophy, clarify with the developer
+6. **Pay attention to small details** - Things like database schema normalization, clean URLs, API schemas, 
+well-structured namespaces, and semantic correctness are vital. This project handles security-sensitive data, so small 
+details say a lot in terms of project quality and planning. The technicals should feel "friendly" and well-thought-out.
 
 ### Common Gotchas
 

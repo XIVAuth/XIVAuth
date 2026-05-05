@@ -1,6 +1,10 @@
+<%# locals: registration, character, job %>
 <div class="modal-header">
-  <h5 class="modal-title text-success" id="verifyLabel">Verified <%= character.name %>!</h5>
-  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="d-block">
+    <%= render 'character_registrations/wizard/step_indicator', current: 2, step_state: :success %>
+    <h5 class="modal-title text-success">Verified <%= character.name %>!</h5>
+  </div>
+  <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
   <p>

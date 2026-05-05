@@ -1,10 +1,4 @@
-<h1>Confirm Character</h1>
-
-<div class="card">
-  <div class="card-body">
-    <%= render partial: "character_registrations/confirm",
-               locals: { candidates: @character_registration.candidates,
-                        name: @character_registration.search_name,
-                        world: @character_registration.search_world } %>
-  </div>
-</div>
+<%= render 'character_registrations/wizard/disambiguation_step',
+           candidates: @character_registration.candidates,
+           name: @character_registration.search_name,
+           world: @character_registration.search_world %>

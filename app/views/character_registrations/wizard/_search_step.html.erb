@@ -1,9 +1,12 @@
+<%# locals: character_registration %>
 <%= form_with(model: character_registration, url: character_registrations_path, method: :post, scope: :character_registration) do |form| %>
   <div class="modal-header">
-    <h5 class="modal-title">Register Character</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="d-block">
+      <%= render 'character_registrations/wizard/step_indicator', current: 0 %>
+      <h5 class="modal-title">Add a Character</h5>
+    </div>
+    <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
   </div>
-
   <div class="modal-body">
     <% alert_errors = character_registration.errors.reject { |e| %i[lodestone_url character_search].include?(e.attribute) } %>
     <% if alert_errors.any? %>
@@ -15,9 +18,7 @@
       </div>
     <% end %>
 
-    <p>
-      You can register a character using either their Lodestone ID or URL, or by entering their name and home world.
-    </p>
+    <p>Find your character by Lodestone ID/URL, or by name and home world.</p>
 
     <div class="form-floating">
       <%= form.text_field :lodestone_url,
@@ -64,11 +65,8 @@
       <% end %>
     </div>
   </div>
-
   <div class="modal-footer">
-    <div>
-      <button type="button" class="btn btn-secondary-outline" data-bs-dismiss="modal">Cancel</button>
-      <%= form.submit "Register Character", class: "btn btn-primary" %>
-    </div>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    <%= form.submit "Find Character", class: "btn btn-primary" %>
   </div>
 <% end %>

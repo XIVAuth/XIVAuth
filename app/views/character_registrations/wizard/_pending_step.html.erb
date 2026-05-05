@@ -1,0 +1,23 @@
+<%# locals: registration, character, job %>
+<%= turbo_stream_from "VerifyCharacterRegistrationJob:#{job.job_id}" %>
+<div id="character-registration-job:<%= job.job_id %>:content">
+  <div class="modal-header">
+    <div class="d-block">
+      <%= render 'character_registrations/wizard/step_indicator', current: 1, step_state: :pending %>
+      <h5 class="modal-title">Verifying <%= character.name %></h5>
+    </div>
+    <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <p>Checking Lodestone for your verification code on <strong><%= character.name %></strong>.</p>
+    <p class="text-muted mb-0">This usually takes a few minutes. This dialog will update automatically.</p>
+  </div>
+  <div class="modal-footer">
+    <div class="me-auto">
+      <div class="text-secondary very-small align-middle">
+        Job ID: <span class="font-monospace"><%= job.job_id %></span>
+      </div>
+    </div>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+  </div>
+</div>

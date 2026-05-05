@@ -23,7 +23,7 @@ class FFXIV::VerifyCharacterRegistrationJob < ApplicationJob
 
   discard_on(FFXIV::LodestoneProfile::LodestoneProfileInvalid) do |job, error|
     logger.error("Got invalid profile while attempting verification", error: error)
-    job.report_result("verification_failed_invalid")
+    job.report_result("failed_invalid")
 
     failure_reason = error.respond_to?(:failure_reason) ? error.failure_reason : "unspecified"
     job.record_verify_metric("error_#{failure_reason}")
@@ -31,26 +31,26 @@ class FFXIV::VerifyCharacterRegistrationJob < ApplicationJob
 
   discard_on(FFXIV::LodestoneProfile::LodestoneCharacterHidden) do |job, _error|
     logger.warn("Could not verify CR #{job.arguments[0].id} - character was hidden.")
-    job.report_result("verification_failed_hiddenchara")
+    job.report_result("failed_hiddenchara")
     job.record_verify_metric("failure_character_hidden")
   end
 
   discard_on(FFXIV::LodestoneProfile::LodestoneProfilePrivate) do |job, _error|
     logger.warn("Could not verify CR #{job.arguments[0].id} - profile was private.")
-    job.report_result("verification_failed_privateprofile")
+    job.report_result("failed_privateprofile")
     job.record_verify_metric("failure_profile_private")
   end
 
   discard_on(FFXIV::LodestoneProfile::LodestoneMaintenance) do |job, _error|
     logger.warn("Could not verify CR #{job.arguments[0].id} - Lodestone is down for maintenance.")
-    job.report_result("verification_failed_maintenance")
+    job.report_result("failed_maintenance")
     # no log to Sentry - maint is out of our control.
   end
 
   retry_on(FFXIV::VerifyCharacterRegistrationJob::VerificationKeyMissingError, attempts: MAX_RETRY_ATTEMPTS,
 wait: 2.minutes) do |job, _error|
     logger.warn("Could not verify CR #{job.arguments[0].id} - verification key was not found after multiple attempts.")
-    job.report_result("verification_failed_codenotfound")
+    job.report_result("failed_codenotfound")
     job.record_verify_metric("failure_code_not_found")
   end
 
@@ -60,7 +60,7 @@ wait: 2.minutes) do |job, _error|
 
     if registration.verified?
       logger.warn "CharacterRegistration #{registration.id} is already verified!"
-      self.report_result("verification_success") # i, uh, guess?
+      self.report_result("success") # i, uh, guess?
       return
     end
 
@@ -91,12 +91,12 @@ wait: 2.minutes) do |job, _error|
       next unless candidate == registration.verification_key
 
       registration.verify!("lodestone_code", clobber: true)
-      self.report_result("verification_success")
+      self.report_result("success")
       self.record_verify_metric("success")
       return
     end
 
-    self.report_result("verification_retry")
+    self.report_result("retry")
     raise FFXIV::VerifyCharacterRegistrationJob::VerificationKeyMissingError,
           "Verification failed for #{registration.id} - key was not found."
   end
@@ -107,8 +107,12 @@ wait: 2.minutes) do |job, _error|
     Turbo::StreamsChannel.broadcast_update_to(
       "VerifyCharacterRegistrationJob:#{self.job_id}",
       target: "character-registration-job:#{self.job_id}:content",
-      partial: "character_registrations/verifications/modals/#{partial_name}",
-      locals: { registration: registration, character: registration.character, job: self },
+      partial: "character_registrations/verifications/wizard_modals/#{partial_name}",
+      locals: {
+        registration: registration,
+        character: registration.character,
+        job: self
+      },
       attributes: { method: :morph }
     )
   end

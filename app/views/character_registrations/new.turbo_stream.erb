@@ -1,6 +1,6 @@
 <%= turbo_stream.append "body" do %>
-  <%= render 'layouts/components/remote_modal', title: 'Add Character', modal_id: "register_character_modal" do %>
-      <%= render partial: 'character_registrations/registration_form_modal',
-                 locals: { character_registration: @character_registration } %>
+  <%= render 'character_registrations/wizard/container' do %>
+    <%= render 'character_registrations/wizard/search_step',
+               character_registration: @character_registration %>
   <% end %>
 <% end %>
