@@ -12,7 +12,7 @@ RUN gem update --system --no-document && \
     gem install -N bundler foreman
 
 # Install base packages
-RUN apk add --no-cache curl jemalloc postgresql-client tzdata libsodium libpq
+RUN apk add --no-cache curl jemalloc postgresql-client tzdata libsodium libpq vips
 
 
 

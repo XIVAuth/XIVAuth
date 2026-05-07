@@ -2,8 +2,16 @@ class ClientApplication < ApplicationRecord
   include HasUploadAttachment
 
   has_upload_attachment :icon,
-    content_types: %w[image/png image/jpeg image/webp image/gif],
-    max_size:      2.megabytes
+                        content_types: %w[image/png image/jpeg image/webp image/gif],
+                        max_size: 2.megabytes,
+                        validate: [
+                          ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
+                        ],
+                        derivatives: ->(pipeline) {
+                          {
+                            large:  pipeline.resize_to_fill!(256, 256)
+                          }
+                        }
 
   belongs_to :owner, polymorphic: true, optional: true
 

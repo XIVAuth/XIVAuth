@@ -40,9 +40,11 @@ module HasUploadAttachment
     #   validate:      Proc (or array of procs) run in Shrine attacher context for
     #                  arbitrary validation. Has access to +file+, +record+, +errors+,
     #                  and all Shrine validation helpers.
-    def has_upload_attachment(name, prefix: nil, content_types: nil, max_size: nil, validate: nil)
+    #   derivatives:   Proc called with a pre-sourced ImageProcessing::Vips pipeline;
+    #                  must return a Hash of { derivative_name => processed_file }.
+    def has_upload_attachment(name, prefix: nil, content_types: nil, max_size: nil, validate: nil, derivatives: nil)
       _register_upload_attachment(name, prefix: prefix, content_types: content_types,
-                                        max_size: max_size, validate: validate)
+                                        max_size: max_size, validate: validate, derivatives: derivatives)
 
       define_method(name) do
         if attachments.loaded?

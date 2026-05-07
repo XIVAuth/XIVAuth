@@ -1,4 +1,12 @@
 class AttachmentUploader < Shrine
+  Attacher.derivatives do |original|
+    config = record&.owner_attachment_config
+    next {} unless (deriv_proc = config&.dig(:derivatives))
+
+    pipeline = ImageProcessing::Vips.source(original)
+    instance_exec(pipeline, &deriv_proc)
+  end
+
   Attacher.validate do
     config = record&.owner_attachment_config
     validate_mime_type config[:content_types] if config&.dig(:content_types)
