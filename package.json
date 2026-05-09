@@ -16,7 +16,7 @@
     "@hotwired/turbo-rails": "^8.0.23",
     "@popperjs/core": "^2.11.8",
     "@rails/actioncable": "^8.1.300",
-    "@sentry/browser": "^10.51.0",
+    "@sentry/browser": "^10.52.0",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "esbuild": "^0.28.0",
