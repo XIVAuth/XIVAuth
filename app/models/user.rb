@@ -3,6 +3,20 @@ class User < ApplicationRecord
   include SystemRoleable
   include User::TeamAssociations
   include User::SessionManageable
+  include HasUploadAttachment
+
+  has_upload_attachment :avatar,
+                        content_types: %w[image/png image/jpeg image/webp image/gif],
+                        max_size: 2.megabytes,
+                        validate: [
+                          ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
+                        ],
+                        derivatives: ->(pipeline) {
+                          {
+                            large: pipeline.resize_to_fill!(256, 256),
+                            medium: pipeline.resize_to_fill!(144, 144),
+                          }
+                        }
 
   # ZXCVBN config
   include PasswordStrengthValidatable
@@ -44,6 +58,10 @@ class User < ApplicationRecord
     super || build_profile
   end
 
+  def avatar_url(derivative: nil)
+    avatar&.url(derivative: derivative) || gravatar_url(144)
+  end
+
   def admin?
     self.role? :admin
   end
@@ -76,10 +94,6 @@ class User < ApplicationRecord
 
   def display_name
     profile.display_name
-  end
-
-  def avatar_url
-    gravatar_url(144)
   end
 
   def gravatar_url(size = 32, fallback: "retro", rating: "pg")

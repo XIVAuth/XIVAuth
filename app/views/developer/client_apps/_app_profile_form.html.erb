@@ -9,11 +9,19 @@
 
       <div class="mb-3">
         <%= f.label :icon, "App Icon", class: "form-label fw-semibold" %>
-        <div class="mb-2">
-          <%= image_tag @application.icon_url, class: "rounded", style: "width: 64px; height: 64px; object-fit: cover;", alt: "Current icon" %>
+        <div class="d-flex align-items-start gap-3">
+          <%= image_tag @application.icon_url, class: "rounded flex-shrink-0", style: "width: 64px; height: 64px; object-fit: cover;", alt: "Current icon" %>
+          <div class="flex-grow-1">
+            <%= f.file_field :icon, class: "form-control form-control-sm", accept: "image/png,image/jpeg,image/webp,image/gif" %>
+            <% if @application.icon.present? %>
+              <div class="form-check mt-1">
+                <%= check_box_tag "client_application[remove_icon]", "1", false, class: "form-check-input", id: "client_application_remove_icon" %>
+                <%= label_tag "client_application_remove_icon", "Remove current icon", class: "form-check-label" %>
+              </div>
+            <% end %>
+            <div class="form-text">PNG, JPG, WebP or GIF. Max 2 MB.</div>
+          </div>
         </div>
-        <%= f.file_field :icon, class: "form-control", accept: "image/png,image/jpeg,image/webp,image/gif" %>
-        <div class="form-text">PNG, JPG, WebP or GIF. Max 2 MB.</div>
       </div>
 
       <% if @application.persisted? %>

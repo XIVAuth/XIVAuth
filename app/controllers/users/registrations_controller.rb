@@ -36,6 +36,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # PUT /resource
   def update
+    current_user.avatar&.destroy if params.dig(:user, :avatar_source) == "gravatar"
+
     super do |resource|
       if resource.errors.empty? && resource.saved_change_to_encrypted_password?
         current_sid = request.env["rack.session.options"]&.[](:id)&.private_id
@@ -86,7 +88,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   protected def configure_account_update_params
-    devise_parameter_sanitizer.permit(:account_update, keys: [profile_attributes: [:display_name]])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:avatar, profile_attributes: [:display_name]])
   end
 
   def after_sign_up_path_for(resource)

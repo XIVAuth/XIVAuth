@@ -9,13 +9,30 @@
           <i class="bi bi-exclamation-triangle"></i> This is a system team and cannot be modified.
         </div>
       <% end %>
-      <%= form_for @team, url: developer_team_path(@team), method: :patch do |f| %>
+      <%= form_for @team, url: developer_team_path(@team), method: :patch, html: { multipart: true } do |f| %>
         <div class="row">
           <div class="col-md-6">
             <div class="mb-3">
               <%= f.label :name, "Team Name", class: "form-label fw-semibold" %>
               <%= f.text_field :name, class: "form-control", placeholder: "My Awesome Team", required: true, disabled: @team.readonly? %>
               <div class="form-text">The name of your team as it appears to users.</div>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :icon, "Team Icon", class: "form-label fw-semibold" %>
+              <div class="d-flex align-items-start gap-3">
+                <%= image_tag @team.icon_url, class: "rounded flex-shrink-0", style: "width: 64px; height: 64px; object-fit: cover;", alt: "Current icon" %>
+                <div class="flex-grow-1">
+                  <%= f.file_field :icon, class: "form-control form-control-sm", accept: "image/png,image/jpeg,image/webp,image/gif", disabled: @team.readonly? %>
+                  <% if @team.icon.present? %>
+                    <div class="form-check mt-1">
+                      <%= check_box_tag "team[remove_icon]", "1", false, class: "form-check-input", id: "team_remove_icon", disabled: @team.readonly? %>
+                      <%= label_tag "team_remove_icon", "Remove current icon", class: "form-check-label" %>
+                    </div>
+                  <% end %>
+                  <div class="form-text">PNG, JPG, WebP or GIF. Max 2 MB.</div>
+                </div>
+              </div>
             </div>
 
             <% if @team.parent.present? %>

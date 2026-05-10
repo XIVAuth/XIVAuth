@@ -1,8 +1,22 @@
 class Team < ApplicationRecord
+  include HasUploadAttachment
+
   TEAM_DEPTH_LIMIT = 5
   TEAM_SUBTEAM_LIMIT = 5
 
   has_one :profile, class_name: "Team::Profile", dependent: :destroy, required: true, autosave: true
+
+  has_upload_attachment :icon,
+                        content_types: %w[image/png image/jpeg image/webp image/gif],
+                        max_size: 2.megabytes,
+                        validate: [
+                          ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
+                        ],
+                        derivatives: ->(pipeline) {
+                          {
+                            large:  pipeline.resize_to_fill!(256, 256)
+                          }
+                        }
 
   belongs_to :parent, class_name: "Team", optional: true
   has_many :subteams, class_name: "Team", foreign_key: "parent_id", inverse_of: :parent
@@ -30,6 +44,10 @@ class Team < ApplicationRecord
 
   def profile
     super || build_profile
+  end
+
+  def icon_url(derivative: nil)
+    icon&.url(derivative: derivative) || "https://api.dicebear.com/9.x/initials/png?seed=#{self.name}&backgroundType=gradientLinear"
   end
 
   def active_memberships

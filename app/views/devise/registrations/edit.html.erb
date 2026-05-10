@@ -11,9 +11,36 @@
           <h2 class="h5 mb-0">Profile Information</h2>
         </div>
       </div>
-      <%= form_for(resource, as: resource_name, url: user_path, html: { method: :put }) do |f| %>
+      <%= form_for(resource, as: resource_name, url: user_path, html: { method: :put, multipart: true }) do |f| %>
         <div class="card-body">
           <%= render "devise/shared/error_messages", resource: resource %>
+
+          <div class="mb-3">
+            <p class="form-label fw-semibold mb-2">Profile Picture</p>
+            <% avatar_source = params.dig(:user, :avatar_source).presence || (resource.avatar.present? ? "custom" : "gravatar") %>
+            <div class="d-flex align-items-start gap-3" data-controller="utilities--toggle-category">
+              <%= image_tag resource.avatar_url, class: "rounded-2 flex-shrink-0", style: "width: 96px; height: 96px; object-fit: cover;", alt: "Current avatar" %>
+              <div class="flex-grow-1">
+                <div class="form-check">
+                  <%= radio_button_tag "user[avatar_source]", "gravatar", avatar_source == "gravatar",
+                        class: "form-check-input", id: "user_avatar_source_gravatar",
+                        data: { action: "change->utilities--toggle-category#update", category: "gravatar" } %>
+                  <%= label_tag "user_avatar_source_gravatar", class: "form-check-label" do %>
+                    Use Gravatar <a class="very-small" target="_blank"  href="https://support.gravatar.com/basic/what-is-gravatar/">(What is this?)</a>
+                  <% end %>
+                </div>
+                <div class="form-check mb-2">
+                  <%= radio_button_tag "user[avatar_source]", "custom", avatar_source == "custom",
+                        class: "form-check-input", id: "user_avatar_source_custom",
+                        data: { action: "change->utilities--toggle-category#update", category: "custom" } %>
+                  <%= label_tag "user_avatar_source_custom", "Upload custom avatar", class: "form-check-label" %>
+                </div>
+                <%= f.file_field :avatar, class: "form-control form-control-sm", accept: "image/png,image/jpeg,image/webp,image/gif",
+                      data: { "utilities--toggle-category-target": "item", category: "custom" } %>
+                <div class="form-text">PNG, JPG, WebP or GIF. Max 2 MB.</div>
+              </div>
+            </div>
+          </div>
 
           <div class="mb-3">
             <label class="form-label fw-semibold" for="user_id">User ID</label>

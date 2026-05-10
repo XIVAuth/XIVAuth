@@ -48,7 +48,7 @@ module HasUploadAttachment
 
       define_method(name) do
         if attachments.loaded?
-          attachments.find { |a| a.name == name.to_s }
+          attachments.find { |a| a.name == name.to_s && a.persisted? }
         else
           attachments.find_by(name: name.to_s)
         end

@@ -46,12 +46,6 @@ class Developer::TeamsController < Developer::DeveloperPortalController
       return
     end
 
-    direct = @team.direct_memberships.includes(:user).to_a
-    inherited = @team.antecedent_memberships.includes(:user, :team).to_a
-
-    role_order = Team::Membership.roles.keys
-    @all_memberships = (direct + inherited).sort_by { |m| role_order.index(m.role) || role_order.size }
-
     respond_to do |format|
       format.html { render :show }
       format.json { render json: @team, as_owner: true }
@@ -78,8 +72,12 @@ class Developer::TeamsController < Developer::DeveloperPortalController
 
     if @team.readonly?
       flash[:alert] = "This is a system team and cannot be modified."
-      redirect_to developer_team_path(@team)
-    elsif @team.update(update_team_params)
+      return redirect_to developer_team_path(@team)
+    end
+
+    @team.icon&.destroy if params.dig(:team, :remove_icon) == "1"
+
+    if @team.update(update_team_params)
       flash[:notice] = "Team updated successfully."
       redirect_to developer_team_path(@team)
     else
@@ -109,6 +107,11 @@ class Developer::TeamsController < Developer::DeveloperPortalController
     @team = Team.find(params[:id])
 
     authorize! :use, @team
+
+    direct = @team.direct_memberships.includes(:user).to_a
+    inherited = @team.antecedent_memberships.includes(:user, :team).to_a
+    role_order = Team::Membership.roles.keys
+    @all_memberships = (direct + inherited).sort_by { |m| role_order.index(m.role) || role_order.size }
   end
 
   private def load_parent_teams
@@ -122,7 +125,7 @@ class Developer::TeamsController < Developer::DeveloperPortalController
   end
 
   private def update_team_params
-    params.require(:team).permit(:name, :inherit_parent_memberships)
+    params.require(:team).permit(:name, :inherit_parent_memberships, :icon)
   end
 
   private def check_team_list_access
