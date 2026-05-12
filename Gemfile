@@ -63,7 +63,6 @@ gem "webauthn", "~> 3.4.1"
 # OAuth2 Providers
 gem "omniauth-github", "~> 2.0"
 gem "omniauth-oauth2", "~> 1.8"
-gem "omniauth-steam", "~> 1.0"
 gem "omniauth-twitch", "~> 1.2"
 
 # Outbound OAuth2
