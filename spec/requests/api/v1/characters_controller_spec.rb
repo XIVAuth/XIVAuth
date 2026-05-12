@@ -1,7 +1,7 @@
 require "rails_helper"
 require "support/without_detailed_exceptions"
 
-RSpec.describe "Api::V1::CharactersControllers", type: :request do
+RSpec.describe "Api::V1::CharactersControllers" do
   let(:user) { FactoryBot.create(:user) }
   let(:oauth_client) { FactoryBot.create(:oauth_client) }
   let(:character) { FactoryBot.create(:ffxiv_character) }
@@ -168,8 +168,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
       context "when registration succeeds" do
         it "returns HTTP 201 with character data" do
           allow(CharacterRegistrationRequest).to receive(:new).and_return(mock_request)
-          allow(mock_request).to receive(:process!).and_return(:success)
-          allow(mock_request).to receive(:created_registration).and_return(mock_registration)
+          allow(mock_request).to receive_messages(process!: :success, created_registration: mock_registration)
 
           post api_v1_characters_path,
                params: { lodestone_id: "12345678" },
@@ -186,8 +185,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
           expect(CharacterRegistrationRequest).to receive(:new)
             .with(hash_including(user: user, lodestone_url: "12345678"))
             .and_return(mock_request)
-          allow(mock_request).to receive(:process!).and_return(:success)
-          allow(mock_request).to receive(:created_registration).and_return(mock_registration)
+          allow(mock_request).to receive_messages(process!: :success, created_registration: mock_registration)
 
           post api_v1_characters_path,
                params: { lodestone_id: "12345678" },
@@ -200,8 +198,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
             .with(hash_including(user: user, search_name: "Test Character", search_world: "Excalibur",
                                  search_exact: false))
             .and_return(mock_request)
-          allow(mock_request).to receive(:process!).and_return(:success)
-          allow(mock_request).to receive(:created_registration).and_return(mock_registration)
+          allow(mock_request).to receive_messages(process!: :success, created_registration: mock_registration)
 
           post api_v1_characters_path,
                params: { name: "Test Character", world: "Excalibur" },
@@ -213,8 +210,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
           expect(CharacterRegistrationRequest).to receive(:new)
             .with(hash_including(search_exact: true))
             .and_return(mock_request)
-          allow(mock_request).to receive(:process!).and_return(:success)
-          allow(mock_request).to receive(:created_registration).and_return(mock_registration)
+          allow(mock_request).to receive_messages(process!: :success, created_registration: mock_registration)
 
           post api_v1_characters_path,
                params: { name: "Test Character", world: "Excalibur", exact: "true" },
@@ -234,8 +230,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
         it "returns HTTP 300 with candidate list" do
           allow(CharacterRegistrationRequest).to receive(:new).and_return(mock_request)
-          allow(mock_request).to receive(:process!).and_return(:confirm)
-          allow(mock_request).to receive(:candidates).and_return(candidates)
+          allow(mock_request).to receive_messages(process!: :confirm, candidates: candidates)
 
           post api_v1_characters_path,
                params: { name: "Test Character", world: "Excalibur" },

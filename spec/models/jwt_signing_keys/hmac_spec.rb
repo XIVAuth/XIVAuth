@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe JwtSigningKeys::HMAC, type: :model do
+RSpec.describe JwtSigningKeys::HMAC do
   subject { described_class.new(name: "rspec_hmac_#{SecureRandom.uuid}") }
 
   it "is not valid without a name" do

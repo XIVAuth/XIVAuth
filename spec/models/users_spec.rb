@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe User, type: :model do
+RSpec.describe User do
   context "with an empty password" do
     before do
       @user = FactoryBot.build(:user, password: nil, encrypted_password: nil)

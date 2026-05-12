@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Certificates::CrlsController", type: :request do
+RSpec.describe "Certificates::CrlsController" do
   let(:ca) { FactoryBot.create(:pki_certificate_authority) }
 
   xdescribe "GET /certificates/crls/:slug" do

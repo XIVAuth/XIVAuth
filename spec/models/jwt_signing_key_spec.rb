@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe JwtSigningKey, type: :model do
+RSpec.describe JwtSigningKey do
   describe "lifecycle and flags" do
     it "computes expired? correctly" do
       key = FactoryBot.create(:jwt_signing_keys_hmac)
@@ -29,7 +29,7 @@ RSpec.describe JwtSigningKey, type: :model do
       inactive = FactoryBot.create(:jwt_signing_keys_hmac, enabled: false)
       expired = FactoryBot.create(:jwt_signing_keys_rsa, expires_at: 1.hour.ago)
 
-      active_keys = JwtSigningKey.active
+      active_keys = described_class.active
       expect(active_keys).to include(active_rsa)
       expect(active_keys).not_to include(inactive)
       expect(active_keys).not_to include(expired)
@@ -47,7 +47,7 @@ RSpec.describe JwtSigningKey, type: :model do
       hmac_active = FactoryBot.create(:jwt_signing_keys_hmac)
       expired = FactoryBot.create(:jwt_signing_keys_hmac, expires_at: 1.hour.ago)
 
-      set = JwtSigningKey.jwks
+      set = described_class.jwks
       expect(set).to be_a(JWT::JWK::Set)
       kids = set.export[:keys].pluck(:kid)
 
@@ -86,36 +86,36 @@ RSpec.describe JwtSigningKey, type: :model do
     end
 
     it "returns RSA for RS256 and PS256 families" do
-      expect(JwtSigningKey.preferred_key_for_algorithm("RS256")).to eq(@rsa_key)
-      expect(JwtSigningKey.preferred_key_for_algorithm("PS256")).to eq(@rsa_key)
+      expect(described_class.preferred_key_for_algorithm("RS256")).to eq(@rsa_key)
+      expect(described_class.preferred_key_for_algorithm("PS256")).to eq(@rsa_key)
     end
 
     it "returns HMAC for HS256 family" do
-      expect(JwtSigningKey.preferred_key_for_algorithm("HS256")).to eq(@hmac_key)
+      expect(described_class.preferred_key_for_algorithm("HS256")).to eq(@hmac_key)
     end
 
     it "returns Ed25519 for EdDSA" do
-      expect(JwtSigningKey.preferred_key_for_algorithm("EdDSA")).to eq(@eddsa_key)
+      expect(described_class.preferred_key_for_algorithm("EdDSA")).to eq(@eddsa_key)
     end
 
     it "returns a matching ECDSA key for ECDSA curves" do
-      expect(JwtSigningKey.preferred_key_for_algorithm("ES256")).to eq(@ecdsa_key)
+      expect(described_class.preferred_key_for_algorithm("ES256")).to eq(@ecdsa_key)
     end
 
     it "returns nil for unknown algorithm" do
-      expect(JwtSigningKey.preferred_key_for_algorithm("foo.bar")).to be_nil
+      expect(described_class.preferred_key_for_algorithm("foo.bar")).to be_nil
     end
   end
 
   it "raises NoMethodError for supported_algorithms in base class" do
-    key = JwtSigningKey.new(name: "base_test_#{SecureRandom.uuid}")
+    key = described_class.new(name: "base_test_#{SecureRandom.uuid}")
     expect { key.supported_algorithms }.to raise_error(NoMethodError, /Must be implemented by subclass/)
   end
 
   describe "encryption" do
     it "has encryption configured for private_key" do
       # Verify that the private_key attribute is marked as encrypted
-      encrypted_attributes = JwtSigningKey.encrypted_attributes
+      encrypted_attributes = described_class.encrypted_attributes
       expect(encrypted_attributes).to include(:private_key)
     end
 
@@ -133,7 +133,7 @@ RSpec.describe JwtSigningKey, type: :model do
       expect(encryptor).to receive(:decrypt).at_least(:once).and_call_original
 
       # Reload to ensure we're reading from DB
-      reloaded_key = JwtSigningKey.find(key.id)
+      reloaded_key = described_class.find(key.id)
       reloaded_key.private_key
     end
   end

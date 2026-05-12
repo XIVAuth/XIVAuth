@@ -2,7 +2,7 @@ require "rails_helper"
 require "support/authentication_helpers"
 require "webauthn/fake_client"
 
-RSpec.describe "Users::SessionsController", type: :request do
+RSpec.describe "Users::SessionsController" do
   let(:password) { "SecurePassword123!" }
   let(:user) do
     FactoryBot.create(:user, password: password, password_confirmation: password,

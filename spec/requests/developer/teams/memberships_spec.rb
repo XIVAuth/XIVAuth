@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Developer::Teams::Memberships", type: :request do
+RSpec.describe "Developer::Teams::Memberships" do
   let(:user) { FactoryBot.create(:user, :developer) }
   let(:target_user) { FactoryBot.create(:user) }
 

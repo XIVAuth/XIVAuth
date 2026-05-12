@@ -1,9 +1,9 @@
 require "rails_helper"
 
-RSpec.describe OAuth::PermissiblePolicy, type: :model do
+RSpec.describe OAuth::PermissiblePolicy do
   context "allow rule present" do
     before do
-      @policy = OAuth::PermissiblePolicy.create
+      @policy = described_class.create
       @resource = FactoryBot.create(:ffxiv_character)
 
       @policy.rules.create(resource: @resource, deny: false)
@@ -26,7 +26,7 @@ RSpec.describe OAuth::PermissiblePolicy, type: :model do
 
   context "deny rule present" do
     before do
-      @policy = OAuth::PermissiblePolicy.create
+      @policy = described_class.create
       @resource = FactoryBot.create(:ffxiv_character)
 
       @policy.rules.create(resource: @resource, deny: true)
@@ -49,7 +49,7 @@ RSpec.describe OAuth::PermissiblePolicy, type: :model do
 
   context "no rules present" do
     before do
-      @policy = OAuth::PermissiblePolicy.create
+      @policy = described_class.create
     end
 
     it "allows access to all resources" do
@@ -73,7 +73,7 @@ RSpec.describe OAuth::PermissiblePolicy, type: :model do
         user: @user_resource
       )
 
-      @policy = OAuth::PermissiblePolicy.create
+      @policy = described_class.create
       @policy.rules.create(resource: @allowed_resource, deny: false)
       @policy.rules.create(resource: @denied_resource, deny: true)
     end

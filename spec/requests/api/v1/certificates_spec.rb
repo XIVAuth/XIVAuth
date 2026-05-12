@@ -1,7 +1,7 @@
 require "rails_helper"
 require "support/without_detailed_exceptions"
 
-RSpec.describe "Api::V1::CertificatesController", type: :request do
+RSpec.describe "Api::V1::CertificatesController" do
   before(:context) do
     @ca = FactoryBot.create(:pki_certificate_authority)
   end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe User::SessionManageable, type: :model do
+RSpec.describe User::SessionManageable do
   let(:user) { FactoryBot.create(:user) }
   let(:sid_near) { SecureRandom.urlsafe_base64(32) }
   let(:sid_far) { SecureRandom.urlsafe_base64(32) }

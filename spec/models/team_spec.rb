@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Team, type: :model do
+RSpec.describe Team do
   describe "validations" do
     describe "#validate_subteam_or_has_admin" do
       it "requires root teams to have at least one admin" do
@@ -347,7 +347,7 @@ RSpec.describe Team, type: :model do
 
       FactoryBot.create(:team_membership, team: team, user: user2)
 
-      expect(team.all_members.count).to eql(2)
+      expect(team.all_members.count).to be(2)
       expect(team.all_members.find(user2.id)).to eql(user2)
     end
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe User::TeamAssociations, type: :model do
+RSpec.describe User::TeamAssociations do
   let(:user) { FactoryBot.create(:user) }
 
   describe "#teams_by_membership_scope" do

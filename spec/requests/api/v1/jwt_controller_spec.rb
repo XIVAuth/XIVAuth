@@ -2,7 +2,7 @@ require "rails_helper"
 require "support/oauth_contexts"
 require "support/pki_support"
 
-RSpec.describe "Api::V1::JwtController", type: :request do
+RSpec.describe "Api::V1::JwtController" do
   include_context "oauth:client_credentials"
 
   # Key generation is expensive, do it once.

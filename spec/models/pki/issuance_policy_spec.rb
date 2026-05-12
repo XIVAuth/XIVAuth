@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PKI::IssuancePolicy, type: :model do
+RSpec.describe PKI::IssuancePolicy do
   let(:ca)      { FactoryBot.create(:pki_certificate_authority) }
   let(:user)    { FactoryBot.create(:user) }
   let(:ec_key)  { OpenSSL::PKey::EC.generate("prime256v1") }
@@ -34,8 +34,8 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
 
     it "raises for unknown certificate types" do
       expect do
-        PKI::IssuancePolicy.for(certificate_type: "unknown", subject: user, public_key: ec_key,
-                                certificate_authority: ca)
+        described_class.for(certificate_type: "unknown", subject: user, public_key: ec_key,
+                            certificate_authority: ca)
       end.to raise_error(ArgumentError, /No PKI issuance policy/)
     end
   end

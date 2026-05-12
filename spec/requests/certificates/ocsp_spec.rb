@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Certificates::OcspController", type: :request do
+RSpec.describe "Certificates::OcspController" do
   let(:ca) { FactoryBot.create(:pki_certificate_authority) }
 
   def build_ocsp_request_der(serials)

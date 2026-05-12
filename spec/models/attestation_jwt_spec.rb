@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AttestationJwt, type: :model do
+RSpec.describe AttestationJwt do
   # Create a default key for tests that rely on automatic key selection
   # Default subject uses HMAC for performance
   subject(:jwt) { described_class.new(algorithm: "HS256", signing_key: hmac_key) }

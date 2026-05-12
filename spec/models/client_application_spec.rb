@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ClientApplication, type: :model do
+RSpec.describe ClientApplication do
   describe "#usable_by?" do
     let!(:random_user) { FactoryBot.create(:user) }
 

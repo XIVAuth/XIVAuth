@@ -1,7 +1,7 @@
 require "rails_helper"
 require "support/authentication_helpers"
 
-RSpec.describe "Users::RegistrationsController", type: :request do
+RSpec.describe "Users::RegistrationsController" do
   include AuthenticationHelpers
   include Warden::Test::Helpers
 
@@ -72,8 +72,8 @@ RSpec.describe "Users::RegistrationsController", type: :request do
 
         # Verify the new password was saved.
         user.reload
-        expect(user.valid_password?(new_password)).to be_truthy
-        expect(user.password_set?).to be_truthy
+        expect(user).to be_valid_password(new_password)
+        expect(user).to be_password_set
       end
     end
 
@@ -118,7 +118,7 @@ RSpec.describe "Users::RegistrationsController", type: :request do
         expect(response).to have_http_status(:unprocessable_content)
 
         user.reload
-        expect(user.valid_password?(new_password)).to be_falsey
+        expect(user).not_to be_valid_password(new_password)
       end
 
       it "accepts current_password when provided and updates protected fields" do

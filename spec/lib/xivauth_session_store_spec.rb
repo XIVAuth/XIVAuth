@@ -6,7 +6,7 @@ RSpec.describe XivAuthSessionStore do
   let(:redis_double) { instance_double(Redis) }
   let(:store) do
     allow(Redis).to receive(:new).and_return(redis_double)
-    XivAuthSessionStore.new(app, redis: { expire_after: 7.days.to_i })
+    described_class.new(app, redis: { expire_after: 7.days.to_i })
   end
 
   let(:sid) { Rack::Session::SessionId.new(SecureRandom.urlsafe_base64(32)) }
@@ -42,7 +42,7 @@ RSpec.describe XivAuthSessionStore do
 
     it "writes without expiry when no TTL is configured" do
       allow(Redis).to receive(:new).and_return(redis_double)
-      store_no_expiry = XivAuthSessionStore.new(app, redis: { })
+      store_no_expiry = described_class.new(app, redis: { })
 
       expect(redis_double).to receive(:set).with(session_key, anything)
       store_no_expiry.write_session({ }, sid, session_data, { })

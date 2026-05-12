@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe JwtSigningKeys::ECDSA, type: :model do
+RSpec.describe JwtSigningKeys::ECDSA do
   subject { described_class.new(name: "rspec_ecdsa_#{SecureRandom.uuid}", curve: "prime256v1") }
 
   context "crypto verification" do
@@ -79,7 +79,7 @@ RSpec.describe JwtSigningKeys::ECDSA, type: :model do
       # P112 curves are not supported per RFC 7518, but OpenSSL can create them.
 
       ec_key = described_class.new(name: "invalid_curve_test", curve: "secp112r1")
-      expect(ec_key).to be_invalid
+      expect(ec_key).not_to be_valid
     end
   end
 end

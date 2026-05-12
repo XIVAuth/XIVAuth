@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe CharacterRegistrationRequest, type: :model do
+RSpec.describe CharacterRegistrationRequest do
   let(:user) { FactoryBot.create(:user) }
 
   def load_fixture(filename)
@@ -30,17 +30,17 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
 
   describe "validations" do
     it "validates lodestone_url format when present" do
-      request = CharacterRegistrationRequest.new(
+      request = described_class.new(
         lodestone_url: "not-a-valid-id",
         user: user
       )
 
-      expect(request).to be_invalid
+      expect(request).not_to be_valid
       expect(request.errors[:lodestone_url]).to be_present
     end
 
     it "allows valid lodestone URLs" do
-      request = CharacterRegistrationRequest.new(
+      request = described_class.new(
         lodestone_url: "https://na.finalfantasyxiv.com/lodestone/character/12345678/",
         user: user
       )
@@ -50,7 +50,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
     end
 
     it "allows bare lodestone IDs" do
-      request = CharacterRegistrationRequest.new(
+      request = described_class.new(
         lodestone_url: "12345678",
         user: user
       )
@@ -64,7 +64,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
       it "creates a character registration successfully" do
         mock_lodestone_profile("12345678", "valid_withcode.json")
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           lodestone_url: "12345678",
           user: user
         )
@@ -83,7 +83,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
       it "extracts and stores region from full URL" do
         mock_lodestone_profile("87654321", "valid_withcode.json")
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           lodestone_url: "https://eu.finalfantasyxiv.com/lodestone/character/87654321/",
           user: user
         )
@@ -101,7 +101,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
       it "returns :invalid and adds error for not found character" do
         mock_lodestone_profile("99999999", "not_found.json")
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           lodestone_url: "99999999",
           user: user
         )
@@ -110,13 +110,13 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           result = request.process!
           expect(result).to eq(:invalid)
           expect(request.errors[:lodestone_url]).to be_present
-        end.not_to(change { CharacterRegistration.count })
+        end.not_to(change(CharacterRegistration, :count))
       end
 
       it "returns :failed and adds error for hidden character" do
         mock_lodestone_profile("88888888", "hidden.json")
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           lodestone_url: "88888888",
           user: user
         )
@@ -134,7 +134,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
       it "does not add duplicate errors" do
         mock_lodestone_profile("99999999", "not_found.json")
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           lodestone_url: "99999999",
           user: user
         )
@@ -154,7 +154,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
       it "returns :failed and adds error to :character when Lodestone is under maintenance" do
         mock_lodestone_profile("77777777", "maintenance.json")
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           lodestone_url: "77777777",
           user: user
         )
@@ -171,7 +171,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
 
     context "with malformed input" do
       it "returns :invalid with error for invalid lodestone ID format" do
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           lodestone_url: "invalid",
           user: user
         )
@@ -196,7 +196,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           ]
         )
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           search_name: "Abe Eon",
           search_world: "Gilgamesh",
           user: user
@@ -224,7 +224,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           ]
         )
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           search_name: "John Doe",
           search_world: "Gilgamesh",
           user: user
@@ -248,7 +248,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           results: []
         )
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           search_name: "Nonexistent Character",
           search_world: "Gilgamesh",
           user: user
@@ -275,7 +275,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           results: results
         )
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           search_name: "Common Name",
           search_world: "Gilgamesh",
           user: user
@@ -298,7 +298,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           error: "Rate limited. Please try again in a moment."
         )
 
-        request = CharacterRegistrationRequest.new(
+        request = described_class.new(
           search_name: "Any Name",
           search_world: "Gilgamesh",
           user: user
@@ -314,7 +314,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
 
   describe "#process! with missing inputs" do
     it "returns :invalid when no inputs provided" do
-      request = CharacterRegistrationRequest.new(user: user)
+      request = described_class.new(user: user)
 
       result = request.process!
 
@@ -324,7 +324,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
     end
 
     it "returns :invalid when only search name provided" do
-      request = CharacterRegistrationRequest.new(
+      request = described_class.new(
         search_name: "Abe Eon",
         user: user
       )
@@ -336,7 +336,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
     end
 
     it "returns :invalid when only search world provided" do
-      request = CharacterRegistrationRequest.new(
+      request = described_class.new(
         search_world: "Gilgamesh",
         user: user
       )
@@ -352,7 +352,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
     it "maps character errors to the specified field" do
       mock_lodestone_profile("99999999", "not_found.json")
 
-      request = CharacterRegistrationRequest.new(
+      request = described_class.new(
         lodestone_url: "99999999",
         user: user
       )
@@ -375,7 +375,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
         ]
       )
 
-      request = CharacterRegistrationRequest.new(
+      request = described_class.new(
         search_name: "Hidden Character",
         search_world: "Gilgamesh",
         user: user

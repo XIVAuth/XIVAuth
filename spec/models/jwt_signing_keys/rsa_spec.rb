@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe JwtSigningKeys::RSA, type: :model do
+RSpec.describe JwtSigningKeys::RSA do
   subject { described_class.new(name: "rspec_rsa_#{SecureRandom.uuid}", size: 2048) }
 
   context "crypto verification" do

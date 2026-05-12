@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe FFXIV::LodestoneProfile, type: :model do
+RSpec.describe FFXIV::LodestoneProfile do
   let(:fixtures_path) { Rails.root.join("spec/fixtures/lodestone/characters") }
 
   def load_fixture(name)
@@ -62,7 +62,7 @@ RSpec.describe FFXIV::LodestoneProfile, type: :model do
       flarestone_response = load_fixture("hidden.json")
       profile = described_class.new(12_345_678, json_object: flarestone_response)
 
-      expect(profile).to be_invalid
+      expect(profile).not_to be_valid
       expect(profile.failure_reason).to eq(:hidden_character)
       expect(profile.errors[:base].join).to match(/is marked as hidden or private/i)
     end
@@ -71,7 +71,7 @@ RSpec.describe FFXIV::LodestoneProfile, type: :model do
       flarestone_response = load_fixture("not_found.json")
       profile = described_class.new(12_345_678, json_object: flarestone_response)
 
-      expect(profile).to be_invalid
+      expect(profile).not_to be_valid
       expect(profile.failure_reason).to eq(:not_found)
       expect(profile.errors[:base].join).to match(/could not be found/i)
     end
@@ -80,7 +80,7 @@ RSpec.describe FFXIV::LodestoneProfile, type: :model do
       flarestone_response = load_fixture("maintenance.json")
       profile = described_class.new(12_345_678, json_object: flarestone_response)
 
-      expect(profile).to be_invalid
+      expect(profile).not_to be_valid
       expect(profile.failure_reason).to eq(:lodestone_maintenance)
       expect(profile.errors[:base].join).to match(/maintenance/i)
       expect(profile.errors.where(:base).first.type).to eq(:maintenance)

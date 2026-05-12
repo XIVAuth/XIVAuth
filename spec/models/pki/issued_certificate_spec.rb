@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PKI::IssuedCertificate, type: :model do
+RSpec.describe PKI::IssuedCertificate do
   include ActiveSupport::Testing::TimeHelpers
 
   describe "validations" do
@@ -31,18 +31,18 @@ RSpec.describe PKI::IssuedCertificate, type: :model do
       cert = FactoryBot.create(:pki_issued_certificate)
       serial_int = cert.id.delete("-").to_i(16)
 
-      expect(PKI::IssuedCertificate.lookup_by_serial(serial_int)).to eq(cert)
+      expect(described_class.lookup_by_serial(serial_int)).to eq(cert)
     end
 
     it "accepts OpenSSL::BN as input" do
       cert = FactoryBot.create(:pki_issued_certificate)
       serial_bn = OpenSSL::BN.new(cert.id.delete("-"), 16)
 
-      expect(PKI::IssuedCertificate.lookup_by_serial(serial_bn.to_i)).to eq(cert)
+      expect(described_class.lookup_by_serial(serial_bn.to_i)).to eq(cert)
     end
 
     it "returns nil for unknown serials" do
-      expect(PKI::IssuedCertificate.lookup_by_serial(0)).to be_nil
+      expect(described_class.lookup_by_serial(0)).to be_nil
     end
   end
 
@@ -74,16 +74,16 @@ RSpec.describe PKI::IssuedCertificate, type: :model do
       revoked = FactoryBot.create(:pki_issued_certificate, :revoked)
       expired = FactoryBot.create(:pki_issued_certificate, :expired)
 
-      expect(PKI::IssuedCertificate.active).to include(active)
-      expect(PKI::IssuedCertificate.active).not_to include(revoked, expired)
+      expect(described_class.active).to include(active)
+      expect(described_class.active).not_to include(revoked, expired)
     end
 
     it "#revoked returns only revoked certs" do
       active  = FactoryBot.create(:pki_issued_certificate)
       revoked = FactoryBot.create(:pki_issued_certificate, :revoked)
 
-      expect(PKI::IssuedCertificate.revoked).to include(revoked)
-      expect(PKI::IssuedCertificate.revoked).not_to include(active)
+      expect(described_class.revoked).to include(revoked)
+      expect(described_class.revoked).not_to include(active)
     end
   end
 

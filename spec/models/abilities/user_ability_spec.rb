@@ -1,7 +1,7 @@
 require "rails_helper"
 require "cancan/matchers"
 
-RSpec.describe Abilities::UserAbility, type: :model do
+RSpec.describe Abilities::UserAbility do
   subject(:ability) { described_class.new(user) }
 
   let(:user) { FactoryBot.create(:user) }
@@ -24,19 +24,19 @@ RSpec.describe Abilities::UserAbility, type: :model do
     end
 
     context "with no membership" do
-      include_examples "cannot access team at all"
+      it_behaves_like "cannot access team at all"
     end
 
     context "with blocked role" do
       before { create_membership_with_role("blocked") }
 
-      include_examples "cannot access team at all"
+      it_behaves_like "cannot access team at all"
     end
 
     context "with invited role" do
       before { create_membership_with_role("invited") }
 
-      include_examples "cannot access team at all"
+      it_behaves_like "cannot access team at all"
     end
 
     context "with member role" do

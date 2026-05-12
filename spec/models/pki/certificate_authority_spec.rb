@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PKI::CertificateAuthority, type: :model do
+RSpec.describe PKI::CertificateAuthority do
   include ActiveSupport::Testing::TimeHelpers
 
   describe "validations" do
@@ -138,26 +138,26 @@ RSpec.describe PKI::CertificateAuthority, type: :model do
       FactoryBot.create(:pki_certificate_authority, created_at: 2.days.ago)
       new_ca = FactoryBot.create(:pki_certificate_authority, created_at: 1.day.ago)
 
-      expect(PKI::CertificateAuthority.current_for(certificate_type: "user_identification")).to eq(new_ca)
+      expect(described_class.current_for(certificate_type: "user_identification")).to eq(new_ca)
     end
 
     it "excludes inactive CAs" do
       FactoryBot.create(:pki_certificate_authority, :inactive)
       active_ca = FactoryBot.create(:pki_certificate_authority)
 
-      expect(PKI::CertificateAuthority.current_for(certificate_type: "user_identification")).to eq(active_ca)
+      expect(described_class.current_for(certificate_type: "user_identification")).to eq(active_ca)
     end
 
     it "excludes revoked CAs" do
       FactoryBot.create(:pki_certificate_authority, :revoked)
       active_ca = FactoryBot.create(:pki_certificate_authority)
 
-      expect(PKI::CertificateAuthority.current_for(certificate_type: "user_identification")).to eq(active_ca)
+      expect(described_class.current_for(certificate_type: "user_identification")).to eq(active_ca)
     end
 
     it "raises when no active CA exists for the certificate type" do
       expect do
-        PKI::CertificateAuthority.current_for(certificate_type: "user_identification")
+        described_class.current_for(certificate_type: "user_identification")
       end.to raise_error(PKI::CertificateAuthority::NoCertificateAuthorityError,
                          /No active CA certificate for certificate type/)
     end
@@ -168,9 +168,9 @@ RSpec.describe PKI::CertificateAuthority, type: :model do
       ca_all   = FactoryBot.create(:pki_certificate_authority)
       ca_users = FactoryBot.create(:pki_certificate_authority, :user_identification_only)
 
-      expect(PKI::CertificateAuthority.for_certificate_type("user_identification")).to include(ca_all, ca_users)
-      expect(PKI::CertificateAuthority.for_certificate_type("character_identification")).to include(ca_all)
-      expect(PKI::CertificateAuthority.for_certificate_type("character_identification")).not_to include(ca_users)
+      expect(described_class.for_certificate_type("user_identification")).to include(ca_all, ca_users)
+      expect(described_class.for_certificate_type("character_identification")).to include(ca_all)
+      expect(described_class.for_certificate_type("character_identification")).not_to include(ca_users)
     end
   end
 

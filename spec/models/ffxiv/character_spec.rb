@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe FFXIV::Character, type: :model do
+RSpec.describe FFXIV::Character do
   let(:fixtures_path) { Rails.root.join("spec/fixtures/lodestone/characters") }
 
   def load_fixture(filename)
@@ -119,7 +119,7 @@ RSpec.describe FFXIV::Character, type: :model do
       it "returns an unsaved character populated from Lodestone" do
         mock_lodestone_profile("12345678", "valid_withcode.json")
 
-        character = FFXIV::Character.for_lodestone_id("12345678")
+        character = described_class.for_lodestone_id("12345678")
 
         expect(character).to be_new_record
         expect(character).to be_valid
@@ -132,7 +132,7 @@ RSpec.describe FFXIV::Character, type: :model do
       it "returns the existing character without creating a new one" do
         existing = FactoryBot.create(:ffxiv_character, lodestone_id: "12345678")
 
-        character = FFXIV::Character.for_lodestone_id("12345678")
+        character = described_class.for_lodestone_id("12345678")
 
         expect(character.id).to eq(existing.id)
         expect(character).to be_persisted
@@ -143,27 +143,27 @@ RSpec.describe FFXIV::Character, type: :model do
       it "does not save character with not_found error" do
         mock_lodestone_profile("99999999", "not_found.json")
 
-        character = FFXIV::Character.for_lodestone_id("99999999")
+        character = described_class.for_lodestone_id("99999999")
         expect(character).not_to be_persisted
-        expect(character).to be_invalid
+        expect(character).not_to be_valid
         expect(character.refresh_fail_reason).to eq(:not_found)
       end
 
       it "does not save character with hidden error" do
         mock_lodestone_profile("88888888", "hidden.json")
 
-        character = FFXIV::Character.for_lodestone_id("88888888")
+        character = described_class.for_lodestone_id("88888888")
         expect(character).not_to be_persisted
-        expect(character).to be_invalid
+        expect(character).not_to be_valid
         expect(character.refresh_fail_reason).to eq(:hidden_character)
       end
 
       it "does not save character with maintenance error" do
         mock_lodestone_profile("77777777", "maintenance.json")
 
-        character = FFXIV::Character.for_lodestone_id("77777777")
+        character = described_class.for_lodestone_id("77777777")
         expect(character).not_to be_persisted
-        expect(character).to be_invalid
+        expect(character).not_to be_valid
         expect(character.refresh_fail_reason).to eq(:lodestone_maintenance)
       end
     end
