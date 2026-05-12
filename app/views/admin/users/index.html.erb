@@ -42,7 +42,7 @@
                 <%= user.character_registrations.size %>
               </td>
               <td>
-                <%= user.has_verified_characters? ? "Yes" : "No" %>
+                <%= user.verified_characters_present? ? "Yes" : "No" %>
               </td>
             </tr>
           <% end %>

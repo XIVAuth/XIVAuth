@@ -11,19 +11,19 @@ class User::Profile < ApplicationRecord
   ].freeze
 
   validates :display_name, length: { in: 4..32 }, presence: true
-  validates :display_name, format: { with: /\A[ a-zA-Z0-9._\-]+\z/,
+  validates :display_name, format: { with: /\A[ a-zA-Z0-9._-]+\z/,
                                      message: "only allows alphanumerics, underscores, spaces, periods, and dashes." }
   validates :display_name, format: { without: /#{Regexp.union(DISPLAY_NAME_BLOCKED_WORDS).source}/i,
                                      message: "cannot be used" }, if: :display_name_changed?
 
-  def has_feature?(feature_name)
+  def feature_enabled?(feature_name)
     self.preferences&.dig("features", feature_name.to_s, "enabled") == true
   end
 
   def set_feature_enabled(feature_name, enabled)
-    self.preferences ||= {}
-    self.preferences[:features] ||= {}
-    self.preferences[:features][feature_name] ||= {}
+    self.preferences ||= { }
+    self.preferences[:features] ||= { }
+    self.preferences[:features][feature_name] ||= { }
     self.preferences[:features][feature_name][:enabled] = enabled
   end
 

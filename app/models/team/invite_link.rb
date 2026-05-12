@@ -3,7 +3,6 @@ class Team::InviteLink < ApplicationRecord
 
   after_initialize :generate_invite_key
 
-  validates :team, presence: true
   validates :invite_key, presence: true, uniqueness: true
   validates :target_role, presence: true, inclusion: { in: %w[member developer] }
 
@@ -40,6 +39,6 @@ class Team::InviteLink < ApplicationRecord
     return if expires_at.blank?
 
     errors.add(:expires_at, "must be in the future") if expires_at <= Time.current
-    errors.add(:expires_at, "cannot be more than 1 month in the future") if expires_at > Time.current + 1.month
+    errors.add(:expires_at, "cannot be more than 1 month in the future") if expires_at > 1.month.from_now
   end
 end

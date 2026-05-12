@@ -26,13 +26,13 @@ RSpec.describe "Users::RegistrationsController", type: :request do
       end
 
       it "rejects the registration and sends no email" do
-        expect {
+        expect do
           post user_registration_path, params: { user: {
             email: "user@example.ocm",
             password: password,
             password_confirmation: password
-          }}
-        }.not_to change(ActionMailer::Base.deliveries, :count)
+          } }
+        end.not_to change(ActionMailer::Base.deliveries, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -66,14 +66,14 @@ RSpec.describe "Users::RegistrationsController", type: :request do
         patch edit_user_path, params: { user: {
           password: new_password,
           password_confirmation: new_password
-        }}
+        } }
 
         expect(response).to redirect_to(edit_user_path)
 
         # Verify the new password was saved.
         user.reload
         expect(user.valid_password?(new_password)).to be_truthy
-        expect(user.has_password?).to be_truthy
+        expect(user.password_set?).to be_truthy
       end
     end
 
@@ -138,8 +138,8 @@ RSpec.describe "Users::RegistrationsController", type: :request do
       it "validates the current_password when one is provided" do
         patch edit_user_path, params: { user: {
           current_password: "ACompletelyIncorrectPassword!",
-          profile_attributes: { display_name: "new_test_name" } }
-        }
+          profile_attributes: { display_name: "new_test_name" }
+        } }
 
         expect(response).to have_http_status(:unprocessable_content)
       end

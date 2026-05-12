@@ -1,6 +1,8 @@
 class Team::Membership < ApplicationRecord
-  enum :role, { admin: "admin", manager: "manager", developer: "developer", member: "member", invited: "invited", blocked: "blocked" },
-       scopes: false
+  enum :role, {
+    admin: "admin", manager: "manager", developer: "developer", member: "member", invited: "invited",
+    blocked: "blocked"
+  }, scopes: false
 
   scope :admins, -> { where(role: [:admin]) }
   scope :managers, -> { where(role: %i[admin manager]) }
@@ -24,9 +26,7 @@ class Team::Membership < ApplicationRecord
     "CASE #{table_alias}.role #{when_thens.join(' ')} ELSE 0 END"
   end
 
-  private
-
-  def validate_team_after_change
+  private def validate_team_after_change
     # For root teams, check that there will still be at least one admin after this change
     return if team.parent_id.present?
 
@@ -47,7 +47,7 @@ class Team::Membership < ApplicationRecord
     errors.add(:base, "Root teams must have at least one admin")
   end
 
-  def ensure_team_has_admin
+  private def ensure_team_has_admin
     return if team.parent_id.present?
     return unless admin?
     return if team.direct_memberships.admins.where.not(id: id).exists?

@@ -1,7 +1,6 @@
-# frozen_string_literal: true
-
 class Webauthn::DeviceClass < ApplicationRecord
-  AAGUID_DATASET = "https://raw.githubusercontent.com/passkeydeveloper/passkey-authenticator-aaguids/refs/heads/main/combined_aaguid.json"
+  AAGUID_DATASET =
+    "https://raw.githubusercontent.com/passkeydeveloper/passkey-authenticator-aaguids/refs/heads/main/combined_aaguid.json".freeze
 
   def self.load_from_dataset
     uri = URI(AAGUID_DATASET)
@@ -29,7 +28,7 @@ class Webauthn::DeviceClass < ApplicationRecord
 
       # Batch upsert 100 records at a time
       records.each_slice(100) do |batch|
-        upsert_all(batch, unique_by: :id)
+        upsert_all(batch, unique_by: :id) # rubocop:disable Rails/SkipsModelValidations -- performance
       end
 
       # Delete AAGUIDs that weren't updated in this sync (i.e., no longer in dataset)

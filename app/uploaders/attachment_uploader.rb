@@ -1,7 +1,7 @@
 class AttachmentUploader < Shrine
   Attacher.derivatives do |original|
     config = record&.owner_attachment_config
-    next {} unless (deriv_proc = config&.dig(:derivatives))
+    next { } unless (deriv_proc = config&.dig(:derivatives))
 
     pipeline = ImageProcessing::Vips.source(original)
     instance_exec(pipeline, &deriv_proc)
@@ -15,12 +15,12 @@ class AttachmentUploader < Shrine
     Array(config[:validate]).each { |v| instance_exec(&v) }
   end
 
-  def generate_location(io, record: nil, derivative: nil, metadata: {}, **)
+  def generate_location(_io, record: nil, derivative: nil, metadata: { }, **)
     ext = File.extname(metadata["filename"].to_s).downcase
 
     if storage_key == :store && record&.record_id.present?
       owner_class = record.record_type.safe_constantize
-      config      = owner_class&.upload_attachment_configs&.dig(record.name&.to_sym) || {}
+      config      = owner_class&.upload_attachment_configs&.dig(record.name&.to_sym) || { }
 
       prefix = config[:prefix]
       prefix = prefix.call(record.record) if prefix.respond_to?(:call)

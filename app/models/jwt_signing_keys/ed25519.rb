@@ -41,8 +41,8 @@ class JwtSigningKeys::Ed25519 < JwtSigningKey
 
       derived_key = private_key.verify_key
       self[:public_key] = OpenSSL::PKey
-                            .new_raw_public_key("Ed25519", derived_key.to_bytes)
-                            .public_to_pem
+                          .new_raw_public_key("Ed25519", derived_key.to_bytes)
+                          .public_to_pem
 
       @public_key = derived_key
     end

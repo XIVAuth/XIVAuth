@@ -8,7 +8,7 @@ class ApplicationRecord < ActiveRecord::Base
 
     begin
       "created_at" if column_names.include?("created_at")
-    rescue
+    rescue StandardError
       # nop - we don't care if we fail because of column_names problems.
       nil
     end

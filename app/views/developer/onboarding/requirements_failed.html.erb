@@ -26,7 +26,7 @@
           <h5>Requirements</h5>
           <ul class="list-unstyled ps-3">
             <li class="mb-2">
-              <% if !current_user.has_password? %>
+              <% if !current_user.password_set? %>
                 <i class="bi bi-check-circle-fill text-success"></i>
                 <strong>Account secured with passwordless</strong>
               <% elsif current_user.mfa_enabled? %>

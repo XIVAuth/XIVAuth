@@ -18,13 +18,13 @@ module OAuth::BuildsPermissiblePolicies
                                    .where(user_id: current_resource_owner.id)
                                    .includes(:character)
 
-    if share_new_characters
-      # Filter to only characters that were *not* selected, so we can deny access to them.
-      objects = objects.where.not(character: { lodestone_id: character_ids })
-    else
-      # Otherwise, filter to only selected characters.
-      objects = objects.where(character: { lodestone_id: character_ids })
-    end
+    objects = if share_new_characters
+                # Filter to only characters that were *not* selected, so we can deny access to them.
+                objects.where.not(character: { lodestone_id: character_ids })
+              else
+                # Otherwise, filter to only selected characters.
+                objects.where(character: { lodestone_id: character_ids })
+              end
 
     logger.info("Creating rules for #{objects.count} characters.")
 
@@ -40,13 +40,13 @@ module OAuth::BuildsPermissiblePolicies
 
     objects = User::SocialIdentity.where(user_id: current_resource_owner.id)
 
-    if share_new_identities
-      # Filter to only identities that were *not* selected, so we can deny access to them.
-      objects = objects.where.not(id: identity_ids)
-    else
-      # Otherwise, filter to only selected characters.
-      objects = objects.where(id: identity_ids)
-    end
+    objects = if share_new_identities
+                # Filter to only identities that were *not* selected, so we can deny access to them.
+                objects.where.not(id: identity_ids)
+              else
+                # Otherwise, filter to only selected characters.
+                objects.where(id: identity_ids)
+              end
 
     logger.info("Creating rules for #{objects.count} identities.")
 

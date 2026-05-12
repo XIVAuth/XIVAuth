@@ -22,10 +22,10 @@ class Api::V1::UsersController < Api::V1::ApiController
       algorithm: params[:algorithm]
     )
 
-    jwt_wrapper.body["verified"] = @user.character_registrations.verified.count.positive?
+    jwt_wrapper.body["verified"] = @user.character_registrations.verified.any?
     jwt_wrapper.body["nonce"] = params[:nonce] if params[:nonce].present?
 
-    unless jwt_wrapper.signing_key.present?
+    if jwt_wrapper.signing_key.blank?
       render json: { error: "Algorithm is not valid, or a key does not exist for it." }, status: :unprocessable_content
       return
     end
@@ -34,7 +34,7 @@ class Api::V1::UsersController < Api::V1::ApiController
     this_app = doorkeeper_token.application.application
 
     if params[:obo_id].present?
-      audience_app = ClientApplication.find(params[:obo_id])
+      audience_app = ClientApplication.find(params.expect(:obo_id))
 
       jwt_wrapper.audience = audience_app
       jwt_wrapper.authorized_party = this_app

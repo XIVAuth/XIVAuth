@@ -8,13 +8,10 @@ class CharacterRegistrationRequest
   attribute :user
   attribute :search_exact, :boolean, default: false
 
-  attr_reader :candidates
-  attr_accessor :character_search # NOTE: fake attribute for search feedback.
-  attr_accessor :from_search
+  attr_reader :candidates, :created_registration
+  attr_accessor :character_search, :from_search # NOTE: fake attribute for search feedback.
 
-  attr_reader :created_registration
   delegate :character, to: :created_registration, allow_nil: true
-
 
   # Provide either a valid Lodestone URL/ID, or both name and world.
   validates :lodestone_url,
@@ -44,13 +41,11 @@ class CharacterRegistrationRequest
     end
   end
 
-  private
-
-  def process_ref_path
-    lodestone_data = CharacterRegistrationsHelper::LODESTONE_URL_REGEX.match(lodestone_url)&.named_captures&.symbolize_keys || {}
+  private def process_ref_path
+    lodestone_data = CharacterRegistrationsHelper::LODESTONE_URL_REGEX.match(lodestone_url)&.named_captures&.symbolize_keys || { }
     lodestone_id_value = lodestone_data[:lodestone_id]
 
-    unless lodestone_id_value.present?
+    if lodestone_id_value.blank?
       errors.add(:lodestone_url, "is not a valid Lodestone ID or URL")
       return :invalid
     end
@@ -58,7 +53,7 @@ class CharacterRegistrationRequest
     create_registration(lodestone_id_value, region: lodestone_data[:region], field_for_character_error: :lodestone_url)
   end
 
-  def perform_search
+  private def perform_search
     search = FFXIV::LodestoneSearch.new(name: search_name, world: search_world, exact: search_exact)
     @candidates = search.results
 
@@ -83,7 +78,7 @@ class CharacterRegistrationRequest
     end
   end
 
-  def register_single_candidate(lodestone_id)
+  private def register_single_candidate(lodestone_id)
     create_registration(lodestone_id, field_for_character_error: :search_name)
   end
 
@@ -92,8 +87,8 @@ class CharacterRegistrationRequest
   # @param region [String, nil] Optional region (na/eu/jp) extracted from URL
   # @param field_for_character_error [Symbol] Which field to attach character validation errors to
   # @return [Symbol] :success, :invalid, or :failed
-  def create_registration(lodestone_id, region: nil, field_for_character_error: :search_name)
-    extra_data = region.present? ? { region: region } : {}
+  private def create_registration(lodestone_id, region: nil, field_for_character_error: :search_name)
+    extra_data = region.present? ? { region: region } : { }
     @created_registration = CharacterRegistration.build_from_lodestone(
       user: user,
       lodestone_id: lodestone_id,
@@ -113,7 +108,7 @@ class CharacterRegistrationRequest
   #     :not_found → input field (user's input caused it)
   #     all others → :character (problem is with the character itself, not the input)
   # - All other CR-native errors (:base, :character_id, :user) → :base
-  def attach_registration_errors(registration, field_for_character_error: :search_name)
+  private def attach_registration_errors(registration, field_for_character_error: :search_name)
     registration.errors.each do |error|
       case error.attribute
       when :character

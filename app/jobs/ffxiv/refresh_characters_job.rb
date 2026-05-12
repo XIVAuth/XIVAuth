@@ -5,7 +5,7 @@ class FFXIV::RefreshCharactersJob < ApplicationJob
   def perform(*characters, force_refresh: false)
     characters.each do |character|
       if !character.stale? && !force_refresh
-         logger.info "Skipping refresh of character #{character.lodestone_id}, they're not stale"
+        logger.info "Skipping refresh of character #{character.lodestone_id}, they're not stale"
         next
       end
 

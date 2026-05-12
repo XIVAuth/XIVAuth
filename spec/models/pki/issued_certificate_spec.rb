@@ -31,18 +31,18 @@ RSpec.describe PKI::IssuedCertificate, type: :model do
       cert = FactoryBot.create(:pki_issued_certificate)
       serial_int = cert.id.delete("-").to_i(16)
 
-      expect(PKI::IssuedCertificate.find_by_serial(serial_int)).to eq(cert)
+      expect(PKI::IssuedCertificate.lookup_by_serial(serial_int)).to eq(cert)
     end
 
     it "accepts OpenSSL::BN as input" do
       cert = FactoryBot.create(:pki_issued_certificate)
       serial_bn = OpenSSL::BN.new(cert.id.delete("-"), 16)
 
-      expect(PKI::IssuedCertificate.find_by_serial(serial_bn.to_i)).to eq(cert)
+      expect(PKI::IssuedCertificate.lookup_by_serial(serial_bn.to_i)).to eq(cert)
     end
 
     it "returns nil for unknown serials" do
-      expect(PKI::IssuedCertificate.find_by_serial(0)).to be_nil
+      expect(PKI::IssuedCertificate.lookup_by_serial(0)).to be_nil
     end
   end
 

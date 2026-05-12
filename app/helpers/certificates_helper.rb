@@ -8,4 +8,3 @@ module CertificatesHelper
       .join("\n")
   end
 end
-

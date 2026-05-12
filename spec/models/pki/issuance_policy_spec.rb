@@ -7,10 +7,11 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
   let(:rsa_key) { PkiSupport.shared_rsa_key }
 
   # Default policy uses EC - fast for the bulk of tests.
-  def build_policy(certificate_type: "user_identification", subject: user, public_key: ec_key, ca: self.ca, requesting_application: nil)
+  def build_policy(certificate_type: "user_identification", subject: user, public_key: ec_key, authority: self.ca,
+                   requesting_application: nil)
     PKI::IssuancePolicy.for(
       certificate_type: certificate_type, subject: subject, public_key: public_key,
-      certificate_authority: ca, requesting_application: requesting_application
+      certificate_authority: authority, requesting_application: requesting_application
     )
   end
 
@@ -27,14 +28,15 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
 
     it "returns CodeSigningPolicy for code_signing type" do
       policy = build_policy(certificate_type: "code_signing",
-                            ca: FactoryBot.create(:pki_certificate_authority, :code_signing_only))
+                            authority: FactoryBot.create(:pki_certificate_authority, :code_signing_only))
       expect(policy).to be_a(PKI::IssuancePolicy::CodeSigningPolicy)
     end
 
     it "raises for unknown certificate types" do
-      expect {
-        PKI::IssuancePolicy.for(certificate_type: "unknown", subject: user, public_key: ec_key, certificate_authority: ca)
-      }.to raise_error(ArgumentError, /No PKI issuance policy/)
+      expect do
+        PKI::IssuancePolicy.for(certificate_type: "unknown", subject: user, public_key: ec_key,
+                                certificate_authority: ca)
+      end.to raise_error(ArgumentError, /No PKI issuance policy/)
     end
   end
 
@@ -67,7 +69,11 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
     end
 
     it "rejects EC keys on disallowed curves" do
-      weak_ec = OpenSSL::PKey::EC.generate("secp112r1") rescue nil
+      weak_ec = begin
+        OpenSSL::PKey::EC.generate("secp112r1")
+      rescue StandardError
+        nil
+      end
       skip "secp112r1 not available" unless weak_ec
 
       policy = build_policy(public_key: weak_ec)
@@ -79,18 +85,18 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
   describe "CA validation" do
     it "rejects inactive CA" do
       inactive_ca = FactoryBot.create(:pki_certificate_authority, :inactive)
-      expect(build_policy(ca: inactive_ca)).not_to be_valid
+      expect(build_policy(authority: inactive_ca)).not_to be_valid
     end
 
     it "rejects revoked CA" do
       revoked_ca = FactoryBot.create(:pki_certificate_authority, :revoked)
-      expect(build_policy(ca: revoked_ca)).not_to be_valid
+      expect(build_policy(authority: revoked_ca)).not_to be_valid
     end
 
     it "rejects CA not permitted for the certificate type" do
       users_only_ca = FactoryBot.create(:pki_certificate_authority, :user_identification_only)
       cr = FactoryBot.create(:verified_registration)
-      policy = build_policy(certificate_type: "character_identification", subject: cr, ca: users_only_ca)
+      policy = build_policy(certificate_type: "character_identification", subject: cr, authority: users_only_ca)
 
       expect(policy).not_to be_valid
       expect(policy.errors[:certificate_authority]).to be_present
@@ -196,7 +202,6 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
       FactoryBot.create(:pki_issued_certificate, :revoked, subject: user, certificate_authority: ca)
       expect(build_policy(public_key: OpenSSL::PKey::EC.generate("prime256v1"))).to be_valid
     end
-
   end
 
   describe "key subject uniqueness validation" do
@@ -245,7 +250,7 @@ RSpec.describe PKI::IssuancePolicy, type: :model do
                         certificate_type: "user_identification",
                         public_key_fingerprint: fresh_fingerprint)
       policy = build_policy(certificate_type: "code_signing", subject: user, public_key: fresh_key,
-                            ca: FactoryBot.create(:pki_certificate_authority, :code_signing_only))
+                            authority: FactoryBot.create(:pki_certificate_authority, :code_signing_only))
 
       expect(policy).not_to be_valid
       expect(policy.errors[:public_key]).to include(match(/already associated with a different subject/))

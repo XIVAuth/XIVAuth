@@ -30,7 +30,7 @@ class Api::V1::CharactersController < Api::V1::ApiController
         user: current_user,
         search_name: params[:name],
         search_world: params[:world],
-        search_exact: params[:exact].to_s == "true"
+        search_exact: !ActiveModel::Type::Boolean.new.cast(params[:exact]).nil?
       }
     end
 
@@ -108,7 +108,7 @@ class Api::V1::CharactersController < Api::V1::ApiController
 
   def lodestone
     character = @registration.character
-    force_fresh = params[:force_fresh].present? && current_client_app.has_entitlement?(:internal)
+    force_fresh = params[:force_fresh].present? && current_client_app.entitlement_granted?(:internal)
     profile = FFXIV::LodestoneProfile.new(character.lodestone_id, force_fresh: force_fresh)
 
     character.refresh_from_lodestone(profile)
@@ -131,14 +131,14 @@ class Api::V1::CharactersController < Api::V1::ApiController
       },
       claim_type: "xivauth.character_attestation",
       expires_in: 10.minutes,
-      algorithm: (params[:algorithm] if params[:algorithm].present?),
-      nonce: (params[:nonce] if params[:nonce].present?)
+      algorithm: params[:algorithm].presence,
+      nonce: params[:nonce].presence
     )
 
     client_app = doorkeeper_token.application.application
 
     if params[:obo_id].present?
-      audience_app = ClientApplication.find(params[:obo_id])
+      audience_app = ClientApplication.find(params.expect(:obo_id))
 
       jwt_wrapper.audience = audience_app
       jwt_wrapper.authorized_party = client_app
@@ -174,7 +174,7 @@ class Api::V1::CharactersController < Api::V1::ApiController
 
   private def search_params
     allowlist = %i[name home_world data_center]
-    allowlist << :content_id if has_character_manage_scope?
+    allowlist << :content_id if character_manage_scope_granted?
 
     params.permit(allowlist)
   end
@@ -184,6 +184,6 @@ class Api::V1::CharactersController < Api::V1::ApiController
   end
 
   private def character_manage?
-    has_character_manage_scope?
+    character_manage_scope_granted?
   end
 end

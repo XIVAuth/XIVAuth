@@ -6,15 +6,36 @@ class Developer::ClientApps::OAuthClientsController < Developer::DeveloperPortal
 
   def show; end
 
+  def new
+    @application = ClientApplication.find(params.expect(:application_id))
+    @oauth_client = ClientApplication::OAuthClient.new
+  end
+
+  def create
+    @application = ClientApplication.find(params.expect(:application_id))
+    authorize! :edit, @application
+
+    @oauth_client = ClientApplication::OAuthClient.new(filtered_params)
+    @oauth_client.application = @application
+
+    if @oauth_client.save
+      flash[:notice] = "OAuth client created successfully."
+      flash[:application_secret] = @oauth_client.plaintext_secret
+
+      redirect_to developer_oauth_client_path(@oauth_client)
+    else
+      flash.now[:error] = "Could not create OAuth client."
+      render :new, status: :unprocessable_content
+    end
+  end
+
   def update
     authorize! :edit, @application
 
     updates = filtered_params
     # Normalize array params by removing blank entries for keys that are present in this submission only
-    [:redirect_uris, :grant_flows, :scopes].each do |key|
-      if updates.has_key?(key)
-        updates[key] = (updates[key] || []).compact_blank
-      end
+    %i[redirect_uris grant_flows scopes].each do |key|
+      updates[key] = (updates[key] || []).compact_blank if updates.key?(key)
     end
 
     @oauth_client.update(updates)
@@ -32,32 +53,9 @@ class Developer::ClientApps::OAuthClientsController < Developer::DeveloperPortal
       respond_to do |format|
         format.html do
           flash[:error] = "Update failed."
-          redirect_back fallback_location: developer_oauth_client_path(@oauth_client)
+          redirect_back_or_to(developer_oauth_client_path(@oauth_client))
         end
       end
-    end
-  end
-
-  def new
-    @application = ClientApplication.find(params[:application_id])
-    @oauth_client = ClientApplication::OAuthClient.new
-  end
-
-  def create
-    @application = ClientApplication.find(params[:application_id])
-    authorize! :edit, @application
-
-    @oauth_client = ClientApplication::OAuthClient.new(filtered_params)
-    @oauth_client.application = @application
-
-    if @oauth_client.save
-      flash[:notice] = "OAuth client created successfully."
-      flash[:application_secret] = @oauth_client.plaintext_secret
-
-      redirect_to developer_oauth_client_path(@oauth_client)
-    else
-      flash.now[:error] = "Could not create OAuth client."
-      render :new, status: :unprocessable_content
     end
   end
 
@@ -110,14 +108,14 @@ class Developer::ClientApps::OAuthClientsController < Developer::DeveloperPortal
   end
 
   private def set_oauth_client
-    @oauth_client = ClientApplication::OAuthClient.find(params[:id])
+    @oauth_client = ClientApplication::OAuthClient.find(params.expect(:id))
     @application = @oauth_client.application
 
     raise ActiveRecord::RecordNotFound unless can? :show, @application
   end
 
   private def filtered_params
-    params.require(:oauth_client).permit(:name, :enabled, :expires_at, :confidential, :app_type,
-                                         redirect_uris: [], grant_flows: [], scopes: [])
+    params.expect(oauth_client: [:name, :enabled, :expires_at, :confidential, :app_type,
+                                 { redirect_uris: [], grant_flows: [], scopes: [] }])
   end
 end

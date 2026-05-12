@@ -11,7 +11,7 @@ internal_app = ClientApplication.find_or_create_by!(id: "00000000-0000-8000-8f0f
   app.owner = internal_team
   app.private = false
 
-  app.verified_at = DateTime.now
+  app.verified_at = Time.current
 
   app.profile.homepage_url = "https://xivauth.net/"
   app.profile.privacy_policy_url = "https://xivauth.net/privacy"

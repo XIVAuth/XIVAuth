@@ -1,7 +1,7 @@
 class CreateTeamInviteLinks < ActiveRecord::Migration[8.0]
   def change
     create_table :team_invite_links, id: :uuid do |t|
-      t.references :team, type: :uuid, index: true, foreign_key: {to_table: :teams, on_delete: :cascade}
+      t.references :team, type: :uuid, index: true, foreign_key: { to_table: :teams, on_delete: :cascade }
 
       t.string :invite_key, null: false, index: { unique: true }
 

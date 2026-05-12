@@ -7,13 +7,15 @@ class PKI::IssuancePolicy::UserIdentificationPolicy < PKI::IssuancePolicy::Base
 
   def validity_period = 1.year
 
-  def subject_alt_names = %W[
-    urn:xivauth:user:#{subject.id}
-  ]
+  def subject_alt_names
+    %W[
+      urn:xivauth:user:#{subject.id}
+    ]
+  end
 
   # User certs are pure authentication tokens - digitalSignature only,
   # no key transport or agreement.
   def key_usage = %w[digitalSignature]
 
-  def extended_key_usage = [ PKI::OID::EKU_UserIdentification ]
+  def extended_key_usage = [PKI::OID::EKU_UserIdentification]
 end

@@ -20,8 +20,8 @@ class FFXIV::XIVAPISearchClient
     params[:query] = query if query.present?
 
     conn = Faraday.new do |f|
-      f.options.timeout = 5       # Total request timeout in seconds
-      f.options.open_timeout = 2   # Connection timeout in seconds
+      f.options.timeout = 5 # Total request timeout in seconds
+      f.options.open_timeout = 2 # Connection timeout in seconds
     end
 
     response = conn.get(BASE_URL, params)

@@ -1,8 +1,8 @@
-Flipper.register(:admins) do |actor, ctx|
+Flipper.register(:admins) do |actor, _ctx|
   actor.respond_to?(:admin?) && actor.admin?
 end
 
-Flipper.register(:developers) do |actor, ctx|
+Flipper.register(:developers) do |actor, _ctx|
   actor.respond_to?(:developer?) && actor.developer?
 end
 

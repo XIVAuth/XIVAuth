@@ -1,4 +1,4 @@
-class Certificates::OcspController < ActionController::Base
+class Certificates::OcspController < ActionController::Base # rubocop:disable Rails/ApplicationController
   OCSP_REASON_CODES = {
     "unspecified" => OpenSSL::OCSP::REVOKED_STATUS_UNSPECIFIED,
     "key_compromise" => OpenSSL::OCSP::REVOKED_STATUS_KEYCOMPROMISE,
@@ -8,7 +8,7 @@ class Certificates::OcspController < ActionController::Base
     "cessation_of_operation" => OpenSSL::OCSP::REVOKED_STATUS_CESSATIONOFOPERATION,
     "certificate_hold" => OpenSSL::OCSP::REVOKED_STATUS_CERTIFICATEHOLD,
     "privilege_withdrawn" => OpenSSL::OCSP::REVOKED_STATUS_UNSPECIFIED, # not in OpenSSL gem yet
-    "aa_compromise" => OpenSSL::OCSP::REVOKED_STATUS_UNSPECIFIED, # not in OpenSSL gem yet
+    "aa_compromise" => OpenSSL::OCSP::REVOKED_STATUS_UNSPECIFIED # not in OpenSSL gem yet
   }.freeze
 
   rate_limit to: 5, within: 1.minute
@@ -31,9 +31,7 @@ class Certificates::OcspController < ActionController::Base
               type: "application/ocsp-response"
   end
 
-  private
-
-  def handle_ocsp_request(der)
+  private def handle_ocsp_request(der)
     ocsp_reader = CertificateAuthority::OCSPRequestReader.from_der(der)
 
     begin
@@ -46,7 +44,7 @@ class Certificates::OcspController < ActionController::Base
 
     ca_records = PKI::CertificateAuthority.where(
       id: PKI::IssuedCertificate.where(id: cert_ids)
-                                .select(:certificate_authority_id)
+          .select(:certificate_authority_id)
     ).distinct
 
     if ca_records.empty?
@@ -70,8 +68,8 @@ class Certificates::OcspController < ActionController::Base
 
     # Gem uses this lambda to get cert status per serial.
     # FIXME: certificate_authority gem doesn't support revocation time, so we can't set that yet.
-    builder.verification_mechanism = ->(serial_bn) {
-      cert = PKI::IssuedCertificate.find_by_serial(serial_bn.to_i)
+    builder.verification_mechanism = lambda { |serial_bn|
+      cert = PKI::IssuedCertificate.lookup_by_serial(serial_bn.to_i)
       if cert.nil?
         [OpenSSL::OCSP::V_CERTSTATUS_UNKNOWN, 0]
       elsif cert.revoked?

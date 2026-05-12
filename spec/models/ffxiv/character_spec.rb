@@ -106,7 +106,7 @@ RSpec.describe FFXIV::Character, type: :model do
         character.refresh_from_lodestone
 
         expect(character.refresh_fail_reason).to eq(:profile_private)
-        # Note: private profiles are still "valid" and provide basic data
+        # NOTE: private profiles are still "valid" and provide basic data
         expect(character.name).to eq("Private Character")
         expect(character.home_world).to eq("Twintania")
         expect(character.data_center).to eq("Light")

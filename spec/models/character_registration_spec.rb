@@ -11,7 +11,7 @@ RSpec.describe CharacterRegistration, type: :model do
 
     context "verification validations" do
       it "is valid if both verified_at and verification_type are set" do
-        @registration.verified_at = DateTime.now
+        @registration.verified_at = Time.current
         @registration.verification_type = "test"
 
         expect(@registration).to be_valid
@@ -25,7 +25,7 @@ RSpec.describe CharacterRegistration, type: :model do
       end
 
       it "is invalid if verified_at is set but verification_type is missing" do
-        @registration.verified_at = DateTime.now
+        @registration.verified_at = Time.current
 
         expect(@registration).to be_invalid
         expect(@registration.errors[:verification_type].first).to eq("can't be blank")
@@ -39,7 +39,7 @@ RSpec.describe CharacterRegistration, type: :model do
       @existing_verified = CharacterRegistration.create(
         user: FactoryBot.create(:user),
         character: @character,
-        verified_at: DateTime.now,
+        verified_at: Time.current,
         verification_type: "test"
       )
     end
@@ -63,9 +63,9 @@ RSpec.describe CharacterRegistration, type: :model do
         character: @character
       )
 
-      expect {
+      expect do
         new_registration.verify!("test", clobber: false)
-      }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Character has already been verified.")
+      end.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Character has already been verified.")
 
       @existing_verified.reload  # possibly mutated above, need to grab from DB again.
 

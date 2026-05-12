@@ -20,7 +20,7 @@ class FFXIV::WorldList
         stale_data
       else
         Rails.logger.error("No cached data available, using fallback")
-        load_fallback_worlds
+        fallback_worlds
       end
     end
 
@@ -32,7 +32,7 @@ class FFXIV::WorldList
 
     # Get just world names for select options
     def names
-      all.map { |w| w[:name] }.sort
+      all.pluck(:name).sort
     end
 
     # Group worlds by datacenter
@@ -48,28 +48,27 @@ class FFXIV::WorldList
     # Returns grouped options for Rails select helper: { "DC (Region)" => [["World", "World"], ...] }
     def grouped_options
       datacenters = by_datacenter
-      datacenters.transform_keys do |datacenter|
-        # Get region from first world in this datacenter
-        region = datacenters[datacenter].first[:region]
-        "#{datacenter} (#{region})"
-      end.transform_values do |worlds|
-        worlds.map { |w| [w[:name], w[:name]] }.sort_by(&:first)
-      end.sort_by(&:first)
-    end
+      result = datacenters.to_h do |datacenter, worlds|
+        region = worlds.first[:region]
+        key = "#{datacenter} (#{region})"
+        value = worlds.map { |w| [w[:name], w[:name]] }.sort_by(&:first)
+        [key, value]
+      end
 
-    private
+      result.sort_by(&:first)
+    end
 
     # Fetch world data from XIVAPI and transform it
     # @return [Array<Hash>] Transformed world data
-    def fetch_from_api
+    private def fetch_from_api
       results = FFXIV::XIVAPISearchClient.search(
         sheet: "World",
-        fields: ["Name", "DataCenter.Name", "DataCenter.Region"],
+        fields: %w[Name DataCenter.Name DataCenter.Region],
         query: "IsPublic=true"
       )
 
       # Use fallback if API returned nothing
-      return load_fallback_worlds if results.empty?
+      return fallback_worlds if results.empty?
 
       transform_worlds(results)
     end
@@ -77,10 +76,10 @@ class FFXIV::WorldList
     # Transform raw XIVAPI results into World hashes
     # @param results [Array<Hash>] Raw XIVAPI results
     # @return [Array<Hash>] Transformed world data
-    def transform_worlds(results)
+    private def transform_worlds(results)
       worlds = results.map do |world|
-        fields = world["fields"] || {}
-        datacenter_fields = fields.dig("DataCenter", "fields") || {}
+        fields = world["fields"] || { }
+        datacenter_fields = fields.dig("DataCenter", "fields") || { }
 
         {
           name: fields["Name"],
@@ -90,12 +89,12 @@ class FFXIV::WorldList
       end
 
       # Filter out invalid entries and excluded regions, then sort by name
-      worlds.select { |w| w[:name].present? && w[:datacenter].present? && !EXCLUDE_REGIONS.include?(w[:region]) }
+      worlds.select { |w| w[:name].present? && w[:datacenter].present? && EXCLUDE_REGIONS.exclude?(w[:region]) }
             .sort_by { |w| w[:name] }
     end
 
     # Normalize region codes (e.g., 1 => "JP", 2 => "NA", 3 => "EU")
-    def normalize_region(region_code)
+    private def normalize_region(region_code)
       case region_code
       when 1, "1" then "JP"
       when 2, "2" then "NA"
@@ -111,7 +110,7 @@ class FFXIV::WorldList
     # Load fallback world list from YAML file
     # YAML structure: Region -> Datacenter -> [World Names]
     # Returns: [{ name:, datacenter:, region: }, ...]
-    def load_fallback_worlds
+    private def fallback_worlds
       @fallback_worlds ||= begin
         fallback_path = Rails.root.join("config/ffxiv_data/fallback_worlds.yml")
         nested_data = YAML.safe_load_file(fallback_path)

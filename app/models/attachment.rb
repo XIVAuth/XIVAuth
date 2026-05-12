@@ -7,26 +7,24 @@ class Attachment < ApplicationRecord
 
   # Returns the URL for the given derivative, falling back to the original
   # if the derivative has not been generated yet.
-  def url(derivative: nil, **options)
+  def url(derivative: nil, **)
     if derivative
-      (file_attacher.derivatives[derivative] || file)&.url(**options)
+      (file_attacher.derivatives[derivative] || file)&.url(**)
     else
-      file&.url(**options)
+      file&.url(**)
     end
   end
 
   def owner_attachment_config
     owner_class = record_type&.safe_constantize
-    owner_class&.upload_attachment_configs&.dig(name&.to_sym) || {}
+    owner_class&.upload_attachment_configs&.dig(name&.to_sym) || { }
   end
 
-  private
-
-  def promoted_to_store?
+  private def promoted_to_store?
     file_data_previously_changed? && file&.storage_key == :store
   end
 
-  def enqueue_derivatives
+  private def enqueue_derivatives
     Attachment::GenerateDerivativesJob.perform_later(id, file_attacher.data)
   end
 end

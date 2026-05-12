@@ -9,7 +9,7 @@ class OAuth::PreflightCheck
   validates_with OAuth::CharacterOwnershipValidator, target_field: :user
   validates_with OAuth::ScopeCompatibilityValidator, target_field: :oauth_client
 
-  def initialize(pre_authorization, attributes = {})
+  def initialize(pre_authorization, attributes = { })
     self.pre_authorization = pre_authorization
     super(attributes)
   end

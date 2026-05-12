@@ -1,6 +1,7 @@
 class Users::SessionsController < Devise::SessionsController
   include Users::AuthenticatesWithMFA
   include Users::AuthenticatesViaPasskey
+
   layout "login/signin"
 
   before_action :authenticate_user!, only: %i[destroy_others destroy_all]
@@ -26,7 +27,7 @@ class Users::SessionsController < Devise::SessionsController
     end
 
     sessions = other_sessions_list
-    current_user.destroy_sessions(sessions.map { |s| s[:sid] })
+    current_user.destroy_sessions(sessions.pluck(:sid))
 
     redirect_to edit_user_path, notice: "Signed out of #{helpers.pluralize(sessions.length, 'other session')}."
   end
@@ -38,14 +39,14 @@ class Users::SessionsController < Devise::SessionsController
     end
 
     sessions = other_sessions_list
-    current_user.destroy_sessions(sessions.map { |s| s[:sid] })
+    current_user.destroy_sessions(sessions.pluck(:sid))
 
     redirect_to edit_user_path, notice: "Signed out of #{helpers.pluralize(sessions.length, 'other session')}."
   end
 
   def destroy_session
     suffix  = params[:session_id]
-    matches = current_user.get_sessions.select { |s| s[:sid].end_with?(suffix) }
+    matches = current_user.active_sessions.select { |s| s[:sid].end_with?(suffix) }
 
     head :not_found and return unless matches.length == 1
 
@@ -60,6 +61,10 @@ class Users::SessionsController < Devise::SessionsController
       format.turbo_stream
       format.html { redirect_to edit_user_path, notice: "Session ended." }
     end
+  end
+
+  def new
+    super
   end
 
   def create
@@ -90,7 +95,7 @@ class Users::SessionsController < Devise::SessionsController
     if params[:webauthn_response].present?
       session[:remembered] = true if params[:remember_me] == "1"
       cred = WebAuthn::Credential.from_get(JSON.parse(params[:webauthn_response]))
-      @user = User.find_by_webauthn_id(cred.user_handle)
+      @user = User.find_by(webauthn_id: cred.user_handle)
       self.resource = @user
 
       if self.resource
@@ -138,17 +143,17 @@ class Users::SessionsController < Devise::SessionsController
 
   def other_sessions_list
     current_private_id = request.env["rack.session.options"]&.[](:id)&.private_id
-    current_user.get_sessions.reject { |s| s[:sid] == current_private_id }
+    current_user.active_sessions.reject { |s| s[:sid] == current_private_id }
   end
 
   def user_params
-    params.fetch(:user, {}).permit(:email, :password)
+    params.fetch(:user, { }).permit(:email, :password)
   end
 
   def after_sign_in_path_for(resource)
-    auth_data = session[:auth_data] || {}
+    auth_data = session[:auth_data] || { }
 
-    auth_data[:created_at] = Time.now.utc.iso8601
+    auth_data[:created_at] = Time.current.iso8601
     auth_data[:initial_ip] = request.remote_ip
     auth_data[:initial_ua] = request.user_agent&.force_encoding("UTF-8")&.scrub
 

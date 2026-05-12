@@ -7,11 +7,10 @@ class PKI::CertificateAuthority < ApplicationRecord
 
   encrypts :private_key
 
-  has_many :issued_certificates, foreign_key: :certificate_authority_id,
-           class_name: "PKI::IssuedCertificate"
+  has_many :issued_certificates, class_name: "PKI::IssuedCertificate", dependent: nil
 
   validates :slug, presence: true, uniqueness: true,
-            format: { with: /\A[a-z0-9\-]+\z/, message: "must be lowercase alphanumeric and hyphens only" }
+            format: { with: /\A[a-z0-9-]+\z/, message: "must be lowercase alphanumeric and hyphens only" }
   validates :certificate_fingerprint, uniqueness: true
 
   # Block changing slug - this is encoded in cert AIA data, so we can't break it.
@@ -25,22 +24,22 @@ class PKI::CertificateAuthority < ApplicationRecord
   protected attr_ar_setter :certificate_fingerprint, :public_key_fingerprint, :expires_at
 
   enum :revocation_reason, {
-    unspecified:            "unspecified",
-    key_compromise:         "key_compromise",
-    ca_compromise:          "ca_compromise",
-    affiliation_changed:    "affiliation_changed",
-    superseded:             "superseded",
+    unspecified: "unspecified",
+    key_compromise: "key_compromise",
+    ca_compromise: "ca_compromise",
+    affiliation_changed: "affiliation_changed",
+    superseded: "superseded",
     cessation_of_operation: "cessation_of_operation",
-    certificate_hold:       "certificate_hold",
-    privilege_withdrawn:    "privilege_withdrawn",
-    aa_compromise:          "aa_compromise"
+    certificate_hold: "certificate_hold",
+    privilege_withdrawn: "privilege_withdrawn",
+    aa_compromise: "aa_compromise"
   }, prefix: :revocation
 
   scope :active,      -> { where(active: true, revoked_at: nil) }
   scope :inactive,    -> { where(active: false) }
   scope :not_revoked, -> { where(revoked_at: nil) }
 
-  scope :for_certificate_type, ->(type) {
+  scope :for_certificate_type, lambda { |type|
     where("? = ANY(allowed_certificate_types)", type)
   }
 
@@ -53,7 +52,7 @@ class PKI::CertificateAuthority < ApplicationRecord
   end
 
   def certificate_pem=(pem)
-    super pem
+    super
     derive_certificate_metadata if pem.present?
   end
 
@@ -64,6 +63,7 @@ class PKI::CertificateAuthority < ApplicationRecord
   # as we cannot decide what certs are eligible for revocation.
   def revoke!(reason: "unspecified")
     return if revoked?
+
     update!(revoked_at: Time.current, revocation_reason: reason, active: false)
   end
 
@@ -78,16 +78,18 @@ class PKI::CertificateAuthority < ApplicationRecord
   end
 
   def as_ca_gem_certificate
-    @ca_gem_cert ||= CertificateAuthority::Certificate.from_x509_cert(certificate_pem)
+    @ca_gem_cert ||= CertificateAuthority::Certificate.from_x509_cert(certificate_pem) # rubocop:disable Naming/MemoizedInstanceVariableName
   end
 
   def as_openssl_certificate
     return nil if certificate_pem.blank?
-    @openssl_cert ||= OpenSSL::X509::Certificate.new(certificate_pem)
+
+    @openssl_cert ||= OpenSSL::X509::Certificate.new(certificate_pem) # rubocop:disable Naming/MemoizedInstanceVariableName
   end
 
   def as_openssl_pkey
     return nil if private_key.blank?
+
     OpenSSL::PKey.read(private_key)
   end
 
@@ -114,14 +116,12 @@ class PKI::CertificateAuthority < ApplicationRecord
     end
 
     bc = cert.extensions.find { |e| e.oid == "basicConstraints" }
-    if bc.nil? || !bc.value.include?("CA:TRUE")
-      errors.add(:certificate_pem, "must have basicConstraints CA:TRUE")
-    end
+    errors.add(:certificate_pem, "must have basicConstraints CA:TRUE") if bc.nil? || bc.value.exclude?("CA:TRUE")
 
     ku = cert.extensions.find { |e| e.oid == "keyUsage" }
-    if ku.nil? || !ku.value.include?("Certificate Sign")
-      errors.add(:certificate_pem, "must have keyUsage keyCertSign")
-    end
+    return unless ku.nil? || ku.value.exclude?("Certificate Sign")
+
+    errors.add(:certificate_pem, "must have keyUsage keyCertSign")
   end
 
   private def validate_private_key_matches_certificate
@@ -140,13 +140,14 @@ class PKI::CertificateAuthority < ApplicationRecord
       return
     end
 
-    unless cert.check_private_key(key)
-      errors.add(:private_key, "does not match certificate public key")
-    end
+    return if cert.check_private_key(key)
+
+    errors.add(:private_key, "does not match certificate public key")
   end
 
   private def slug_immutable_after_issuance
     return unless will_save_change_to_slug? && issued_certificates.exists?
+
     errors.add(:slug, "cannot be changed after certificates have been issued")
   end
 end

@@ -40,7 +40,7 @@ class PKI::CertificateIssuanceService
     # Sign outside of the builder, as the service needs responsibility.
     begin
       leaf.sign!(policy.signing_profile)
-    rescue => e
+    rescue StandardError => e
       raise IssuanceError, "Certificate signing failed: #{e.message}"
     end
 
@@ -61,11 +61,10 @@ class PKI::CertificateIssuanceService
     end
   end
 
-  private
-
-  def parse_csr!(csr_pem)
+  private def parse_csr!(csr_pem)
     csr = OpenSSL::X509::Request.new(csr_pem)
     raise IssuanceError, "CSR self-signature verification failed" unless csr.verify(csr.public_key)
+
     csr
   rescue OpenSSL::X509::RequestError => e
     raise IssuanceError, "Invalid CSR: #{e.message}"

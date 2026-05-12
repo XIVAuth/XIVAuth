@@ -7,7 +7,7 @@ RSpec.describe "Certificates::OcspController", type: :request do
     ocsp_req = OpenSSL::OCSP::Request.new
     ca_cert  = OpenSSL::X509::Certificate.new(ca.certificate_pem)
 
-    serials.each do |serial|
+    serials.each do |_serial|
       cert_id = OpenSSL::OCSP::CertificateId.new(
         OpenSSL::X509::Certificate.new(create(:pki_issued_certificate, certificate_authority: ca).certificate_pem),
         ca_cert
@@ -56,7 +56,7 @@ RSpec.describe "Certificates::OcspController", type: :request do
         ocsp_resp = OpenSSL::OCSP::Response.new(response.body)
         # check_nonce returns 1 when nonces are present and match
         expect(ocsp_req.check_nonce(ocsp_resp.basic)).to eq(1),
-          "OCSP response must echo the request nonce"
+                                                         "OCSP response must echo the request nonce"
       end
 
       it "response is signed by the CA (RFC 6960 §4.2.1)" do
@@ -65,8 +65,8 @@ RSpec.describe "Certificates::OcspController", type: :request do
         store   = OpenSSL::X509::Store.new
         store.add_cert(ca_cert)
 
-        expect(basic.verify([ca_cert], store)).to be(true),
-          "OCSP response signature must verify against the issuing CA certificate"
+        expect(basic.verify([ca_cert], store))
+          .to be(true), "OCSP response signature must verify against the issuing CA certificate"
       end
 
       it "encodes thisUpdate/nextUpdate as valid ASN.1 times (RFC 6960 §2.2)" do
@@ -75,15 +75,15 @@ RSpec.describe "Certificates::OcspController", type: :request do
         expect(basic.responses).not_to be_empty
         cert_state = basic.responses.first
 
-        expect(cert_state.this_update).to be_within(1.minute).of(Time.now)
+        expect(cert_state.this_update).to be_within(1.minute).of(Time.current)
         expect(cert_state.next_update).not_to be_nil
-        expect(cert_state.next_update).to be > Time.now
+        expect(cert_state.next_update).to be > Time.current
       end
     end
 
     context "with a revoked certificate" do
-      def ocsp_status_for(cert, ca)
-        ca_cert   = OpenSSL::X509::Certificate.new(ca.certificate_pem)
+      def ocsp_status_for(cert, authority)
+        ca_cert   = OpenSSL::X509::Certificate.new(authority.certificate_pem)
         leaf_cert = OpenSSL::X509::Certificate.new(cert.certificate_pem)
         ocsp_req  = OpenSSL::OCSP::Request.new
         ocsp_req.add_certid(OpenSSL::OCSP::CertificateId.new(leaf_cert, ca_cert))

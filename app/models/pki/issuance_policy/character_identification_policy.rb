@@ -9,10 +9,12 @@ class PKI::IssuancePolicy::CharacterIdentificationPolicy < PKI::IssuancePolicy::
   def common_name     = "[XIVAUTH] #{subject.character.name} @ #{subject.character.home_world}"
   def validity_period = 1.year
 
-  def subject_alt_names = %W[
-    urn:xivauth:character:lodestone:#{subject.character.lodestone_id}
-    urn:xivauth:character:persistent_key:#{subject.entangled_id}
-  ]
+  def subject_alt_names
+    %W[
+      urn:xivauth:character:lodestone:#{subject.character.lodestone_id}
+      urn:xivauth:character:persistent_key:#{subject.entangled_id}
+    ]
+  end
 
   def key_usage
     case public_key
@@ -22,15 +24,15 @@ class PKI::IssuancePolicy::CharacterIdentificationPolicy < PKI::IssuancePolicy::
     end
   end
 
-  def extended_key_usage = [ PKI::OID::EKU_CharacterIdentification ]
+  def extended_key_usage = [PKI::OID::EKU_CharacterIdentification]
 
   # Snapshot the stable character identity at issuance for audit purposes.
   # Survives CharacterRegistration deletion since the cert record persists.
   def issuance_context
     {
       "persistent_key" => subject.entangled_id,
-      "lodestone_id"   => subject.character.lodestone_id.to_s,
-      "user_id"        => subject.user_id.to_s
+      "lodestone_id" => subject.character.lodestone_id.to_s,
+      "user_id" => subject.user_id.to_s
     }
   end
 

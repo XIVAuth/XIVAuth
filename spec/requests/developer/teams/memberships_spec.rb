@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Developer::Teams::Memberships", type: :request do
   let(:user) { FactoryBot.create(:user, :developer) }
@@ -89,10 +89,10 @@ RSpec.describe "Developer::Teams::Memberships", type: :request do
       before { FactoryBot.create(:team_membership, :developer, team: team, user: user) }
 
       it "is denied access" do
-        expect {
+        expect do
           patch developer_team_membership_path(team, target_user),
                 params: { team_membership: { role: "developer" } }
-        }.to raise_error(CanCan::AccessDenied)
+        end.to raise_error(CanCan::AccessDenied)
       end
     end
 
@@ -100,10 +100,10 @@ RSpec.describe "Developer::Teams::Memberships", type: :request do
       before { FactoryBot.create(:team_membership, team: team, user: user) }
 
       it "is denied access" do
-        expect {
+        expect do
           patch developer_team_membership_path(team, target_user),
                 params: { team_membership: { role: "developer" } }
-        }.to raise_error(CanCan::AccessDenied)
+        end.to raise_error(CanCan::AccessDenied)
       end
     end
   end
@@ -113,9 +113,9 @@ RSpec.describe "Developer::Teams::Memberships", type: :request do
       before { FactoryBot.create(:team_membership, :admin, team: team, user: user) }
 
       it "can remove a member" do
-        expect {
+        expect do
           delete developer_team_membership_path(team, target_user), params: { commit: "1" }
-        }.to change(Team::Membership, :count).by(-1)
+        end.to change(Team::Membership, :count).by(-1)
       end
 
       it "cannot remove themselves" do
@@ -130,9 +130,9 @@ RSpec.describe "Developer::Teams::Memberships", type: :request do
       before { FactoryBot.create(:team_membership, :manager, team: team, user: user) }
 
       it "can remove a regular member" do
-        expect {
+        expect do
           delete developer_team_membership_path(team, target_user), params: { commit: "1" }
-        }.to change(Team::Membership, :count).by(-1)
+        end.to change(Team::Membership, :count).by(-1)
       end
 
       it "cannot remove an admin" do
@@ -160,9 +160,9 @@ RSpec.describe "Developer::Teams::Memberships", type: :request do
       before { FactoryBot.create(:team_membership, :developer, team: team, user: user) }
 
       it "is denied access" do
-        expect {
+        expect do
           delete developer_team_membership_path(team, target_user), params: { commit: "1" }
-        }.to raise_error(CanCan::AccessDenied)
+        end.to raise_error(CanCan::AccessDenied)
       end
     end
   end

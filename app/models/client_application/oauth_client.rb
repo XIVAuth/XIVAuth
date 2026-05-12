@@ -16,9 +16,7 @@ class ClientApplication::OAuthClient < ApplicationRecord
   end
 
   def redirect_uri=(val)
-    if val.is_a?(String)
-      val = val.split("\n")
-    end
+    val = val.split("\n") if val.is_a?(String)
     self.redirect_uris = val
   end
 
@@ -27,7 +25,7 @@ class ClientApplication::OAuthClient < ApplicationRecord
   end
 
   def expired?
-    self.expires_at.present? && self.expires_at < Time.now
+    self.expires_at.present? && self.expires_at < Time.current
   end
 
   def needs_secret?
@@ -36,7 +34,7 @@ class ClientApplication::OAuthClient < ApplicationRecord
   end
 
   def validate_internal_scopes
-    return if application.has_entitlement?(:internal)
+    return if application.entitlement_granted?(:internal)
 
     self.scopes.select { |s| s.starts_with? "internal" }.each do |scope|
       errors.add(:scopes, :internal_scope, message: "cannot include internal scope: #{scope}")

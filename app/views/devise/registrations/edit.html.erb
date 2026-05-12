@@ -79,7 +79,7 @@
             <div class="accordion-item">
               <h2 class="accordion-header" id="headingChangePassword">
                 <button class="accordion-button <%= 'collapsed' unless pwd_open %>" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChangePassword" aria-expanded="<%= pwd_open %>" aria-controls="collapseChangePassword">
-                  <% if resource.has_password? %>
+                  <% if resource.password_set? %>
                     <i class="bi bi-shield-lock me-2"></i> Change password
                   <% else %>
                     <i class="bi bi-shield-lock-fill me-2"></i> Set password
@@ -88,7 +88,7 @@
               </h2>
               <div id="collapseChangePassword" class="accordion-collapse collapse <%= 'show' if pwd_open %>" aria-labelledby="headingChangePassword" data-bs-parent="#settingsAccordion">
                 <div class="accordion-body">
-                  <% unless resource.has_password? %>
+                  <% unless resource.password_set? %>
                     <p class="text-muted small">
                       Your account is currently <em>passwordless</em>, meaning you need to use OAuth or a Passkey to
                       sign in. If you wish to use a password, you can set one here. You will still be able to sign in
@@ -134,7 +134,7 @@
             </div>
           </div>
 
-          <% if resource.has_password? %>
+          <% if resource.password_set? %>
             <div class="mb-3">
               <%= f.label :current_password, class: "form-label fw-semibold" %>
               <%= f.password_field :current_password, autocomplete: "current-password", class: "form-control", aria: { describedby: "currentPasswordHelp" } %>
@@ -156,7 +156,7 @@
 
   <% current_sid = request.env["rack.session.options"]&.[](:id)&.private_id %>
   <%= render partial: "devise/registrations/sections/sessions",
-             locals: { sessions: current_user.get_sessions, current_sid: current_sid } %>
+             locals: { sessions: current_user.active_sessions, current_sid: current_sid } %>
 
   <div class="col-md-6">
     <div class="card border border-danger h-100">

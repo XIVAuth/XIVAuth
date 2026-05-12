@@ -9,16 +9,16 @@ require "msgpack"
 # When sessions are read, we validate that it exists *both* in the session namespace (where data is stored) AND, if
 # the session is authenticated, that it also exists in the user's known sessions list. This prevents us from falling out
 # of sync if an entry is deleted in one place, but not the other.
-class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # rubocop:disable Metrics/ClassLength
+class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore
   SESSION_KEY_PREFIX = "xivauth:sessions:v1:sid:".freeze
   USER_INDEX_PREFIX  = "xivauth:sessions:v1:usermap:".freeze
 
-  def initialize(app, options = {})
+  def initialize(app, options = { })
     super
-    redis_config    = options.fetch(:redis, {})
+    redis_config    = options.fetch(:redis, { })
     @expire_after   = redis_config[:expire_after].to_i
     @remembered_ttl = redis_config[:remembered_ttl].to_i
-    conn_options    = redis_config.reject { |k, _| %i[expire_after remembered_ttl key_prefix].include?(k) }
+    conn_options    = redis_config.except(:expire_after, :remembered_ttl, :key_prefix)
     @redis          = Redis.new(conn_options)
   end
 
@@ -31,8 +31,8 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
 
   def self.session_redis_options
     {
-      url:        "#{ENV.fetch('REDIS_URL', 'redis://localhost:6379')}/#{ENV.fetch('REDIS_SESSION_DB_INDEX', 2)}",
-      password:   ENV.fetch("REDIS_PASSWORD", nil),
+      url: "#{ENV.fetch('REDIS_URL', 'redis://localhost:6379')}/#{ENV.fetch('REDIS_SESSION_DB_INDEX', 2)}",
+      password: ENV.fetch("REDIS_PASSWORD", nil),
       ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
     }.compact
   end
@@ -54,11 +54,11 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
     session_default_values
   end
 
-  def write_session(env, sid, session_data, options = nil)
-    remembered = session_data['remembered']
+  def write_session(env, sid, session_data, _options = nil)
+    remembered = session_data["remembered"]
     expiry     = remembered ? @remembered_ttl : @expire_after
 
-    if expiry > 0
+    if expiry.positive?
       @redis.setex(prefixed(sid.private_id), expiry, encode(session_data))
     else
       @redis.set(prefixed(sid.private_id), encode(session_data))
@@ -80,18 +80,16 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
     delete_redis_keys(sid)
     unindex_session!(user_id, sid.private_id) if user_id
 
-    (options || {})[:drop] ? nil : generate_sid
+    (options || { })[:drop] ? nil : generate_sid
   rescue Errno::ECONNREFUSED, Redis::CannotConnectError
     generate_sid
   end
 
-  private
-
   # Prevents a new session from being persisted for read-only requests where
   # the session cookie is present but the session has already expired in Redis.
-  def session_exists?(env)
+  private def session_exists?(env)
     sid = current_session_id(env)
-    return false unless sid.present?
+    return false if sid.blank?
 
     @redis.exists?(prefixed(sid.private_id))
   rescue Errno::ECONNREFUSED, Redis::CannotConnectError
@@ -124,7 +122,7 @@ class XivAuthSessionStore < ActionDispatch::Session::AbstractSecureStore # ruboc
   end
 
   def extract_devise_user_id(session)
-    session&.dig("warden.user.user.key")&.first&.first
+    session.dig("warden.user.user.key", 0, 0)
   end
 
   def session_in_user_index?(user_id, sid_private_id)

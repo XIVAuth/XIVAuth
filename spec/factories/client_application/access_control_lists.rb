@@ -7,4 +7,3 @@ FactoryBot.define do
     include_team_descendants { false }
   end
 end
-

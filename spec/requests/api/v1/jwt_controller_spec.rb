@@ -23,31 +23,31 @@ RSpec.describe "Api::V1::JwtController", type: :request do
 
   describe "GET /api/v1/jwt/jwks" do
     it "does not require authentication" do
-      get api_v1_jwt_jwks_path  # no auth header
+      get api_v1_jwt_jwks_path # no auth header
       expect(response).to be_successful
     end
 
     it "returns only active keys in JWKS" do
-      _disabled = FactoryBot.create(:jwt_signing_keys_hmac, enabled: false)
-      _expired = FactoryBot.create(:jwt_signing_keys_hmac, expires_at: 1.hour.ago)
+      disabled = FactoryBot.create(:jwt_signing_keys_hmac, enabled: false)
+      expired = FactoryBot.create(:jwt_signing_keys_hmac, expires_at: 1.hour.ago)
 
       get api_v1_jwt_jwks_path, headers: { Authorization: bearer_token }
       expect(response).to be_successful
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       expect(body).to have_key("keys")
-      kids = body["keys"].map { |k| k["kid"] }
+      kids = body["keys"].pluck("kid")
 
       expect(kids).to include(@test_key.name, @rsa_key.name, @ed25519_key.name, @ecdsa_key.name)
-      expect(kids).not_to include(_disabled.name)
-      expect(kids).not_to include(_expired.name)
+      expect(kids).not_to include(disabled.name)
+      expect(kids).not_to include(expired.name)
     end
 
     it "includes required parameters" do
       get api_v1_jwt_jwks_path, headers: { Authorization: bearer_token }
       expect(response).to be_successful
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       body["keys"].each do |jwk|
         expect(jwk.keys).to include("kty", "use", "kid")
       end
@@ -57,10 +57,10 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       get api_v1_jwt_jwks_path, headers: { Authorization: bearer_token }
       expect(response).to be_successful
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       hmac_jwk = body["keys"].find { |k| k["kid"] == @test_key.name }
       expect(hmac_jwk).to be_present
-      expect(hmac_jwk.keys).to_not include("k")
+      expect(hmac_jwk.keys).not_to include("k")
       expect(hmac_jwk["k"]).to be_nil
     end
 
@@ -68,33 +68,33 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       get api_v1_jwt_jwks_path, headers: { Authorization: bearer_token }
       expect(response).to be_successful
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       rsa_jwk = body["keys"].find { |k| k["kid"] == @rsa_key.name }
       expect(rsa_jwk).to be_present
       expect(rsa_jwk).to include("n", "e")
-      expect(rsa_jwk.keys).to_not include("d", "p", "q", "dp", "dq", "qi")
+      expect(rsa_jwk.keys).not_to include("d", "p", "q", "dp", "dq", "qi")
     end
 
     it "does not leak private keys (Ed25519)" do
       get api_v1_jwt_jwks_path, headers: { Authorization: bearer_token }
       expect(response).to be_successful
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       ed_jwk = body["keys"].find { |k| k["kid"] == @ed25519_key.name }
       expect(ed_jwk).to be_present
       expect(ed_jwk.keys).to include("crv", "x")
-      expect(ed_jwk.keys).to_not include("d")
+      expect(ed_jwk.keys).not_to include("d")
     end
 
     it "does not leak private keys (ECDSA)" do
       get api_v1_jwt_jwks_path, headers: { Authorization: bearer_token }
       expect(response).to be_successful
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       ec_jwk = body["keys"].find { |k| k["kid"] == @ecdsa_key.name }
       expect(ec_jwk).to be_present
       expect(ec_jwk.keys).to include("crv", "x", "y")
-      expect(ec_jwk.keys).to_not include("d")
+      expect(ec_jwk.keys).not_to include("d")
     end
 
     it "returns an expiration timestamp if set" do
@@ -103,10 +103,10 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       get api_v1_jwt_jwks_path, headers: { Authorization: bearer_token }
       expect(response).to be_successful
 
-      body = JSON.parse(response.body)
+      body = response.parsed_body
       nonexpiring_jwk = body["keys"].find { |k| k["kid"] == @test_key.name }
       expect(nonexpiring_jwk).to be_present
-      expect(nonexpiring_jwk.keys).to_not include("exp")
+      expect(nonexpiring_jwk.keys).not_to include("exp")
 
       expiring_jwk = body["keys"].find { |k| k["kid"] == expiring_key.name }
       expect(expiring_jwk).to be_present
@@ -121,7 +121,7 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
 
       expect(response).to have_http_status(:unprocessable_content)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json["status"]).to eq("error")
       expect(json["error"]).to match(/No kid specified/i)
     end
@@ -132,7 +132,7 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
 
       expect(response).to have_http_status(:unprocessable_content)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
 
       expect(json["status"]).to eq("invalid")
     end
@@ -143,7 +143,7 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
 
       expect(response).to have_http_status(:unprocessable_content)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
 
       expect(json["status"]).to eq("invalid")
     end
@@ -151,11 +151,11 @@ RSpec.describe "Api::V1::JwtController", type: :request do
     context "with real signed JWTs" do
       it "accepts a valid HS256 token" do
         header = { alg: "HS256", kid: @test_key.name, typ: "JWT" }
-        iss = ENV.fetch('APP_URL', 'https://xivauth.net')
+        iss = ENV.fetch("APP_URL", "https://xivauth.net")
         payload = {
           iss: iss,
           iat: Time.now.to_i,
-          exp: (Time.now + 300).to_i,
+          exp: (Time.current + 300).to_i,
           data: "hs256 valid"
         }
 
@@ -163,7 +163,7 @@ RSpec.describe "Api::V1::JwtController", type: :request do
 
         post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
         expect(response).to be_successful
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["status"]).to eq("valid")
         expect(json["jwt_head"]).to be_present
         expect(json["jwt_body"]).to be_present
@@ -174,9 +174,9 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       it "accepts an audience for its own app" do
         header = { alg: "HS256", kid: @test_key.name, typ: "JWT" }
         payload = {
-          iss: ENV.fetch('APP_URL', 'https://xivauth.net'),
+          iss: ENV.fetch("APP_URL", "https://xivauth.net"),
           iat: Time.now.to_i,
-          exp: (Time.now + 300).to_i,
+          exp: (Time.current + 300).to_i,
           aud: "https://xivauth.net/applications/#{oauth_client.application_id}",
           data: "valid"
         }
@@ -185,7 +185,7 @@ RSpec.describe "Api::V1::JwtController", type: :request do
 
         post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
         expect(response).to be_successful
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["status"]).to eq("valid")
         expect(json["jwt_body"]["aud"]).to eq("https://xivauth.net/applications/#{oauth_client.application_id}")
       end
@@ -195,9 +195,9 @@ RSpec.describe "Api::V1::JwtController", type: :request do
 
         header = { alg: "HS256", kid: @test_key.name, typ: "JWT" }
         payload = {
-          iss: ENV.fetch('APP_URL', 'https://xivauth.net'),
+          iss: ENV.fetch("APP_URL", "https://xivauth.net"),
           iat: Time.now.to_i,
-          exp: (Time.now + 300).to_i,
+          exp: (Time.current + 300).to_i,
           aud: "https://xivauth.net/applications/#{another_app.id}",
           data: "valid"
         }
@@ -207,7 +207,7 @@ RSpec.describe "Api::V1::JwtController", type: :request do
         post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
         expect(response).to have_http_status(:unprocessable_content)
 
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["status"]).to eq("invalid_client")
         expect(json["jwt_head"]).to be_present
         expect(json["jwt_body"]).to be_present
@@ -220,9 +220,9 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       let(:token) do
         header = { alg: "HS256", kid: @test_key.name, typ: "JWT" }
         payload = {
-          iss: ENV.fetch('APP_URL', 'https://xivauth.net'),
+          iss: ENV.fetch("APP_URL", "https://xivauth.net"),
           iat: Time.now.to_i,
-          exp: (Time.now + 300).to_i,
+          exp: (Time.current + 300).to_i,
           aud: "https://xivauth.net/applications/#{aud_application.id}",
           azp: "https://xivauth.net/applications/#{azp_application.id}"
         }
@@ -233,7 +233,7 @@ RSpec.describe "Api::V1::JwtController", type: :request do
       it "rejects an AZP from a different app" do
         post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
         expect(response).to have_http_status(:unprocessable_content)
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["status"]).to eq("invalid_client")
         expect(json["jwt_head"]).to be_present
         expect(json["jwt_body"]).to be_present
@@ -245,7 +245,7 @@ RSpec.describe "Api::V1::JwtController", type: :request do
 
         post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
         expect(response).to be_successful
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["status"]).to eq("valid")
         expect(json["jwt_body"]["azp"]).to eq("https://xivauth.net/applications/#{azp_application.id}")
       end
@@ -254,9 +254,9 @@ RSpec.describe "Api::V1::JwtController", type: :request do
     it "returns expired status for expired tokens" do
       header = { alg: "HS256", kid: @test_key.name, typ: "JWT" }
       payload = {
-        iss: ENV.fetch('APP_URL', 'https://xivauth.net'),
-        iat: (Time.now - 3600).to_i,
-        exp: (Time.now - 60).to_i,
+        iss: ENV.fetch("APP_URL", "https://xivauth.net"),
+        iat: (Time.current - 3600).to_i,
+        exp: (Time.current - 60).to_i,
         data: "expired"
       }
 
@@ -264,11 +264,10 @@ RSpec.describe "Api::V1::JwtController", type: :request do
 
       post api_v1_jwt_verify_path, params: { token: token }, headers: { Authorization: bearer_token }
       expect(response).to have_http_status(:unprocessable_content)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json["status"]).to eq("expired")
       expect(json["jwt_head"]).to be_present
       expect(json["jwt_body"]).to be_present
     end
   end
 end
-

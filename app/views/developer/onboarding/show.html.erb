@@ -4,7 +4,7 @@
   </div>
 <% end %>
 
-<% is_oauth_only = !current_user.has_password? %>
+<% is_oauth_only = !current_user.password_set? %>
 <% has_mfa = current_user.mfa_enabled? %>
 <% has_verified_character = current_user.character_registrations.verified.any? %>
 <% all_requirements_met = (is_oauth_only || has_mfa) && has_verified_character %>

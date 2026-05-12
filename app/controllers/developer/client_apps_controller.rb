@@ -1,6 +1,7 @@
 class Developer::ClientAppsController < Developer::DeveloperPortalController
   layout "portal/base"
   include Pagy::Method
+
   helper Doorkeeper::DashboardHelper
 
   before_action :load_available_owners, only: %i[new create]
@@ -33,7 +34,8 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
       owning_team = Team.find_by(id: create_application_params[:owner_id])
 
       unless can? :create_apps, owning_team
-        @application.errors.add(:owner_id, :not_developer, message: "you do not have permission to create applications for this team")
+        @application.errors.add(:owner_id, :not_developer,
+                                message: "you do not have permission to create applications for this team")
         return render :new, status: :unprocessable_content
       end
       @application.owner = owning_team
@@ -42,7 +44,7 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
     end
 
     if @application.save
-      flash[:notice] = I18n.t(:notice, scope: %i[doorkeeper flash applications create])
+      flash[:notice] = I18n.t("doorkeeper.flash.applications.create.notice")
 
       respond_to do |format|
         format.html { redirect_to developer_application_path(@application) }
@@ -55,6 +57,30 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
           errors = @application.errors.full_messages
 
           render json: { errors: }, status: :unprocessable_content
+        end
+      end
+    end
+  end
+
+  def update
+    authorize! :update, @application
+
+    @application.icon&.destroy if params.dig(:client_application, :remove_icon) == "1"
+
+    if @application.update(application_params)
+      flash[:notice] = "Application updated successfully"
+
+      respond_to do |format|
+        format.html { redirect_to developer_application_path(@application) }
+        format.json { render json: @application, as_owner: true }
+      end
+    else
+      respond_to do |format|
+        format.html { render :show, status: :unprocessable_content }
+        format.json do
+          errors = @application.errors.full_messages
+
+          render json: { errors: errors }, status: :unprocessable_content
         end
       end
     end
@@ -81,30 +107,6 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
     respond_to do |format|
       format.turbo_stream
       format.html { render :transfer }
-    end
-  end
-
-  def update
-    authorize! :update, @application
-
-    @application.icon&.destroy if params.dig(:client_application, :remove_icon) == "1"
-
-    if @application.update(application_params)
-      flash[:notice] = "Application updated successfully"
-
-      respond_to do |format|
-        format.html { redirect_to developer_application_path(@application) }
-        format.json { render json: @application, as_owner: true }
-      end
-    else
-      respond_to do |format|
-        format.html { render :show, status: :unprocessable_content }
-        format.json do
-          errors = @application.errors.full_messages
-
-          render json: { errors: errors }, status: :unprocessable_content
-        end
-      end
     end
   end
 
@@ -150,21 +152,22 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
   end
 
   private def set_application
-    @application = ClientApplication.find(params[:id])
+    @application = ClientApplication.find(params.expect(:id))
 
     # specifically show RecordNotFound if we can't see it, rather than 403.
     raise ActiveRecord::RecordNotFound unless can? :show, @application
   end
 
   private def application_params
-    params.require(:client_application)
-          .permit(:name, :private, :icon, profile_attributes: [:homepage_url, :privacy_policy_url, :terms_of_service_url])
+    params
+      .expect(client_application: [:name, :private, :icon, { profile_attributes: %i[homepage_url privacy_policy_url
+                                                                                    terms_of_service_url] }])
   end
 
   private def create_application_params
-    params.require(:client_application)
-          .permit(:name, :private, :owner_id, :icon,
-                  profile_attributes: [:homepage_url, :privacy_policy_url, :terms_of_service_url])
+    params
+      .expect(client_application: [:name, :private, :owner_id, :icon,
+                                   { profile_attributes: %i[homepage_url privacy_policy_url terms_of_service_url] }])
   end
 
   private def transferable_teams_for(application)
@@ -173,7 +176,9 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
     if application.owner.is_a?(User)
       developer_teams
     elsif application.owner.is_a?(Team)
-      hierarchy_ids = application.owner.antecedent_team_ids + application.owner.descendant_team_ids + [application.owner.id]
+      hierarchy_ids = application.owner.antecedent_team_ids +
+                      application.owner.descendant_team_ids +
+                      [application.owner.id]
       developer_teams.where(id: hierarchy_ids)
     else
       Team.none
@@ -181,6 +186,6 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
   end
 
   private def transfer_params
-    params.require(:client_application).permit(:owner_id)
+    params.expect(client_application: [:owner_id])
   end
 end

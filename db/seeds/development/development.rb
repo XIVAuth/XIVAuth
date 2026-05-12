@@ -3,12 +3,12 @@ superuser = User.find_or_create_by!(email: "dev@eorzea.id") do |u|
   # the same.
   u.id = "00000000-0000-8000-8f00-fe55934cf9a0"
   u.password = "password"
-  u.roles = [:admin, :developer]
+  u.roles = %i[admin developer]
   u.build_profile(display_name: "developer")
   u.skip_confirmation!
 end
 
-superteam = Team.find_by!(id: "00000000-0000-8000-8f0f-000000000001")
+superteam = Team.find("00000000-0000-8000-8f0f-000000000001")
 superteam.direct_memberships.create!(user: superuser, role: "admin")
 
 client_app = ClientApplication.find_or_create_by!(id: "00000000-0000-8000-8f00-ea9e0669f9ba") do |app|

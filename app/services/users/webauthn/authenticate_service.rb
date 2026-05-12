@@ -16,23 +16,22 @@ class Users::Webauthn::AuthenticateService
     response_credential = WebAuthn::Credential.from_get(device_response)
     stored_credential = @user.webauthn_credentials.find_by!(external_id: response_credential.id)
 
-    if discoverable
-      verification_arguments[:user_verification] ||= true
-    end
+    verification_arguments[:user_verification] ||= true if discoverable
 
-    logger.info("Verifying webauthn challenge for user #{@user.id}", response: device_response, credential: response_credential.id)
+    logger.info("Verifying webauthn challenge for user #{@user.id}", response: device_response,
+credential: response_credential.id)
     response_credential.verify(@challenge,
                                public_key: stored_credential.public_key,
                                sign_count: stored_credential.sign_count,
                                **verification_arguments)
 
-    stored_credential.update!(sign_count: response_credential.sign_count, last_used_at: DateTime.now)
+    stored_credential.update!(sign_count: response_credential.sign_count, last_used_at: Time.current)
 
     # update passkeys that weren't properly marked as discoverable but were presented accordingly.
     # this is the case for Apple, possibly other keys.
-    if discoverable && !stored_credential.resident_key
-      stored_credential.update!(resident_key: true)
-    end
+    return unless discoverable && !stored_credential.resident_key
+
+    stored_credential.update!(resident_key: true)
   end
 
   # Build a new Webauthn challenge for the specified user.
@@ -47,7 +46,7 @@ class Users::Webauthn::AuthenticateService
 
     WebAuthn::Credential.options_for_get(
       allow_credentials: allowed_credentials,
-      user_verification: "discouraged", # acceptable as this is MFA.
+      user_verification: "discouraged" # acceptable as this is MFA.
     )
   end
 

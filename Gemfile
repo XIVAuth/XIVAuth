@@ -7,10 +7,10 @@ ruby ">= 4.0.0", "< 4.1"
 gem "rails", "~> 8.1.0"
 
 # Core systems
+gem "msgpack", "~> 1.8"
 gem "pg", "~> 1.5"
 gem "puma", "~> 8.0"
 gem "redis", "~> 5.2"
-gem "msgpack", "~> 1.8"
 
 # Platform-specific
 gem "tzinfo-data", platforms: %i[windows jruby]
@@ -37,8 +37,8 @@ gem "jbuilder"
 gem "bootsnap", require: false
 
 # Mail Services
-gem "postmark-rails", "~> 0.22.1"
 gem "email_address", "~> 0.2"
+gem "postmark-rails", "~> 0.22.1"
 
 # Internal Security
 gem "rack-cors", "~> 3.0.0"
@@ -83,7 +83,7 @@ gem "omniauth-rails_csrf_protection", "~> 2.0"
 gem "rails_cloudflare_turnstile", "~> 0.4"
 
 # CA certificates
-gem 'certificate_authority', '~> 1.1'
+gem "certificate_authority", "~> 1.1"
 
 # HTTP Requests
 gem "faraday", "~> 2.9"
@@ -118,8 +118,8 @@ group :development, :test do
   gem "faker", "~> 3.4"
   gem "rspec_junit_formatter", "~> 0.6", require: false
   gem "rspec-rails", "~> 8.0"
-  gem 'simplecov', require: false
-  gem 'simplecov-cobertura', require: false
+  gem "simplecov", require: false
+  gem "simplecov-cobertura", require: false
   gem "test-prof", "~> 1.0"
 
   # Analysis tools

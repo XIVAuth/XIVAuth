@@ -1,4 +1,4 @@
-class ErrorsController < ActionController::Base
+class ErrorsController < ActionController::Base # rubocop:disable Rails/ApplicationController
   helper ApplicationHelper
   helper ErrorsHelper
   before_action :set_observability_context
@@ -38,7 +38,7 @@ class ErrorsController < ActionController::Base
     sentry_frontend_data = {
       environment: ENV["APP_ENV"] || Rails.env,
       dsn: Rails.application.credentials.dig(:sentry, :dsn, :frontend),
-      user: {}
+      user: { }
     }
 
     if user_signed_in?
@@ -53,14 +53,14 @@ class ErrorsController < ActionController::Base
 
     trace = {
       "Event ID": (Sentry.last_event_id if defined?(Sentry)),
-      "Trace ID": get_internal_trace_id,
+      "Trace ID": internal_trace_id,
       "Request ID": request.uuid # fallback
     }
 
-    @trace_type, @trace_id = trace.select { |_, v| v.present? }.first
+    @trace_type, @trace_id = trace.compact_blank.first
   end
 
-  private def get_internal_trace_id
+  private def internal_trace_id
     return Sentry.get_current_scope&.get_span&.trace_id if defined?(Sentry)
 
     nil

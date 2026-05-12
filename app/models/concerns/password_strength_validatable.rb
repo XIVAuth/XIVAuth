@@ -10,20 +10,18 @@ module PasswordStrengthValidatable
     validate :strong_password, unless: :skip_password_complexity?
   end
 
-  private
-
-  def skip_password_complexity?
+  private def skip_password_complexity?
     !password_required?
   end
 
-  def strong_password
+  private def strong_password
     score = zxcvbn_score
     return if score >= MIN_PASSWORD_SCORE
 
     errors.add(:password, :weak_password, score: score, min_password_score: MIN_PASSWORD_SCORE)
   end
 
-  def zxcvbn_score
+  private def zxcvbn_score
     weak_words = zxcvbn_user_inputs.flat_map do |field|
       value = public_send(field).to_s
       [value, *value.split(/[[:^word:]_]/)]

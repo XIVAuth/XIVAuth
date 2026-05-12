@@ -10,7 +10,7 @@ require "resolv"
 # Valid DNS resolutions are cached for 14 days, invalid resolutions are cached
 # for however long the SOA says it should be.
 class EmailValidator < ActiveModel::EachValidator
-  DNS_TIMEOUT          = 0.2  # 200ms
+  DNS_TIMEOUT          = 0.2 # 200ms
   INVALID_TTL_FALLBACK = 5.minutes
   VALID_CACHE_TTL      = 14.days
 
@@ -34,9 +34,7 @@ class EmailValidator < ActiveModel::EachValidator
     record.errors.add(attribute, options[:message] || :unresolvable_domain)
   end
 
-  private
-
-  def parse(email)
+  private def parse(email)
     # NOTE: We're not going to enforce pure RFC compliance here, because some email providers allow
     # some very stupid things that I don't want to bother with. I'm also not sure Postmark would be
     # happy to handle those either, honestly...
@@ -46,10 +44,10 @@ class EmailValidator < ActiveModel::EachValidator
     nil
   end
 
-  def reachable?(dns_name)
+  private def reachable?(dns_name)
     # Assume everything is reachable in a test environment. If we want a failure to actually take place,
     # we can test that by mocking this entire method out.
-    return true if Rails.env.test? || Rails.env.development?
+    return true if Rails.env.local?
 
     cached = Rails.cache.read(cache_key(dns_name))
     return cached unless cached.nil?
@@ -63,22 +61,23 @@ class EmailValidator < ActiveModel::EachValidator
 
   # Returns true if the domain has MX or A records, false if we know this domain
   # can't get email, nil if we can't tell.
-  def query(dns_name)
+  private def query(dns_name)
     Resolv::DNS.open do |dns|
       dns.timeouts = DNS_TIMEOUT
       return true if dns.getresources(dns_name, Resolv::DNS::Resource::IN::MX).any?
       return true if dns.getresources(dns_name, Resolv::DNS::Resource::IN::A).any?
+
       false
     end
-  rescue Resolv::ResolvTimeout, Resolv::ResolvError, StandardError
+  rescue StandardError
     nil
   end
 
-  def cache_key(dns_name)
+  private def cache_key(dns_name)
     "email_domain_mx:#{dns_name.downcase}"
   end
 
-  def write_cache(dns_name, valid)
+  private def write_cache(dns_name, valid)
     if valid
       Rails.cache.write(cache_key(dns_name), true, expires_in: VALID_CACHE_TTL)
     else
@@ -90,18 +89,18 @@ class EmailValidator < ActiveModel::EachValidator
   #   min(SOA TTL, SOA RDATA minimum field)
   # Walks up the domain tree until an authoritative SOA is found.
   # Falls back to INVALID_TTL_FALLBACK if no SOA is found or the query fails.
-  def negative_ttl(dns_name)
+  private def negative_ttl(dns_name)
     labels = Resolv::DNS::Name.create(dns_name).to_a
     Resolv::DNS.open do |dns|
       dns.timeouts = DNS_TIMEOUT
       labels.length.downto(2) do |n|
         name = Resolv::DNS::Name.new(labels.last(n))
         soa = dns.getresources(name, Resolv::DNS::Resource::IN::SOA).first
-        return [ soa.ttl, soa.minimum ].min.seconds if soa
+        return [soa.ttl, soa.minimum].min.seconds if soa
       end
     end
     INVALID_TTL_FALLBACK
-  rescue Resolv::ResolvTimeout, Resolv::ResolvError, StandardError
+  rescue StandardError
     INVALID_TTL_FALLBACK
   end
 end

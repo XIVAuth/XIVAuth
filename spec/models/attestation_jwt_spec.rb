@@ -2,15 +2,15 @@ require "rails_helper"
 
 RSpec.describe AttestationJwt, type: :model do
   # Create a default key for tests that rely on automatic key selection
+  # Default subject uses HMAC for performance
+  subject(:jwt) { described_class.new(algorithm: "HS256", signing_key: hmac_key) }
+
   let!(:default_key) { FactoryBot.create(:jwt_signing_keys_ed25519) }
 
   # Use HMAC for performance in most tests
   let(:hmac_key) { FactoryBot.create(:jwt_signing_keys_hmac) }
   let(:disabled_key) { FactoryBot.create(:jwt_signing_keys_hmac, enabled: false) }
   let(:expired_key) { FactoryBot.create(:jwt_signing_keys_hmac, expires_at: 1.hour.ago) }
-
-  # Default subject uses HMAC for performance
-  subject(:jwt) { described_class.new(algorithm: "HS256", signing_key: hmac_key) }
 
   describe "initialization and defaults" do
     subject(:jwt) { described_class.new }
@@ -25,7 +25,7 @@ RSpec.describe AttestationJwt, type: :model do
     end
 
     it "allows custom algorithm to be set" do
-      hmac_key  # Ensure HMAC key exists
+      hmac_key # Ensure HMAC key exists
 
       jwt = described_class.new(algorithm: "HS256")
 
@@ -78,8 +78,8 @@ RSpec.describe AttestationJwt, type: :model do
 
   describe "field accessors" do
     describe "issued_at" do
-      it "sets and retrieves issued_at as DateTime" do
-        time = DateTime.now - 1.hour
+      it "sets and retrieves issued_at as Time" do
+        time = 1.hour.ago
         jwt.issued_at = time
 
         expect(jwt.issued_at).to be_within(1.second).of(time)
@@ -93,7 +93,7 @@ RSpec.describe AttestationJwt, type: :model do
       end
 
       it "writes to JWT body during managed field population" do
-        time = DateTime.now - 1.hour
+        time = 1.hour.ago
         jwt.issued_at = time
         jwt.send(:set_managed_fields)
 
@@ -106,8 +106,8 @@ RSpec.describe AttestationJwt, type: :model do
     end
 
     describe "expires_at" do
-      it "sets and retrieves expires_at as DateTime" do
-        time = DateTime.now + 1.hour
+      it "sets and retrieves expires_at as Time" do
+        time = 1.hour.from_now
         jwt.expires_at = time
 
         expect(jwt.expires_at).to be_within(1.second).of(time)
@@ -121,7 +121,7 @@ RSpec.describe AttestationJwt, type: :model do
       end
 
       it "writes to JWT body during managed field population" do
-        time = DateTime.now + 1.hour
+        time = 1.hour.from_now
         jwt.expires_at = time
         jwt.send(:set_managed_fields)
 
@@ -132,11 +132,11 @@ RSpec.describe AttestationJwt, type: :model do
         jwt.expires_in = 1.hour
 
         # expires_at returns a preview calculated from current time
-        expect(jwt.expires_at).to be_within(5.seconds).of(DateTime.now + 1.hour)
+        expect(jwt.expires_at).to be_within(5.seconds).of(1.hour.from_now)
       end
 
       it "resolves duration at managed field population" do
-        jwt.issued_at = DateTime.now
+        jwt.issued_at = Time.current
         jwt.expires_in = 1.hour
 
         jwt.send(:set_managed_fields)
@@ -159,8 +159,8 @@ RSpec.describe AttestationJwt, type: :model do
     end
 
     describe "not_before" do
-      it "sets and retrieves not_before as DateTime" do
-        time = DateTime.now - 1.hour
+      it "sets and retrieves not_before as Time" do
+        time = 1.hour.ago
         jwt.not_before = time
 
         expect(jwt.not_before).to be_within(1.second).of(time)
@@ -174,7 +174,7 @@ RSpec.describe AttestationJwt, type: :model do
       end
 
       it "writes to JWT body" do
-        time = DateTime.now + 1.hour
+        time = 1.hour.from_now
         jwt.not_before = time
 
         expect(jwt.body["nbf"]).to eq(time.to_i)
@@ -447,7 +447,7 @@ RSpec.describe AttestationJwt, type: :model do
       token = jwt.token
       decoded = JWT.decode(token, nil, false)
 
-      expect(Time.at(decoded[0]["iat"]).to_datetime).to be_within(5.seconds).of(DateTime.now)
+      expect(Time.zone.at(decoded[0]["iat"])).to be_within(5.seconds).of(Time.current)
     end
 
     it "preserves custom issued_at" do
@@ -545,13 +545,13 @@ RSpec.describe AttestationJwt, type: :model do
 
     it "handles large payloads" do
       jwt = described_class.new(algorithm: "HS256", signing_key: hmac_key)
-      jwt.body["large_data"] = "x" * 10000
+      jwt.body["large_data"] = "x" * 10_000
 
       expect(jwt).to be_valid
       token = jwt.token
       decoded = JWT.decode(token, nil, false)
 
-      expect(decoded[0]["large_data"].length).to eq(10000)
+      expect(decoded[0]["large_data"].length).to eq(10_000)
     end
 
     it "handles special characters in claims" do
@@ -566,7 +566,7 @@ RSpec.describe AttestationJwt, type: :model do
 
     it "validates tokens even when iat equals exp" do
       jwt = described_class.new(algorithm: "HS256", signing_key: hmac_key)
-      now = DateTime.now
+      now = Time.current
       jwt.issued_at = now
       jwt.expires_at = now
 
@@ -641,7 +641,7 @@ RSpec.describe AttestationJwt, type: :model do
       jwt = described_class.new(algorithm: "HS256", signing_key: hmac_key)
       jwt.subject = "user_123"
       jwt.audience = app
-      jwt.issued_at = DateTime.now
+      jwt.issued_at = Time.current
       jwt.expires_at = 1.hour.from_now
       jwt.body["scope"] = "read write"
 

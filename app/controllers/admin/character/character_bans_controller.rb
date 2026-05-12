@@ -41,7 +41,7 @@ class Admin::Character::CharacterBansController < Admin::AdminController
   end
 
   private def filtered_params
-    params.require(:character_ban).permit(:reason)
+    params.expect(character_ban: [:reason])
   end
 
   private def render_new_form_again(status: :unprocessable_content)

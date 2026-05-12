@@ -9,7 +9,7 @@ RSpec.describe User, type: :model do
     it "properly reports an empty password" do
       # Sanity test to ensure FactoryBot isn't going to cause problems for us.
       expect(@user.encrypted_password).to be_nil
-      expect(@user.has_password?).to be(false)
+      expect(@user.password_set?).to be(false)
       expect(@user.password).to be_nil
     end
 
@@ -20,7 +20,7 @@ RSpec.describe User, type: :model do
     end
 
     it "fails initial validation without a social identity" do
-      expect(@user).to_not be_valid
+      expect(@user).not_to be_valid
       expect(@user.errors[:password].first).to eq "can't be blank"
     end
 

@@ -1,6 +1,5 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  # FIXME: Possible security issue (?) - Steam doesn't give us CSRF back, so we have to deal with a bit of a headache.
-  skip_before_action :verify_authenticity_token, only: [:steam]
+  skip_before_action :verify_authenticity_token, only: [:steam] # rubocop:disable Rails/LexicallyScopedActionFilter
 
   User.omniauth_providers.each do |provider|
     next if self.method_defined?(provider)
@@ -14,9 +13,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def callback
     @provider = params[:provider]
 
-    unless User.omniauth_providers.include? @provider
-      raise "Unknown OAuth provider: #{@provider}"
-    end
+    raise "Unknown OAuth provider: #{@provider}" unless User.omniauth_providers.include? @provider
 
     common
   end
@@ -45,8 +42,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
       # check for login-only providers.
       if [:steam].include? @provider
-        redirect_to new_user_session_path, alert: "#{@provider.to_s.titleize} must be linked before being used for " \
-        "sign in. Please log in and link your #{@provider.to_s.titleize} account first."
+        redirect_to new_user_session_path,
+                    alert: "#{@provider.to_s.titleize} must be linked before being used for " \
+                           "sign in. Please log in and link your #{@provider.to_s.titleize} account first."
         return
       end
 
@@ -77,10 +75,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         identity.merge_auth_hash(auth_data)
 
         redirect_to edit_user_path, alert: "This social identity already exists on your account! " \
-                                                        "Information about this identity has been updated."
+                                           "Information about this identity has been updated."
       else
         redirect_to edit_user_path, alert: "This social identity is already used on another account. " \
-                                                        "Please delete it from that account first."
+                                           "Please delete it from that account first."
       end
 
       return

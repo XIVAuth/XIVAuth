@@ -1,9 +1,10 @@
 class UserMailer < Devise::Mailer
   include PostmarkRails::TemplatedMailerMixin
   include Devise::Controllers::UrlHelpers
+
   default from: "XIVAuth <noreply@xivauth.net>"
 
-  def reset_password_instructions(record, token, opts = nil)
+  def reset_password_instructions(record, token, _opts = nil)
     self.template_model = {
       email: record.email,
       action_url: reset_user_password_url(reset_password_token: token),
@@ -28,7 +29,7 @@ class UserMailer < Devise::Mailer
     mail to: record.email, postmark_template_alias: "welcome"
   end
 
-  def reconfirmation_instructions(record, token, opts = nil)
+  def reconfirmation_instructions(record, token, _opts = nil)
     self.template_model = {
       email: record.unconfirmed_email,
       action_url: user_confirmation_url(record, confirmation_token: token)

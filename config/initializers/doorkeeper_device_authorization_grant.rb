@@ -6,13 +6,13 @@ Doorkeeper::DeviceAuthorizationGrant.configure do
   # device_code_expires_in 300
 
   # Customizable reference to the DeviceGrant model.
-  device_grant_class 'OAuth::DeviceGrant'
+  device_grant_class "OAuth::DeviceGrant"
 
   # Reference to a model (or class) for user code generation.
   #
   # It must implement a `.generate` method, which can be invoked without
   # arguments to obtain a String user code value.
-  user_code_generator 'OAuth::CrockfordCodeGenerator'
+  user_code_generator "OAuth::CrockfordCodeGenerator"
 
   # A Proc returning the end-user verification URI on the authorization server.
   # verification_uri ->(host_name) do

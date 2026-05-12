@@ -6,6 +6,6 @@ module Users::TotpCredentialsHelper
       shape_rendering: "crispEdges",
       module_size: 4,
       standalone: true
-    ).html_safe
+    ).html_safe # rubocop:disable Rails/OutputSafety -- verified.
   end
 end

@@ -9,27 +9,6 @@ class Users::WebauthnCredentialsController < ApplicationController
     @challenge = build_registration_challenge
   end
 
-  def destroy
-    credential = current_user.webauthn_credentials.find(params[:id])
-
-    if credential.destroy
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace("mfa-settings", partial: "devise/registrations/sections/mfa_settings",
-                                 locals: { resource: current_user })
-          ]
-        end
-        format.html { redirect_to edit_user_path, notice: "Credential was removed." }
-      end
-    else
-      respond_to do |format|
-        format.turbo_stream { }
-        format.html { redirect_to edit_user_path, error: "Credential could not be deleted." }
-      end
-    end
-  end
-
   def create
     credential_json = JSON.parse(create_params[:credential])
     recovered_credential = WebAuthn::Credential.from_create(credential_json)
@@ -45,7 +24,7 @@ class Users::WebauthnCredentialsController < ApplicationController
         transports: recovered_credential.response&.transports,
         aaguid: recovered_credential.response&.aaguid,
         resident_key: recovered_credential.client_extension_outputs&.dig("credProps", "rk") || false,
-        raw_data: credential_json,
+        raw_data: credential_json
       )
 
       if @webauthn_credential.save
@@ -77,6 +56,26 @@ class Users::WebauthnCredentialsController < ApplicationController
     end
   end
 
+  def destroy
+    credential = current_user.webauthn_credentials.find(params.expect(:id))
+
+    if credential.destroy
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace("mfa-settings", partial: "devise/registrations/sections/mfa_settings",
+                                 locals: { resource: current_user })
+          ]
+        end
+        format.html { redirect_to edit_user_path, notice: "Credential was removed." }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to edit_user_path, error: "Credential could not be deleted." }
+      end
+    end
+  end
+
   private def render_new_form_again(status: :unprocessable_content)
     @challenge = build_registration_challenge
 
@@ -86,8 +85,8 @@ class Users::WebauthnCredentialsController < ApplicationController
   end
 
   private def create_params
-    params.require(:user_webauthn_credential)
-          .permit(:credential, :nickname)
+    params
+      .expect(user_webauthn_credential: %i[credential nickname])
   end
 
   private def build_registration_challenge

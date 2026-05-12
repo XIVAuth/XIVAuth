@@ -2,11 +2,11 @@ class Api::V1::JwtController < Api::V1::ApiController
   skip_before_action :doorkeeper_authorize!, only: %i[jwks]
 
   def dummy_jwt
-    expiry_time = (request.query_parameters[:ttl].to_i or 300)
+    expiry_time = (request.query_parameters[:ttl] || 300).to_i
 
     # Build JWT using JwtWrapper
     jwt_wrapper = AttestationJwt.new(
-      algorithm: (params[:algorithm] if params[:algorithm].present?),
+      algorithm: params[:algorithm].presence,
       issuer: "#{ENV.fetch('APP_URL', 'https://xivauth.net')}/sandbox",
       claim_type: "xivauth.dummy"
     )
@@ -22,11 +22,9 @@ class Api::V1::JwtController < Api::V1::ApiController
     end
 
     # Set issued_at unless ignore_iat is specified
-    jwt_wrapper.issued_at = DateTime.now if request.query_parameters[:ignore_iat].blank?
+    jwt_wrapper.issued_at = Time.current if request.query_parameters[:ignore_iat].blank?
 
-    unless jwt_wrapper.signing_key.present?
-      raise ActiveRecord::RecordNotFound
-    end
+    raise ActiveRecord::RecordNotFound if jwt_wrapper.signing_key.blank?
 
     # Validate and render
     unless jwt_wrapper.valid?
@@ -87,9 +85,7 @@ class Api::V1::JwtController < Api::V1::ApiController
       issuer_id = doorkeeper_token&.application&.application_id || "_anonymous"
       expected_aud = "#{ENV.fetch('APP_URL', 'https://xivauth.net')}/applications/#{issuer_id}"
 
-      unless payload["aud"] == expected_aud
-        raise JWT::InvalidAudError, "Audience does not match this app's ID"
-      end
+      raise JWT::InvalidAudError, "Audience does not match this app's ID" unless payload["aud"] == expected_aud
     end
 
     # Manual OBO/azp authorization check
@@ -101,46 +97,53 @@ class Api::V1::JwtController < Api::V1::ApiController
     end
 
     render json: { status: "valid", jwt_head: header_data, jwt_body: payload }
-
   rescue JWT::ExpiredSignature => e
-    render json: { status: "expired", error: e.message, jwt_head: safe_header(token), jwt_body: safe_payload(token) },
-           status: :unprocessable_content
+    render status: :unprocessable_content, json: {
+      status: "expired",
+      error: e.message,
+      jwt_head: safe_header(token),
+      jwt_body: safe_payload(token)
+    }
   rescue JWT::InvalidAudError => e
-    render json: { status: "invalid_client", error: e.message, jwt_head: safe_header(token), jwt_body: safe_payload(token) },
-           status: :unprocessable_content
+    render status: :unprocessable_content, json: {
+      status: "invalid_client",
+      error: e.message,
+      jwt_head: safe_header(token),
+      jwt_body: safe_payload(token)
+    }
   rescue JWT::VerificationError, JWT::DecodeError, JWT::InvalidPayload => e
-    render json: { status: "invalid", error: e.message, jwt_head: safe_header(token), jwt_body: safe_payload(token) },
-           status: :unprocessable_content
+    render status: :unprocessable_content, json: {
+      status: "invalid",
+      error: e.message,
+      jwt_head: safe_header(token),
+      jwt_body: safe_payload(token)
+    }
   end
 
   def jwks
     render json: JwtSigningKey.jwks.export
   end
 
-  private
-
-  def extract_token
+  private def extract_token
     return params[:token] if params[:token].present?
-    return params[:_json] if params[:_json].present? && params[:_json].is_a?(String)
+    return params[:_json] if params[:_json].present? && params.expect(:_json).is_a?(String)
 
     raw = request.raw_post.to_s.strip
     return if raw.blank?
 
     # Strip wrapping quotes if present
-    if raw.start_with?("\"") && raw.end_with?("\"")
-      raw = raw[1..-2]
-    end
+    raw = raw[1..-2] if raw.start_with?("\"") && raw.end_with?("\"")
 
     raw.presence
   end
 
-  def safe_header(token_string)
+  private def safe_header(token_string)
     JWT.decode(token_string, nil, false)[1]
   rescue StandardError
     nil
   end
 
-  def safe_payload(token_string)
+  private def safe_payload(token_string)
     JWT.decode(token_string, nil, false)[0]
   rescue StandardError
     nil

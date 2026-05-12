@@ -1,5 +1,14 @@
-require:
+plugins:
   - rubocop-rails
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/migrate/*.rb'
+    - 'bin/*'
+    - 'vendor/**/*'
+    - 'spec/*_helper.rb'
 
 Style/AccessModifierDeclarations:
   EnforcedStyle: inline
@@ -23,6 +32,9 @@ Style/ClassAndModuleChildren:
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
 
+Style/EmptyElse:
+  AllowComments: true
+
 Layout/HashAlignment:
   EnforcedLastArgumentHashStyle: ignore_implicit
 
@@ -31,6 +43,12 @@ Layout/FirstHashElementIndentation:
 
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyleForEmptyBraces: space
+
+Layout/SpaceAroundOperators:
+  EnforcedStyleForExponentOperator: space
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
 
 # My code's too broken to care.
 Metrics/AbcSize:
@@ -44,12 +62,23 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   Enabled: false
 
+# ...
+Metrics/ClassLength:
+  Enabled: false
+
 Metrics/CyclomaticComplexity:
   Enabled: false
 
 Metrics/PerceivedComplexity:
   Enabled: false
 
-# lol.
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+# lol. lmao even.
 Style/Documentation:
+  Enabled: false
+
+# One day.
+Rails/I18nLocaleTexts:
   Enabled: false

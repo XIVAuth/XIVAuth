@@ -1,16 +1,15 @@
-require 'contextual_logger/log_context'
+require "contextual_logger"
+require "contextual_logger/log_context"
 
-module ContextualLogger
-  class Middleware
-    def initialize(app)
-      @app = app
-    end
+class ContextualLogger::Middleware
+  def initialize(app)
+    @app = app
+  end
 
-    def call(env)
-      status, headers, response = @app.call(env)
-      LogContext.clear
+  def call(env)
+    status, headers, response = @app.call(env)
+    LogContext.clear
 
-      [status, headers, response]
-    end
+    [status, headers, response]
   end
 end

@@ -56,7 +56,8 @@ class Users::TotpCredentialsController < ApplicationController
     unless @totp_credential.validate_and_consume_otp_or_backup!(otp_attempt)
       @totp_credential.errors.add(:otp_attempt, "was invalid")
       render status: :unprocessable_content,
-             turbo_stream: turbo_stream.update("remove_totp_modal-content", partial: "users/totp_credentials/destroy_modal")
+             turbo_stream: turbo_stream.update("remove_totp_modal-content",
+                                               partial: "users/totp_credentials/destroy_modal")
 
       return
     end
@@ -80,7 +81,8 @@ class Users::TotpCredentialsController < ApplicationController
     unless @totp_credential.validate_and_consume_otp_or_backup!(otp_attempt)
       @totp_credential.errors.add(:otp_attempt, "was invalid")
       render status: :unprocessable_content,
-             turbo_stream: turbo_stream.update("regenerate_totp_backup_modal-content", partial: "users/totp_credentials/regenerate_check_modal")
+             turbo_stream: turbo_stream.update("regenerate_totp_backup_modal-content",
+                                               partial: "users/totp_credentials/regenerate_check_modal")
 
       return
     end
@@ -88,7 +90,8 @@ class Users::TotpCredentialsController < ApplicationController
     @backup_codes = @totp_credential.generate_otp_backup_codes!
     if @totp_credential.save
       render status: :ok,
-             turbo_stream: turbo_stream.update("regenerate_totp_backup_modal-content", partial: "users/totp_credentials/regenerate_success_modal")
+             turbo_stream: turbo_stream.update("regenerate_totp_backup_modal-content",
+                                               partial: "users/totp_credentials/regenerate_success_modal")
     else
       redirect_to edit_user_path, error: "TOTP backup codes could not be regenerated."
     end
@@ -100,6 +103,6 @@ class Users::TotpCredentialsController < ApplicationController
   end
 
   private def filtered_params
-    params.require(:user_totp_credential).permit(:otp_attempt)
+    params.expect(user_totp_credential: [:otp_attempt])
   end
 end

@@ -1,7 +1,8 @@
 class User::WebauthnCredential < ApplicationRecord
   belongs_to :user
 
-  belongs_to :device_class, class_name: "Webauthn::DeviceClass", foreign_key: :aaguid, optional: true
+  belongs_to :device_class, class_name: "Webauthn::DeviceClass", foreign_key: :aaguid, optional: true,
+             inverse_of: false
 
   validates :external_id, presence: true, uniqueness: true
   validates :public_key, presence: true

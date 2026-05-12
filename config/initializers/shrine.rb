@@ -20,7 +20,7 @@ elsif Rails.application.credentials.dig(:storage, :uploads, :bucket)
       endpoint:          creds[:endpoint],
       prefix:            creds[:prefix],
       force_path_style:  true,
-      copy_options:      {}
+      copy_options:      { }
     )
   end
 

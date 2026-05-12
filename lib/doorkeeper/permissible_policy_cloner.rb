@@ -5,10 +5,8 @@ class Doorkeeper::PermissiblePolicyCloner
       original = request.refresh_token
     when Doorkeeper::OAuth::AuthorizationCodeRequest
       original = request.grant
-    when Doorkeeper::OAuth::ClientCredentialsRequest
-      # No permissible policy exists for this case; just skip.
-      return
-    when Doorkeeper::DeviceAuthorizationGrant::OAuth::DeviceAuthorizationRequest
+    when Doorkeeper::OAuth::ClientCredentialsRequest,
+      Doorkeeper::DeviceAuthorizationGrant::OAuth::DeviceAuthorizationRequest
       # No policy has been created yet, so nothing to do.
       return
     when Doorkeeper::DeviceAuthorizationGrant::OAuth::DeviceCodeRequest

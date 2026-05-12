@@ -16,11 +16,11 @@ module Users::AuthenticatesViaPasskey
     sign_in(:user, @user)
   rescue WebAuthn::Error => e
     flash.now[:alert] = "Passkey authentication failed: #{e.message}"
-    render :new, status: :unprocessable_content 
+    render :new, status: :unprocessable_content
   rescue ActiveRecord::RecordNotFound
     logger.warn("WebAuthn login attempt with a known user_handle, but unregistered credential.")
     self.flash.now[:alert] = "Security key presented is not registered."
-    render :new, status: :unprocessable_content 
+    render :new, status: :unprocessable_content
   end
 
   def reset_passkey_challenge!

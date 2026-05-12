@@ -2,7 +2,7 @@ require "rails_helper"
 require "xivauth_session_store"
 
 RSpec.describe XivAuthSessionStore do
-  let(:app) { ->(_env) { [200, {}, ["OK"]] } }
+  let(:app) { ->(_env) { [200, { }, ["OK"]] } }
   let(:redis_double) { instance_double(Redis) }
   let(:store) do
     allow(Redis).to receive(:new).and_return(redis_double)
@@ -12,14 +12,14 @@ RSpec.describe XivAuthSessionStore do
   let(:sid) { Rack::Session::SessionId.new(SecureRandom.urlsafe_base64(32)) }
   let(:user_id) { SecureRandom.uuid }
   let(:session_data) { { "warden.user.user.key" => [[user_id], nil] }.with_indifferent_access }
-  let(:empty_session) { {}.with_indifferent_access }
+  let(:empty_session) { { }.with_indifferent_access }
 
-  def session_key(s = sid)
-    "#{XivAuthSessionStore::SESSION_KEY_PREFIX}#{s.private_id}"
+  def session_key(session_id = sid)
+    "#{XivAuthSessionStore::SESSION_KEY_PREFIX}#{session_id.private_id}"
   end
 
-  def public_session_key(s = sid)
-    "#{XivAuthSessionStore::SESSION_KEY_PREFIX}#{s.public_id}"
+  def public_session_key(session_id = sid)
+    "#{XivAuthSessionStore::SESSION_KEY_PREFIX}#{session_id.public_id}"
   end
 
   def index_key
@@ -37,34 +37,35 @@ RSpec.describe XivAuthSessionStore do
 
     it "writes session data to Redis with TTL when ttl option is given" do
       expect(redis_double).to receive(:setex).with(session_key, 7.days.to_i, anything)
-      store.write_session({}, sid, session_data, { ttl: 7.days.to_i })
+      store.write_session({ }, sid, session_data, { ttl: 7.days.to_i })
     end
 
     it "writes without expiry when no TTL is configured" do
       allow(Redis).to receive(:new).and_return(redis_double)
-      store_no_expiry = XivAuthSessionStore.new(app, redis: {})
+      store_no_expiry = XivAuthSessionStore.new(app, redis: { })
 
       expect(redis_double).to receive(:set).with(session_key, anything)
-      store_no_expiry.write_session({}, sid, session_data, {})
+      store_no_expiry.write_session({ }, sid, session_data, { })
     end
 
     it "indexes the session in the user sorted set when session has Devise user data" do
       expect(redis_double).to receive(:zadd).with(index_key, anything, sid.private_id)
-      store.write_session({}, sid, session_data, { ttl: 7.days.to_i })
+      store.write_session({ }, sid, session_data, { ttl: 7.days.to_i })
     end
 
     it "sets the sorted set expiry slightly longer than the session TTL" do
-      expect(redis_double).to receive(:expireat).with(index_key, be_within(5).of(Time.now.to_i + 7.days.to_i + 1.day.to_i))
-      store.write_session({}, sid, session_data, { ttl: 7.days.to_i })
+      expect(redis_double).to receive(:expireat).with(index_key,
+                                                      be_within(5).of(Time.now.to_i + 7.days.to_i + 1.day.to_i))
+      store.write_session({ }, sid, session_data, { ttl: 7.days.to_i })
     end
 
     it "does not index the session when there is no Devise user data" do
       expect(redis_double).not_to receive(:zadd)
-      store.write_session({}, sid, empty_session, { ttl: 7.days.to_i })
+      store.write_session({ }, sid, empty_session, { ttl: 7.days.to_i })
     end
 
     it "returns the sid on success" do
-      result = store.write_session({}, sid, session_data, { ttl: 7.days.to_i })
+      result = store.write_session({ }, sid, session_data, { ttl: 7.days.to_i })
       expect(result).to eq(sid)
     end
   end
@@ -77,7 +78,7 @@ RSpec.describe XivAuthSessionStore do
       end
 
       it "returns the original sid and session data" do
-        returned_sid, data = store.find_session({}, sid)
+        returned_sid, data = store.find_session({ }, sid)
         expect(returned_sid).to eq(sid)
         expect(data["warden.user.user.key"]).to be_present
       end
@@ -91,13 +92,13 @@ RSpec.describe XivAuthSessionStore do
       end
 
       it "returns a new empty session" do
-        _sid, data = store.find_session({}, sid)
+        _sid, data = store.find_session({ }, sid)
         expect(data).to be_empty
       end
 
       it "deletes the orphaned Redis key" do
         expect(redis_double).to receive(:del).with(session_key, public_session_key)
-        store.find_session({}, sid)
+        store.find_session({ }, sid)
       end
     end
 
@@ -107,7 +108,7 @@ RSpec.describe XivAuthSessionStore do
       end
 
       it "returns a new empty session" do
-        _sid, data = store.find_session({}, sid)
+        _sid, data = store.find_session({ }, sid)
         expect(data).to be_empty
       end
     end
@@ -115,7 +116,7 @@ RSpec.describe XivAuthSessionStore do
     context "when sid is nil" do
       it "returns a new empty session without hitting Redis" do
         expect(redis_double).not_to receive(:get)
-        _sid, data = store.find_session({}, nil)
+        _sid, data = store.find_session({ }, nil)
         expect(data).to be_empty
       end
     end
@@ -127,7 +128,7 @@ RSpec.describe XivAuthSessionStore do
 
       it "returns the session without performing an index check" do
         expect(redis_double).not_to receive(:zscore)
-        returned_sid, data = store.find_session({}, sid)
+        returned_sid, data = store.find_session({ }, sid)
         expect(returned_sid).to eq(sid)
         expect(data).to be_empty
       end
@@ -139,7 +140,7 @@ RSpec.describe XivAuthSessionStore do
       end
 
       it "returns a new empty session" do
-        _sid, data = store.find_session({}, sid)
+        _sid, data = store.find_session({ }, sid)
         expect(data).to be_empty
       end
     end
@@ -154,22 +155,22 @@ RSpec.describe XivAuthSessionStore do
 
     it "deletes the session key from Redis" do
       expect(redis_double).to receive(:del).with(session_key, public_session_key)
-      store.delete_session({}, sid, {})
+      store.delete_session({ }, sid, { })
     end
 
     it "removes the session from the user sorted set index" do
       expect(redis_double).to receive(:zrem).with(index_key, sid.private_id)
-      store.delete_session({}, sid, {})
+      store.delete_session({ }, sid, { })
     end
 
     it "returns a new sid when drop option is false" do
-      result = store.delete_session({}, sid, { drop: false })
+      result = store.delete_session({ }, sid, { drop: false })
       expect(result).to be_a(Rack::Session::SessionId)
       expect(result).not_to eq(sid)
     end
 
     it "returns nil when drop option is true" do
-      result = store.delete_session({}, sid, { drop: true })
+      result = store.delete_session({ }, sid, { drop: true })
       expect(result).to be_nil
     end
 
@@ -180,7 +181,7 @@ RSpec.describe XivAuthSessionStore do
 
       it "deletes the key without touching the user index" do
         expect(redis_double).not_to receive(:zrem)
-        store.delete_session({}, sid, {})
+        store.delete_session({ }, sid, { })
       end
     end
   end

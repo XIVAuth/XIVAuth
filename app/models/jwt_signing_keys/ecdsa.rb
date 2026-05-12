@@ -16,7 +16,7 @@ class JwtSigningKeys::ECDSA < JwtSigningKey
     self[:public_key] = key.public_to_pem
 
     @private_key = key
-    @public_key = nil  # needs to be recalculated from the PEM, can be deferred.
+    @public_key = nil # needs to be recalculated from the PEM, can be deferred.
 
     key_params[:curve] = key.public_key&.group&.curve_name
   end
@@ -60,9 +60,9 @@ class JwtSigningKeys::ECDSA < JwtSigningKey
     digest = OpenSSL::Digest.new("SHA256")
     signature = private_key.sign(digest, sig_data)
 
-    unless public_key.verify(digest, signature, sig_data)
-      errors.add(:public_key, "must be consistent with the private key")
-    end
+    return if public_key.verify(digest, signature, sig_data)
+
+    errors.add(:public_key, "must be consistent with the private key")
   end
 
   def self.preferred_key_for_algorithm(algorithm_name)

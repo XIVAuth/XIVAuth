@@ -1,3 +1,2 @@
 module Admin::CharactersHelper
-
 end

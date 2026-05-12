@@ -3,11 +3,11 @@ class CharacterRegistrations::VerificationsController < ApplicationController
 
   def show
     respond_to do |format|
-      if !@character_registration.verified?
+      if @character_registration.verified?
+        format.html { redirect_to character_registrations_path, error: "This character is already verified!" }
+      else
         format.turbo_stream
         format.html
-      else
-        format.html { redirect_to character_registrations_path, error: "This character is already verified!" }
       end
     end
   end
@@ -36,16 +36,14 @@ class CharacterRegistrations::VerificationsController < ApplicationController
     respond_to do |format|
       if @character_registration.save
         format.html { redirect_to character_registrations_path, notice: "Character was successfully unverified" }
-        format.turbo_stream { }
       else
         format.html { redirect_to character_registrations_path, error: "Could not unverify character." }
-        format.turbo_stream { }
       end
     end
   end
 
   private def set_character_registration
-    @character_registration = CharacterRegistration.find(params[:character_registration_id])
+    @character_registration = CharacterRegistration.find(params.expect(:character_registration_id))
     raise ActiveRecord::RecordNotFound unless can? :show, @character_registration
 
     @character = @character_registration.character

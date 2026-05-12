@@ -20,7 +20,7 @@ module AuthenticationHelpers
 
   def build_fake_webauthn(origin)
     client = WebAuthn::FakeClient.new(origin, encoding: :base64url)
-    create_options = WebAuthn::Credential.options_for_create( user: { id: "fake_id", name: "fake_name" } )
+    create_options = WebAuthn::Credential.options_for_create(user: { id: "fake_id", name: "fake_name" })
 
     client.create(challenge: create_options.challenge)
     client

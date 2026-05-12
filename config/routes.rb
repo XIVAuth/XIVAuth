@@ -49,8 +49,9 @@ Rails.application.routes.draw do
       post :ocsp, controller: "certificates/ocsp", action: :respond
       # RFC 6960 §A.1: OCSP over HTTP GET - base64url-encoded DER in path
       get "ocsp/*encoded_request", controller: "certificates/ocsp", action: :respond_get, as: :ocsp_get
-      resources :ca_certs, controller: "certificates/certificate_authorities", only: %i[index show], param: :slug, path: "cas"
-      resources :crls,  controller: "certificates/crls",  only: %i[show],       param: :slug
+      resources :ca_certs, controller: "certificates/certificate_authorities", only: %i[index show], param: :slug,
+path: "cas"
+      resources :crls, controller: "certificates/crls", only: %i[show], param: :slug
     end
   end
 
@@ -124,7 +125,7 @@ Rails.application.routes.draw do
   post "/cat", to: "marketing#headpat", as: :marketing_cat
   # end static page routes
 
-  if Rails.env.development? || ENV["APP_ENV"].present? && ENV["APP_ENV"] != "production"
+  if Rails.env.development? || (ENV["APP_ENV"].present? && ENV["APP_ENV"] != "production")
     get "/_debug/generate_exception", to: "debug#generate_exception"
     get "/_debug/teapot", to: "debug#teapot"
   end
@@ -140,7 +141,7 @@ Rails.application.routes.draw do
 
   devise_for :users, path: "auth", only: [:omniauth_callbacks],
              controllers: {
-               omniauth_callbacks: "users/omniauth_callbacks",
+               omniauth_callbacks: "users/omniauth_callbacks"
              }
 
   devise_scope :user do
@@ -181,7 +182,8 @@ Rails.application.routes.draw do
       resource :totp_credential, path: "totp", controller: "users/totp_credentials", only: %i[new create destroy] do
         post :regenerate_backup, to: "users/totp_credentials#regenerate_backup"
       end
-      resources :oauth_authorizations, path: "authorizations", controller: "users/oauth_authorizations", only: %i[index destroy]
+      resources :oauth_authorizations, path: "authorizations", controller: "users/oauth_authorizations",
+only: %i[index destroy]
     end
   end
 end

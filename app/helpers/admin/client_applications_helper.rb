@@ -1,3 +1,2 @@
 module Admin::ClientApplicationsHelper
-
 end

@@ -12,16 +12,16 @@ class Team < ApplicationRecord
                         validate: [
                           ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
                         ],
-                        derivatives: ->(pipeline) {
+                        derivatives: lambda { |pipeline|
                           {
-                            large:  pipeline.resize_to_fill!(256, 256)
+                            large: pipeline.resize_to_fill!(256, 256)
                           }
                         }
 
   belongs_to :parent, class_name: "Team", optional: true
-  has_many :subteams, class_name: "Team", foreign_key: "parent_id", inverse_of: :parent
+  has_many :subteams, class_name: "Team", foreign_key: "parent_id", inverse_of: :parent, dependent: nil
 
-  # Note: memberships don't have any callbacks we care about, so just dropping is safe (for now)
+  # NOTE: memberships don't have any callbacks we care about, so just dropping is safe (for now)
   has_many :direct_memberships, class_name: "Team::Membership", dependent: :delete_all
   has_many :direct_members, through: :direct_memberships, source: :user
 
@@ -29,7 +29,7 @@ class Team < ApplicationRecord
 
   has_many :invite_links, class_name: "Team::InviteLink", dependent: :destroy
 
-  has_many :client_applications, class_name: "ClientApplication", as: :owner
+  has_many :client_applications, class_name: "ClientApplication", as: :owner, dependent: nil
 
   validates :name, presence: true
   validate :validate_subteam_or_has_admin
@@ -114,7 +114,7 @@ class Team < ApplicationRecord
   end
 
   def readonly?
-    super || (!new_record? && is_special_id?)
+    super || (!new_record? && special_id?)
   end
 
   def verified?
@@ -152,7 +152,7 @@ class Team < ApplicationRecord
   private def deletion_check
     deletion_errors = []
 
-    if is_special_id?
+    if special_id?
       deletion_errors << { code: :system_team, message: "This team is marked as a system team and cannot be deleted." }
     end
 
@@ -169,18 +169,18 @@ class Team < ApplicationRecord
 
   private def validate_deletion
     checks = deletion_check
-    if checks.present?
-      checks.each do |check|
-        errors.add(:base, check[:message])
-      end
-      throw :abort
+    return if checks.blank?
+
+    checks.each do |check|
+      errors.add(:base, check[:message])
     end
+    throw :abort
   end
 
   # Check if this ID is a special UUID of the form 00000000-0000-8000-8f0f-0000xxxxxxxx
   # where x is any hex digit. This is used to mark internal or system teams that should
   # not be edited by the app.
-  def is_special_id?
+  def special_id?
     return false if self.id.nil?
 
     (self.id.gsub("-", "").to_i(16) >> 32) == 0x8000_8f0f_0000
@@ -206,9 +206,7 @@ class Team < ApplicationRecord
 
     children = Team.where(parent_id: self.id)
     while children.any?
-      if children.any? { |t| t.id == self.parent_id }
-        errors.add(:parent_id, "cannot create a recursive hierarchy")
-      end
+      errors.add(:parent_id, "cannot create a recursive hierarchy") if children.any? { |t| t.id == self.parent_id }
 
       children = Team.where(parent_id: children.pluck(:id))
     end
@@ -226,8 +224,8 @@ class Team < ApplicationRecord
     end
 
     # Disallow depth of n+ (i.e., great-grandchildren)
-    if antecedent_team_ids.length >= TEAM_DEPTH_LIMIT
-      errors.add(:parent_id, "cannot be more than #{TEAM_DEPTH_LIMIT} levels deep")
-    end
+    return unless antecedent_team_ids.length >= TEAM_DEPTH_LIMIT
+
+    errors.add(:parent_id, "cannot be more than #{TEAM_DEPTH_LIMIT} levels deep")
   end
 end

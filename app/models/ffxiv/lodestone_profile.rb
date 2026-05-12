@@ -23,7 +23,7 @@ class FFXIV::LodestoneProfile
     super()
 
     if json_object.nil?
-      params = force_fresh ? { fresh: true } : {}
+      params = force_fresh ? { fresh: true } : { }
       request = connection.get("#{flarestone_base_url}/character/#{lodestone_id}", params)
       json_object = JSON.parse(request.body)
 
@@ -74,7 +74,7 @@ class FFXIV::LodestoneProfile
 
     {
       name: fc_data["name"],
-      id: fc_data["lodestoneUrl"].match(/\/(\d+)\//)[1].to_i
+      id: fc_data["lodestoneUrl"].match(%r{/(\d+)/})[1].to_i
     }
   end
 
@@ -85,7 +85,7 @@ class FFXIV::LodestoneProfile
   # Check if this character is known to be paid. Returns true heuristically.
   # A false value does not indicate that this is a free trial character.
   def paid_character?
-    free_company&.present? || class_levels.values.any? { |x| x > FREE_TRIAL_LEVEL_CAP }
+    free_company.present? || class_levels.values.any? { |x| x > FREE_TRIAL_LEVEL_CAP }
   end
 
   private def flarestone_base_url
@@ -106,7 +106,7 @@ class FFXIV::LodestoneProfile
       self.failure_reason = nil
     when "profile_private"
       self.failure_reason = :profile_private
-      # note: this is still valid, we just don't have all the data.
+      # NOTE: this is still valid, we just don't have all the data.
     when "not_found"
       self.failure_reason = :not_found
       errors.add(:base, :not_found, message: "could not be found.")

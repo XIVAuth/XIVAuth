@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module PrideHelper
   PRIDE_FLAGS = %w[
     rainbow transgender bisexual lesbian asexual gay demi nonbinary pansexual

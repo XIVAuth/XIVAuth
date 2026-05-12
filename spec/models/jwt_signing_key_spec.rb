@@ -45,14 +45,14 @@ RSpec.describe JwtSigningKey, type: :model do
     it "includes only active keys in JWKS with correct kids" do
       rsa_active = FactoryBot.create(:jwt_signing_keys_rsa)
       hmac_active = FactoryBot.create(:jwt_signing_keys_hmac)
-      _expired = FactoryBot.create(:jwt_signing_keys_hmac, expires_at: 1.hour.ago)
+      expired = FactoryBot.create(:jwt_signing_keys_hmac, expires_at: 1.hour.ago)
 
       set = JwtSigningKey.jwks
       expect(set).to be_a(JWT::JWK::Set)
-      kids = set.export[:keys].map { |k| k[:kid] }
+      kids = set.export[:keys].pluck(:kid)
 
       expect(kids).to include(rsa_active.name, hmac_active.name)
-      expect(kids).not_to include(_expired.name)
+      expect(kids).not_to include(expired.name)
     end
 
     it "exports algs and exp fields on JWK when present" do

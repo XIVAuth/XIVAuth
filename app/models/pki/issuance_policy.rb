@@ -1,11 +1,11 @@
 class PKI::IssuancePolicy
-  # Registry mapping certificate_type strings to policy classes.
-  # Populated by each subclass via `register_certificate_type`.
-  REGISTRY = {}
+  def self.registry
+    @registry ||= { }
+  end
 
   # Factory: returns the correct policy object for the given certificate type.
   def self.for(certificate_type:, subject:, public_key:, certificate_authority:, requesting_application: nil)
-    policy_class = REGISTRY.fetch(certificate_type.to_s) do
+    policy_class = registry.fetch(certificate_type.to_s) do
       raise ArgumentError, "No PKI issuance policy for certificate type '#{certificate_type}'"
     end
     policy_class.new(
@@ -28,7 +28,7 @@ class PKI::IssuancePolicy
       @public_key = public_key
       @certificate_authority = certificate_authority
       @requesting_application = requesting_application
-      @cert_uuid  = SecureRandom.uuid_v7
+      @cert_uuid = SecureRandom.uuid_v7
     end
 
     # --- Class-level DSL ---
@@ -36,12 +36,12 @@ class PKI::IssuancePolicy
     # Subclasses call this to register themselves in the REGISTRY.
     def self.register_certificate_type(type)
       @certificate_type = type.to_s
-      PKI::IssuancePolicy::REGISTRY[@certificate_type] = self
+      PKI::IssuancePolicy.registry[@certificate_type] = self
     end
 
     # The certificate type string this policy handles.
-    def self.certificate_type
-      @certificate_type
+    class << self
+      attr_reader :certificate_type
     end
 
     # Which subject classes are allowed for this certificate type.
@@ -60,12 +60,13 @@ class PKI::IssuancePolicy
     validate :validate_subject_type
     validate :validate_key_subject_uniqueness
 
-    def min_rsa_bits      = 2048
-    def min_ec_bits       = 256
+    def min_rsa_bits = 2048
+
+    def min_ec_bits = 256
+
     def allowed_ec_curves = %w[prime256v1 secp384r1 secp521r1]
 
     def max_active_certs_per_app = 2
-
 
     # @return [String] The Common Name (CN) to include in the final certificate.
     def common_name
@@ -79,8 +80,7 @@ class PKI::IssuancePolicy
     def subject_alt_names = []
 
     # @return [Hash] Extra context to persist to the issuance_context column in the DB.
-    def issuance_context = {}
-
+    def issuance_context = { }
 
     # @return [Array<String>] keyUsage values for the issued certificate
     def key_usage
@@ -99,16 +99,16 @@ class PKI::IssuancePolicy
 
       profile = {
         "extensions" => {
-          "basicConstraints"       => { "ca" => false, "critical" => true },
-          "keyUsage"               => { "usage" => key_usage, "critical" => true },
-          "extendedKeyUsage"       => { "usage" => extended_key_usage },
-          "authorityInfoAccess"    => {
-            "ocsp"       => [routes.ocsp_certificates_url],
+          "basicConstraints" => { "ca" => false, "critical" => true },
+          "keyUsage" => { "usage" => key_usage, "critical" => true },
+          "extendedKeyUsage" => { "usage" => extended_key_usage },
+          "authorityInfoAccess" => {
+            "ocsp" => [routes.ocsp_certificates_url],
             "ca_issuers" => [routes.ca_cert_url(slug, format: :der)]
           },
           "crlDistributionPoints" => {
             "uris" => [routes.crl_url(slug)]
-          },
+          }
           # The certificate_authority gem will set AKI and SKI fields.
         }
       }
@@ -131,12 +131,12 @@ class PKI::IssuancePolicy
       dn.cn = common_name
 
       leaf = CertificateAuthority::Certificate.new
-      leaf.distinguished_name   = dn
+      leaf.distinguished_name = dn
       leaf.serial_number.number = @cert_uuid.delete("-").to_i(16)
-      leaf.key_material         = signing_key_mat
+      leaf.key_material = signing_key_mat
       leaf.not_before = now - 30.seconds
-      leaf.not_after  = now + validity_period
-      leaf.parent     = certificate_authority.as_ca_gem_issuer
+      leaf.not_after = now + validity_period
+      leaf.parent = certificate_authority.as_ca_gem_issuer
       leaf
     end
 
@@ -144,15 +144,13 @@ class PKI::IssuancePolicy
       @public_key_fingerprint ||= "sha256:#{OpenSSL::Digest::SHA256.hexdigest(public_key.to_der)}"
     end
 
-    private
+    private def validate_key_type
+      return if public_key.is_a?(OpenSSL::PKey::RSA) || public_key.is_a?(OpenSSL::PKey::EC)
 
-    def validate_key_type
-      unless public_key.is_a?(OpenSSL::PKey::RSA) || public_key.is_a?(OpenSSL::PKey::EC)
-        errors.add(:public_key, "unsupported key type: #{public_key.class}")
-      end
+      errors.add(:public_key, "unsupported key type: #{public_key.class}")
     end
 
-    def validate_key_strength
+    private def validate_key_strength
       case public_key
       when OpenSSL::PKey::RSA
         if public_key.n.num_bits < min_rsa_bits
@@ -169,23 +167,23 @@ class PKI::IssuancePolicy
       end
     end
 
-    def validate_cert_limit
+    private def validate_cert_limit
       count = cert_limit_scope
-                .where(requesting_application_id: requesting_application&.id)
-                .active
-                .count
-      if count >= max_active_certs_per_app
-        errors.add(:base, "certificate limit reached: #{count}/#{max_active_certs_per_app} " \
-                          "active certificates for this subject and application")
-      end
+              .where(requesting_application_id: requesting_application&.id)
+              .active
+              .count
+      return unless count >= max_active_certs_per_app
+
+      errors.add(:base, "certificate limit reached: #{count}/#{max_active_certs_per_app} " \
+                        "active certificates for this subject and application")
     end
 
     # Certificates can only be renewed if at least one year has passed, or 75% of the certificate's lifespan
     # has passed, whichever is first.
-    def validate_renewal_window
+    private def validate_renewal_window
       prior_certs = PKI::IssuedCertificate
-                      .where(subject: subject, public_key_fingerprint: public_key_fingerprint)
-                      .active
+                    .where(subject: subject, public_key_fingerprint: public_key_fingerprint)
+                    .active
 
       return if prior_certs.none?
 
@@ -194,51 +192,50 @@ class PKI::IssuancePolicy
         Time.current >= cert.issued_at + window
       end
 
-      unless renewable
-        earliest = prior_certs.map do |cert|
-          window = [(cert.expires_at - cert.issued_at) * 0.75, 1.year].min
-          cert.issued_at + window
-        end.min
-        errors.add(:base, "certificate is not yet eligible for renewal; " \
-                          "renewal window opens #{earliest.to_fs(:long)}")
-      end
+      return if renewable
+
+      earliest = prior_certs.map do |cert|
+        window = [(cert.expires_at - cert.issued_at) * 0.75, 1.year].min
+        cert.issued_at + window
+      end.min
+      errors.add(:base, "certificate is not yet eligible for renewal; " \
+                        "renewal window opens #{earliest.to_fs(:long)}")
     end
 
-    def validate_certificate_authority
+    private def validate_certificate_authority
       unless certificate_authority.active? && !certificate_authority.revoked?
         errors.add(:certificate_authority, "is not active or has been revoked")
       end
-      unless certificate_authority.allowed_certificate_types.include?(certificate_type)
-        errors.add(:certificate_authority, "is not permitted to issue #{certificate_type} certificates")
-      end
+      return if certificate_authority.allowed_certificate_types.include?(certificate_type)
+
+      errors.add(:certificate_authority, "is not permitted to issue #{certificate_type} certificates")
     end
 
-    def validate_subject_type
-      unless self.class.allowed_subject_types.include?(subject.class)
-        errors.add(:subject, "#{subject.class.name} is not a valid subject for #{certificate_type} certificates")
-      end
+    private def validate_subject_type
+      return if self.class.allowed_subject_types.include?(subject.class)
+
+      errors.add(:subject, "#{subject.class.name} is not a valid subject for #{certificate_type} certificates")
     end
 
     # Overridable scope to determine limits (per application) for cert issuance purposes.
-    def cert_limit_scope
+    private def cert_limit_scope
       PKI::IssuedCertificate.where(subject: subject)
     end
 
-    def validate_key_not_revoked
-      if PKI::IssuedCertificate.where(public_key_fingerprint: public_key_fingerprint).revoked.exists?
-        errors.add(:public_key, "has been revoked and may not be used to issue new certificates")
-      end
+    private def validate_key_not_revoked
+      return unless PKI::IssuedCertificate.where(public_key_fingerprint: public_key_fingerprint).revoked.exists?
+
+      errors.add(:public_key, "has been revoked and may not be used to issue new certificates")
     end
 
-    def validate_key_subject_uniqueness
-      conflict = PKI::IssuedCertificate
-                   .where(public_key_fingerprint: public_key_fingerprint)
-                   .where.not(subject_type: subject.class.name, subject_id: subject.id, certificate_type: certificate_type)
-                   .exists?
-      if conflict
-        errors.add(:public_key, "is already associated with a different subject - " \
-                                "generate a new key pair to issue a certificate for this subject")
-      end
+    private def validate_key_subject_uniqueness
+      conflict = PKI::IssuedCertificate.where(public_key_fingerprint: public_key_fingerprint)
+                                       .exists?(["subject_type != ? OR subject_id != ? OR certificate_type != ?",
+                                                 subject.class.name, subject.id, certificate_type])
+      return unless conflict
+
+      errors.add(:public_key, "is already associated with a different subject - " \
+                              "generate a new key pair to issue a certificate for this subject")
     end
   end
 

@@ -9,9 +9,7 @@ module HasUploadAttachment
     validate :propagate_attachment_errors
   end
 
-  private
-
-  def propagate_attachment_errors
+  private def propagate_attachment_errors
     attachments.each do |attachment|
       next if attachment.valid?
 
@@ -21,12 +19,14 @@ module HasUploadAttachment
     end
   end
 
-  def destroy_replaced_attachments
+  private def destroy_replaced_attachments
     (@_attachments_to_replace || []).each(&:destroy)
     @_attachments_to_replace = nil
   end
 
   class_methods do
+    # rubocop:disable Naming/PredicatePrefix
+
     # Declares a single-file attachment. The setter replaces any existing
     # attachment with the same name; the getter returns one Attachment or nil.
     #
@@ -55,7 +55,7 @@ module HasUploadAttachment
       end
 
       define_method(:"#{name}=") do |file|
-        return if file.blank? || file.respond_to?(:original_filename) && file.original_filename.blank?
+        return if file.blank? || (file.respond_to?(:original_filename) && file.original_filename.blank?)
 
         incoming_sha256 = Digest::SHA256.hexdigest(file.read).tap { file.rewind }
         old = attachments.find_by(name: name.to_s)
@@ -92,15 +92,15 @@ module HasUploadAttachment
     end
 
     def upload_attachment_configs
-      base = superclass.respond_to?(:upload_attachment_configs) ? superclass.upload_attachment_configs : {}
-      base.merge(@upload_attachment_configs ||= {})
+      base = superclass.respond_to?(:upload_attachment_configs) ? superclass.upload_attachment_configs : { }
+      base.merge(@upload_attachment_configs ||= { })
     end
 
-    private
-
-    def _register_upload_attachment(name, **options)
-      @upload_attachment_configs ||= {}
+    private def _register_upload_attachment(name, **options)
+      @upload_attachment_configs ||= { }
       @upload_attachment_configs[name.to_sym] = options
     end
+
+    # rubocop:enable Naming/PredicatePrefix
   end
 end

@@ -125,7 +125,7 @@ Doorkeeper.configure do
   # +ActionController::API+. The return value of this option must be a stringified class name.
   # See https://doorkeeper.gitbook.io/guides/configuration/other-configurations#custom-controllers
   #
-  base_controller 'ApplicationController'
+  base_controller "ApplicationController"
 
   # Reuse access token for the same resource owner within an application (disabled by default).
   #
@@ -288,7 +288,11 @@ Doorkeeper.configure do
   force_ssl_in_redirect_uri do |uri|
     !(uri.host == "localhost" ||
       uri.host =~ /.*(\.test|\.example|\.localhost|\.invalid)$/ ||
-      (IPAddr.new(uri.host) rescue nil)&.loopback?)
+      begin
+        IPAddr.new(uri.host)
+      rescue StandardError
+        nil
+      end&.loopback?)
   end
 
   # Specify what redirect URI's you want to block during Application creation.
@@ -314,8 +318,9 @@ Doorkeeper.configure do
   # allow_blank_redirect_uri do |grant_flows, client|
   #   client.superapp?
   # end
-  allow_blank_redirect_uri do |grant_flows, client|
-    grant_flows.include?("client_credentials") || grant_flows.include?("password") || grant_flows.include?("device_code")
+  allow_blank_redirect_uri do |grant_flows, _client|
+    grant_flows.include?("client_credentials") || grant_flows.include?("password") ||
+      grant_flows.include?("device_code")
   end
 
   # Specify how authorization errors should be handled.
@@ -393,9 +398,7 @@ Doorkeeper.configure do
   #
   allow_grant_flow_for_client do |grant_flow, client|
     # DAG wanted to use the full URI for some reason.
-    if grant_flow == Doorkeeper::DeviceAuthorizationGrant::OAuth::DEVICE_CODE
-      grant_flow = "device_code"
-    end
+    grant_flow = "device_code" if grant_flow == Doorkeeper::DeviceAuthorizationGrant::OAuth::DEVICE_CODE
 
     client.grant_flows.blank? || client.grant_flows.include?(grant_flow)
   end

@@ -25,7 +25,7 @@ class PKITables < ActiveRecord::Migration[8.1]
       t.datetime :expires_at
 
       t.datetime :revoked_at
-      t.enum    :revocation_reason, enum_type: :pki_revocation_reason, null: true
+      t.enum :revocation_reason, enum_type: :pki_revocation_reason, null: true
       t.timestamps
     end
 
@@ -33,12 +33,12 @@ class PKITables < ActiveRecord::Migration[8.1]
       t.references :certificate_authority, type: :uuid, null: false,
                    foreign_key: { to_table: :pki_certificate_authorities }
 
-      # note: references intentionally don't have foreign keys, since we can't guarantee the other side
+      # NOTE: references intentionally don't have foreign keys, since we can't guarantee the other side
       # will always exist, and this table will also act as an audit log.
       t.references :requesting_application, type: :uuid, null: true, foreign_key: false, index: true
       t.references :subject, type: :uuid, polymorphic: true, index: true
 
-      t.text   :certificate_pem, null: false
+      t.text :certificate_pem, null: false
 
       t.datetime :issued_at,  null: false
       t.datetime :expires_at, null: false
@@ -46,14 +46,14 @@ class PKITables < ActiveRecord::Migration[8.1]
       # Structured public key metadata:
       # RSA: { "type" => "RSA", "bits" => 4096 }
       # EC:  { "type" => "EC",  "curve" => "prime256v1", "bits" => 256 }
-      t.jsonb  :public_key_info,    null: false, default: {}
-      t.jsonb  :issuance_context,   null: false, default: {}
+      t.jsonb  :public_key_info,    null: false, default: { }
+      t.jsonb  :issuance_context,   null: false, default: { }
 
       t.string :public_key_fingerprint, null: false, index: true
       t.string :certificate_fingerprint, null: false, index: { unique: true }
 
       t.datetime :revoked_at
-      t.enum   :revocation_reason, enum_type: :pki_revocation_reason, null: true
+      t.enum :revocation_reason, enum_type: :pki_revocation_reason, null: true
       t.timestamps
     end
   end

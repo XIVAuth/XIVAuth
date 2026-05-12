@@ -4,10 +4,10 @@ require "webauthn/fake_client"
 
 RSpec.describe "Users::SessionsController", type: :request do
   let(:password) { "SecurePassword123!" }
-  let(:user) {
+  let(:user) do
     FactoryBot.create(:user, password: password, password_confirmation: password,
                       webauthn_id: WebAuthn.generate_user_id)
-  }
+  end
   let(:origin) { "http://localhost:3000" }
   let(:rp_id) { URI.parse(origin).host }
 
@@ -42,8 +42,7 @@ RSpec.describe "Users::SessionsController", type: :request do
                       user: user,
                       external_id: recovered_data.id,
                       public_key: recovered_data.public_key,
-                      sign_count: 0
-    )
+                      sign_count: 0)
   end
 
   describe "GET /users/sign_in" do
@@ -130,8 +129,7 @@ RSpec.describe "Users::SessionsController", type: :request do
       FactoryBot.create(:users_totp_credential,
                         user: user,
                         otp_secret: totp_secret,
-                        otp_enabled: true
-      )
+                        otp_enabled: true)
     end
     let(:valid_otp) { ROTP::TOTP.new(totp_secret).now }
 
@@ -354,7 +352,7 @@ RSpec.describe "Users::SessionsController", type: :request do
 
     before do
       true_sign_in user, password: password
-      allow_any_instance_of(User).to receive(:get_sessions).and_return([other_session])
+      allow_any_instance_of(User).to receive(:active_sessions).and_return([other_session])
       allow_any_instance_of(User).to receive(:destroy_sessions)
     end
 

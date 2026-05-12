@@ -32,9 +32,7 @@ class Developer::Teams::InviteLinksController < Developer::DeveloperPortalContro
   end
 
   def destroy
-    unless @team.present?
-      redirect_to root_path, alert: "Team not found."
-    end
+    redirect_to root_path, alert: "Team not found." if @team.blank?
 
     authorize! :manage_users, @team
 
@@ -46,9 +44,7 @@ class Developer::Teams::InviteLinksController < Developer::DeveloperPortalContro
   end
 
   def accept_invite
-    unless @team.present?
-      redirect_to root_path, alert: "Team invite link invalid."
-    end
+    redirect_to root_path, alert: "Team invite link invalid." if @team.blank?
 
     membership = Team::Membership.new(team: @team, user: current_user)
 
@@ -60,7 +56,7 @@ class Developer::Teams::InviteLinksController < Developer::DeveloperPortalContro
   end
 
   private def filtered_params
-    params.require(:team_invite_link).permit(:target_role, :usage_limit, :expires_at)
+    params.expect(team_invite_link: %i[target_role usage_limit expires_at])
   end
 
   private def set_invite_link
@@ -69,6 +65,6 @@ class Developer::Teams::InviteLinksController < Developer::DeveloperPortalContro
   end
 
   private def set_team
-    @team = Team.find(params[:team_id])
+    @team = Team.find(params.expect(:team_id))
   end
 end

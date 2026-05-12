@@ -10,7 +10,7 @@ RSpec.describe Abilities::UserAbility, type: :model do
     let(:team) { FactoryBot.create(:team) }
 
     # Helper: give the user a direct membership on the team with the given role
-    def set_role(role)
+    def create_membership_with_role(role)
       FactoryBot.create(:team_membership, team: team, user: user, role: role)
     end
 
@@ -28,19 +28,19 @@ RSpec.describe Abilities::UserAbility, type: :model do
     end
 
     context "with blocked role" do
-      before { set_role("blocked") }
+      before { create_membership_with_role("blocked") }
 
       include_examples "cannot access team at all"
     end
 
     context "with invited role" do
-      before { set_role("invited") }
+      before { create_membership_with_role("invited") }
 
       include_examples "cannot access team at all"
     end
 
     context "with member role" do
-      before { set_role("member") }
+      before { create_membership_with_role("member") }
 
       it { is_expected.to be_able_to(:use, team) }
       it { is_expected.not_to be_able_to(:show, team) }
@@ -51,7 +51,7 @@ RSpec.describe Abilities::UserAbility, type: :model do
     end
 
     context "with developer role" do
-      before { set_role("developer") }
+      before { create_membership_with_role("developer") }
 
       it { is_expected.to be_able_to(:use, team) }
       it { is_expected.to be_able_to(:show, team) }
@@ -62,7 +62,7 @@ RSpec.describe Abilities::UserAbility, type: :model do
     end
 
     context "with manager role" do
-      before { set_role("manager") }
+      before { create_membership_with_role("manager") }
 
       it { is_expected.to be_able_to(:use, team) }
       it { is_expected.to be_able_to(:show, team) }
@@ -73,7 +73,7 @@ RSpec.describe Abilities::UserAbility, type: :model do
     end
 
     context "with admin role" do
-      before { set_role("admin") }
+      before { create_membership_with_role("admin") }
 
       it { is_expected.to be_able_to(:use, team) }
       it { is_expected.to be_able_to(:show, team) }
@@ -115,19 +115,19 @@ RSpec.describe Abilities::UserAbility, type: :model do
 
     describe "create_subteam" do
       it "is denied for managers" do
-        set_role("manager")
+        create_membership_with_role("manager")
 
         expect(ability).not_to be_able_to(:create_subteam, team)
       end
 
       it "is denied for developers" do
-        set_role("developer")
+        create_membership_with_role("developer")
 
         expect(ability).not_to be_able_to(:create_subteam, team)
       end
 
       it "is allowed for admins via manage wildcard" do
-        set_role("admin")
+        create_membership_with_role("admin")
 
         expect(ability).to be_able_to(:create_subteam, team)
       end

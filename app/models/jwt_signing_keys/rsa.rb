@@ -71,8 +71,8 @@ class JwtSigningKeys::RSA < JwtSigningKey
     digest = OpenSSL::Digest.new("SHA256")
     signature = private_key.sign(digest, sig_data)
 
-    unless public_key.verify(digest, signature, sig_data)
-      errors.add(:public_key, "must be consistent with the private key")
-    end
+    return if public_key.verify(digest, signature, sig_data)
+
+    errors.add(:public_key, "must be consistent with the private key")
   end
 end

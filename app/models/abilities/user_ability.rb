@@ -46,7 +46,7 @@ class Abilities::UserAbility
 
     # Only admins can create subteams at present. Just defining this rule for clarity, as it's covered in the
     # wildcard. NOTE: Also set as part of `load_parent_teams` in TeamsController!
-    can :create_subteam, Team do |t|
+    can :create_subteam, Team do |_t|
       false
     end
 

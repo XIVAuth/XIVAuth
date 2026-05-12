@@ -3,9 +3,9 @@ class Developer::OnboardingController < Developer::DeveloperPortalController
   skip_before_action :check_developer_role
 
   def show
-    if current_user.role?(:developer)
-      redirect_to developer_applications_path, notice: "Developer mode is already enabled on your account."
-    end
+    return unless current_user.role?(:developer)
+
+    redirect_to developer_applications_path, notice: "Developer mode is already enabled on your account."
   end
 
   def enable
@@ -22,12 +22,14 @@ class Developer::OnboardingController < Developer::DeveloperPortalController
     end
 
     unless user.character_registrations.verified.any?
-      redirect_to developer_onboarding_path, alert: "At least one verified character is required to enable Developer Mode."
+      redirect_to developer_onboarding_path,
+                  alert: "At least one verified character is required to enable Developer Mode."
       return
     end
 
-    unless params[:agree].present?
-      redirect_to developer_onboarding_path, alert: "You must read and agree to the Developer Agreement to enable Developer Mode."
+    if params[:agree].blank?
+      redirect_to developer_onboarding_path,
+                  alert: "You must read and agree to the Developer Agreement to enable Developer Mode."
       return
     end
 

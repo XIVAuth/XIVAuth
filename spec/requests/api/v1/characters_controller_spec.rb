@@ -15,10 +15,10 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
       it "returns a verified character when present" do
         FactoryBot.create(:verified_registration, character:, user:)
 
-        get api_v1_characters_path, headers: { 'Authorization': "Bearer #{oauth_token.token}" }, as: :json
+        get api_v1_characters_path, headers: { Authorization: "Bearer #{oauth_token.token}" }, as: :json
 
         expect(response).to be_successful
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         character_data = json.first
 
         expect(character_data["lodestone_id"]).to eq(character.lodestone_id)
@@ -28,10 +28,10 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
       it "does not return an unverified character" do
         FactoryBot.create(:character_registration, character:, user:)
 
-        get api_v1_characters_path, headers: { 'Authorization': "Bearer #{oauth_token.token}" }, as: :json
+        get api_v1_characters_path, headers: { Authorization: "Bearer #{oauth_token.token}" }, as: :json
 
         expect(response).to be_successful
-        json = JSON.parse(response.body)
+        json = response.parsed_body
 
         expect(json).to be_empty
       end
@@ -44,11 +44,11 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
         get api_v1_characters_path,
             params: { name: character.name },
-            headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+            headers: { Authorization: "Bearer #{oauth_token.token}" },
             as: :json
 
         expect(response).to be_successful
-        json = JSON.parse(response.body)
+        json = response.parsed_body
 
         expect(json.count).to eq(1)
         expect(json.first["lodestone_id"]).to eq(character.lodestone_id)
@@ -60,10 +60,10 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
         FactoryBot.create(:verified_registration, character:, user:)
 
         get api_v1_character_path(lodestone_id: character.lodestone_id),
-            headers: { 'Authorization': "Bearer #{oauth_token.token}" }, as: :json
+            headers: { Authorization: "Bearer #{oauth_token.token}" }, as: :json
 
         expect(response).to be_successful
-        json = JSON.parse(response.body)
+        json = response.parsed_body
 
         expect(json["lodestone_id"]).to eq(character.lodestone_id)
       end
@@ -73,10 +73,10 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
         without_detailed_exceptions do
           get api_v1_character_path(lodestone_id: character.lodestone_id),
-              headers: { 'Authorization': "Bearer #{oauth_token.token}" }, as: :json
+              headers: { Authorization: "Bearer #{oauth_token.token}" }, as: :json
         end
 
-        expect(response).to have_http_status(404)
+        expect(response).to have_http_status(:not_found)
       end
 
       it "does not allow retrieving a character owned by another user" do
@@ -86,10 +86,10 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
         without_detailed_exceptions do
           get api_v1_character_path(lodestone_id: another_character.lodestone_id),
-              headers: { 'Authorization': "Bearer #{oauth_token.token}" }, as: :json
+              headers: { Authorization: "Bearer #{oauth_token.token}" }, as: :json
         end
 
-        expect(response).to have_http_status(404)
+        expect(response).to have_http_status(:not_found)
       end
     end
 
@@ -97,8 +97,8 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
       it "returns HTTP 403" do
         without_detailed_exceptions do
           post api_v1_characters_path,
-               params: { 'lodestone_id': "12345678" },
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               params: { lodestone_id: "12345678" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
         end
 
@@ -112,8 +112,8 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
       it "returns HTTP 403" do
         without_detailed_exceptions do
           patch api_v1_character_path(lodestone_id: character.lodestone_id),
-                params: { 'content_id': "22446688" },
-                headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+                params: { content_id: "22446688" },
+                headers: { Authorization: "Bearer #{oauth_token.token}" },
                 as: :json
         end
 
@@ -126,7 +126,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
         FactoryBot.create(:verified_registration, character:, user:)
 
         delete api_v1_character_path(lodestone_id: character.lodestone_id),
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
 
         expect(response).to have_http_status(:forbidden)
@@ -143,10 +143,10 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
       it "returns unverified characters" do
         registration = FactoryBot.create(:character_registration, character:, user:)
 
-        get api_v1_characters_path, headers: { 'Authorization': "Bearer #{oauth_token.token}" }, as: :json
+        get api_v1_characters_path, headers: { Authorization: "Bearer #{oauth_token.token}" }, as: :json
 
         expect(response).to be_successful
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         character_data = json.first
 
         # validate presence of internal fields
@@ -173,12 +173,12 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
           post api_v1_characters_path,
                params: { lodestone_id: "12345678" },
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
 
           expect(response).to have_http_status(:created)
 
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["lodestone_id"]).to eq(mock_registration.character.lodestone_id)
         end
 
@@ -191,20 +191,21 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
           post api_v1_characters_path,
                params: { lodestone_id: "12345678" },
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
         end
 
         it "passes name/world parameters to CharacterRegistrationRequest" do
           expect(CharacterRegistrationRequest).to receive(:new)
-            .with(hash_including(user: user, search_name: "Test Character", search_world: "Excalibur", search_exact: false))
+            .with(hash_including(user: user, search_name: "Test Character", search_world: "Excalibur",
+                                 search_exact: false))
             .and_return(mock_request)
           allow(mock_request).to receive(:process!).and_return(:success)
           allow(mock_request).to receive(:created_registration).and_return(mock_registration)
 
           post api_v1_characters_path,
                params: { name: "Test Character", world: "Excalibur" },
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
         end
 
@@ -217,7 +218,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
           post api_v1_characters_path,
                params: { name: "Test Character", world: "Excalibur", exact: "true" },
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
         end
       end
@@ -225,7 +226,8 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
       context "when multiple candidates are found" do
         let(:candidates) do
           [
-            { lodestone_id: "11111111", name: "Test Character", world: "Excalibur", datacenter: "Primal", avatar_url: "http://example.com/avatar1.jpg" },
+            { lodestone_id: "11111111", name: "Test Character", world: "Excalibur", datacenter: "Primal",
+              avatar_url: "http://example.com/avatar1.jpg" },
             { lodestone_id: "22222222", name: "Test Character", world: "Excalibur", datacenter: "Primal", avatar_url: "http://example.com/avatar2.jpg" }
           ]
         end
@@ -237,12 +239,12 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
           post api_v1_characters_path,
                params: { name: "Test Character", world: "Excalibur" },
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
 
           expect(response).to have_http_status(:multiple_choices)
 
-          json = JSON.parse(response.body).deep_symbolize_keys
+          json = response.parsed_body.deep_symbolize_keys
           expect(json[:status]).to eq("search_selection_required")
           expect(json[:message]).to be_present
           expect(json[:candidates]).to eq candidates
@@ -253,16 +255,17 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
         it "returns HTTP 422 with error messages" do
           allow(CharacterRegistrationRequest).to receive(:new).and_return(mock_request)
           allow(mock_request).to receive(:process!).and_return(:invalid)
-          allow(mock_request).to receive_message_chain(:errors, :full_messages).and_return(["Character is already registered to you!"])
+          allow(mock_request)
+            .to receive_message_chain(:errors, :full_messages).and_return(["Character is already registered to you!"])
 
           post api_v1_characters_path,
                params: { lodestone_id: "12345678" },
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
 
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]).to include("Character is already registered to you!")
         end
 
@@ -273,13 +276,13 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
             .and_return(["Please provide either a Lodestone URL or both character name and world."])
 
           post api_v1_characters_path,
-               params: {},
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               params: { },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
 
           expect(response).to have_http_status(:unprocessable_content)
 
-          json = JSON.parse(response.body)
+          json = response.parsed_body
           expect(json["errors"]).to be_present
         end
       end
@@ -290,12 +293,12 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
         FactoryBot.create(:character_registration, character:, user:)
 
         get api_v1_character_path(lodestone_id: character.lodestone_id),
-            headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+            headers: { Authorization: "Bearer #{oauth_token.token}" },
             as: :json
 
         expect(response).to have_http_status(:ok)
 
-        json = JSON.parse(response.body)
+        json = response.parsed_body
 
         expect(json["lodestone_id"]).to eq(character.lodestone_id)
         expect(json["verification_key"]).to be_present
@@ -307,7 +310,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
         FactoryBot.create(:verified_registration, character:, user:)
 
         delete api_v1_character_path(lodestone_id: character.lodestone_id),
-               headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+               headers: { Authorization: "Bearer #{oauth_token.token}" },
                as: :json
 
         expect(response).to have_http_status(:no_content)
@@ -324,7 +327,7 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
         without_detailed_exceptions do
           delete api_v1_character_path(lodestone_id: character.lodestone_id),
-                 headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+                 headers: { Authorization: "Bearer #{oauth_token.token}" },
                  as: :json
         end
 
@@ -342,13 +345,13 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
         new_content_id = "a1b2c3d4"
 
         patch api_v1_character_path(lodestone_id: character.lodestone_id),
-              params: { 'content_id': new_content_id },
-              headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+              params: { content_id: new_content_id },
+              headers: { Authorization: "Bearer #{oauth_token.token}" },
               as: :json
 
         expect(response).to have_http_status(:ok)
 
-        json = JSON.parse(response.body)
+        json = response.parsed_body
         expect(json["content_id"]).to eq(new_content_id)
 
         character.reload
@@ -358,15 +361,15 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
       it "can't edit a character's name" do
         patch api_v1_character_path(lodestone_id: character.lodestone_id),
-              params: { 'name': "Test Failure" },
-              headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+              params: { name: "Test Failure" },
+              headers: { Authorization: "Bearer #{oauth_token.token}" },
               as: :json
 
         # FIXME: This should return 422 here.
         expect(response).to have_http_status(:ok)
 
         character.reload
-        expect(character.name).to_not eq("Test Failure")
+        expect(character.name).not_to eq("Test Failure")
       end
 
       it "can't edit another user's character" do
@@ -376,15 +379,15 @@ RSpec.describe "Api::V1::CharactersControllers", type: :request do
 
         without_detailed_exceptions do
           patch api_v1_character_path(lodestone_id: another_character.lodestone_id),
-                params: { 'content_id': "12345678" },
-                headers: { 'Authorization': "Bearer #{oauth_token.token}" },
+                params: { content_id: "12345678" },
+                headers: { Authorization: "Bearer #{oauth_token.token}" },
                 as: :json
         end
 
         expect(response).to have_http_status(:not_found)
 
         another_character.reload
-        expect(another_character.content_id).to_not eq("12345678")
+        expect(another_character.content_id).not_to eq("12345678")
       end
     end
   end

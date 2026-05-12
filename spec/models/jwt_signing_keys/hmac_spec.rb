@@ -9,7 +9,7 @@ RSpec.describe JwtSigningKeys::HMAC, type: :model do
   end
 
   it "contains a private key at initialization" do
-    expect(subject.private_key).to_not be_nil
+    expect(subject.private_key).not_to be_nil
     expect(subject.public_key).to be_nil
   end
 

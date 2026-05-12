@@ -7,8 +7,8 @@ class JwtSigningKey < ApplicationRecord
   validates :type, presence: true
 
   validates :private_key, presence: true
-  
-  scope :active, -> { where(enabled: true).where("expires_at IS NULL or expires_at >= ?", DateTime.now) }
+
+  scope :active, -> { where(enabled: true).where("expires_at IS NULL or expires_at >= ?", Time.current) }
 
   attr_readonly :public_key, :raw_public_key, :raw_private_key, :jwk
 
@@ -33,7 +33,7 @@ class JwtSigningKey < ApplicationRecord
   end
 
   def expired?
-    expires_at.present? && expires_at <= DateTime.now
+    expires_at.present? && expires_at <= Time.current
   end
 
   def active?
@@ -41,10 +41,7 @@ class JwtSigningKey < ApplicationRecord
   end
 
   def self.jwks
-    jwk_set = []
-    active.each do |key|
-      jwk_set << key.jwk
-    end
+    jwk_set = active.map(&:jwk)
 
     JWT::JWK::Set.new(jwk_set)
   end
@@ -60,8 +57,6 @@ class JwtSigningKey < ApplicationRecord
       JwtSigningKeys::HMAC.active.first
     when "JWT::JWA::Ecdsa"
       JwtSigningKeys::ECDSA.preferred_key_for_algorithm(algorithm_name)
-    else
-      nil
     end
   end
 

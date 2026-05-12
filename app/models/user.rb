@@ -11,22 +11,23 @@ class User < ApplicationRecord
                         validate: [
                           ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
                         ],
-                        derivatives: ->(pipeline) {
+                        derivatives: lambda { |pipeline|
                           {
                             large: pipeline.resize_to_fill!(256, 256),
-                            medium: pipeline.resize_to_fill!(144, 144),
+                            medium: pipeline.resize_to_fill!(144, 144)
                           }
                         }
 
   # ZXCVBN config
   include PasswordStrengthValidatable
+
   self.zxcvbn_user_inputs = %i[email display_name]
   self.zxcvbn_static_inputs = %w[xivauth ffxiv eorzea]
 
   devise :database_authenticatable, :registerable,
          :confirmable, :trackable, :recoverable,
          :validatable, :omniauthable
-  devise :pwned_password unless Rails.env.development? || Rails.env.test?
+  devise :pwned_password unless Rails.env.local?
 
   validates :email, exclusion: { in: Users::SessionsHelper::RANDOM_NPC_EMAILS, message: " is an NPC's email.... Nice try." }
   validates :email, email: true
@@ -50,7 +51,7 @@ class User < ApplicationRecord
            inverse_of: :resource_owner, dependent: :destroy
 
   has_many :pki_issued_certificates, class_name: "PKI::IssuedCertificate",
-           as: :subject  # no dependent: - records survive as a permanent audit log
+           as: :subject, dependent: nil
 
   before_destroy :revoke_pki_certificates_on_destroy
 
@@ -83,18 +84,16 @@ class User < ApplicationRecord
   # Check whether the user is passwordless or has MFA.
   # Used for activities that require MFA.
   def mfa_enabled_or_passwordless?
-    !has_password? || mfa_enabled?
+    !password_set? || mfa_enabled?
   end
 
   # Check if the user has a defined encrypted password. If not, this user is considered oauth-only and cannot
   # use certain login features.
-  def has_password?
+  def password_set?
     self.encrypted_password.present?
   end
 
-  def display_name
-    profile.display_name
-  end
+  delegate :display_name, to: :profile
 
   def gravatar_url(size = 32, fallback: "retro", rating: "pg")
     hash = EmailAddress::Address.new(email).sha256
@@ -107,14 +106,14 @@ class User < ApplicationRecord
     return false if !persisted? && !social_identities.empty?
 
     # Don't require a password for validation if the user does not have a password
-    return false if persisted? && !has_password?
+    return false if persisted? && !password_set?
 
     super
   end
 
   def set_initial_password(password, confirmation)
     # This method cannot be used to set a new password.
-    return false if has_password?
+    return false if password_set?
 
     update(
       password: password,
@@ -122,9 +121,9 @@ class User < ApplicationRecord
     )
   end
 
-  def has_verified_characters?
+  def verified_characters_present?
     if character_registrations.loaded?
-      character_registrations.any?(&:verified?)  # N+1
+      character_registrations.any?(&:verified?) # N+1
     else
       character_registrations.verified.exists?
     end

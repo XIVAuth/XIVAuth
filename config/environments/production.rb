@@ -57,7 +57,7 @@ Rails.application.configure do
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).
-  config.log_level = ENV["LOG_LEVEL"]&.downcase&.strip&.to_sym || :info
+  config.log_level = ENV.fetch("LOG_LEVEL", "info").downcase.strip.to_sym
 
   # Prepend all log lines with the following tags.
   config.log_tags = {
@@ -66,7 +66,7 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   config.cache_store = :redis_cache_store, {
-    url: "#{ENV['REDIS_URL']}/#{ENV.fetch('REDIS_CACHE_DB_INDEX', 1)}",
+    url: "#{ENV.fetch('REDIS_URL', nil)}/#{ENV.fetch('REDIS_CACHE_DB_INDEX', 1)}",
     password: ENV.fetch("REDIS_PASSWORD", nil),
     ssl_params: {
       verify_mode: OpenSSL::SSL::VERIFY_NONE
@@ -108,5 +108,5 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Only use :id for inspections in production.
-  config.active_record.attributes_for_inspect = [ :id ]
+  config.active_record.attributes_for_inspect = [:id]
 end

@@ -8,6 +8,6 @@ class Admin::JwtKeysController < Admin::AdminController
   def show; end
 
   private def set_key
-    @key = JwtSigningKey.find_by_name(params[:name])
+    @key = JwtSigningKey.find_by(name: params[:name])
   end
 end

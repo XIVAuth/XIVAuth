@@ -1,12 +1,12 @@
 require "rails_helper"
 
 RSpec.describe PKI::CertificateIssuanceService, type: :service do
+  subject(:service) { described_class.new(subject: user, certificate_type: "user_identification") }
+
   let(:ca)      { FactoryBot.create(:pki_certificate_authority) }
   let(:user)    { FactoryBot.create(:user) }
   let(:ec_key)  { OpenSSL::PKey::EC.generate("prime256v1") }
   let(:csr_pem) { PkiSupport.generate_csr_pem(key: ec_key) }
-
-  subject(:service) { described_class.new(subject: user, certificate_type: "user_identification") }
 
   describe "#issue!" do
     context "with a valid CSR and user subject" do
@@ -63,7 +63,7 @@ RSpec.describe PKI::CertificateIssuanceService, type: :service do
         url_extensions.each do |ext|
           ext.value.scan(%r{https?://[^\s,]+}).each do |url|
             expect(url).to start_with("http://test.xivauth.net"),
-              "Expected #{ext.oid} URL #{url.inspect} to start with http://test.xivauth.net"
+                           "Expected #{ext.oid} URL #{url.inspect} to start with http://test.xivauth.net"
           end
         end
       end
@@ -122,26 +122,30 @@ RSpec.describe PKI::CertificateIssuanceService, type: :service do
 
     context "when the policy is invalid" do
       it "returns the policy with errors (no record written) for an EC curve not allowed" do
-        weak_ec  = OpenSSL::PKey::EC.generate("secp112r1") rescue nil
+        weak_ec = begin
+          OpenSSL::PKey::EC.generate("secp112r1")
+        rescue StandardError
+          nil
+        end
         skip "secp112r1 not available" unless weak_ec
         weak_csr = PkiSupport.generate_csr_pem(key: weak_ec)
 
-        expect {
+        expect do
           result = service.issue!(csr_pem: weak_csr, certificate_authority: ca)
           expect(result).to be_a(PKI::IssuancePolicy::Base)
           expect(result.errors[:public_key]).to be_present
-        }.not_to change(PKI::IssuedCertificate, :count)
+        end.not_to change(PKI::IssuedCertificate, :count)
       end
 
       it "returns the policy with errors (no record written) for RSA key too small" do
         small_key = OpenSSL::PKey::RSA.new(1024)
         small_csr = PkiSupport.generate_csr_pem(key: small_key)
 
-        expect {
+        expect do
           result = service.issue!(csr_pem: small_csr, certificate_authority: ca)
           expect(result).to be_a(PKI::IssuancePolicy::Base)
           expect(result.errors[:public_key]).to be_present
-        }.not_to change(PKI::IssuedCertificate, :count)
+        end.not_to change(PKI::IssuedCertificate, :count)
       end
 
       it "returns the policy with errors for inactive CA" do
@@ -156,34 +160,35 @@ RSpec.describe PKI::CertificateIssuanceService, type: :service do
         # Destroy all CAs so none are available
         PKI::CertificateAuthority.destroy_all
 
-        expect {
+        expect do
           service.issue!(csr_pem: csr_pem)
-        }.to raise_error(PKI::CertificateAuthority::NoCertificateAuthorityError, /No active CA certificate for certificate type/)
+        end.to raise_error(PKI::CertificateAuthority::NoCertificateAuthorityError,
+                           /No active CA certificate for certificate type/)
       end
     end
 
     context "with an invalid CSR" do
       it "raises IssuanceError for malformed PEM" do
-        expect {
+        expect do
           service.issue!(csr_pem: "not a csr", certificate_authority: ca)
-        }.to raise_error(PKI::CertificateIssuanceService::IssuanceError, /Invalid CSR/)
+        end.to raise_error(PKI::CertificateIssuanceService::IssuanceError, /Invalid CSR/)
       end
 
       it "raises IssuanceError when CSR signature doesn't match its public key" do
         # Build a CSR with one key, then re-sign with a different key so the
         # embedded public key and the signature don't match.
-        legit_key  = OpenSSL::PKey::EC.generate("prime256v1")
+        legit_key = OpenSSL::PKey::EC.generate("prime256v1")
         tampered_key = OpenSSL::PKey::EC.generate("prime256v1")
 
         req = OpenSSL::X509::Request.new
         req.version    = 0
         req.subject    = OpenSSL::X509::Name.parse("CN=Tampered")
-        req.public_key = legit_key  # embed legit_key's public key
-        req.sign(tampered_key, OpenSSL::Digest::SHA256.new)  # but sign with a different key
+        req.public_key = legit_key # embed legit_key's public key
+        req.sign(tampered_key, OpenSSL::Digest.new("SHA256")) # but sign with a different key
 
-        expect {
+        expect do
           service.issue!(csr_pem: req.to_pem, certificate_authority: ca)
-        }.to raise_error(PKI::CertificateIssuanceService::IssuanceError, /CSR self-signature verification failed/)
+        end.to raise_error(PKI::CertificateIssuanceService::IssuanceError, /CSR self-signature verification failed/)
       end
     end
 
@@ -194,7 +199,7 @@ RSpec.describe PKI::CertificateIssuanceService, type: :service do
       it "is a version 3 (X.509 v3) certificate" do
         result = service.issue!(csr_pem: csr_pem, certificate_authority: ca)
         cert = OpenSSL::X509::Certificate.new(result.certificate_pem)
-        expect(cert.version).to eq(2)  # OpenSSL uses 0-indexed version: 2 == v3
+        expect(cert.version).to eq(2) # OpenSSL uses 0-indexed version: 2 == v3
       end
 
       it "embeds authorityKeyIdentifier (RFC 5280 §4.2.1.1 MUST)" do
@@ -254,8 +259,8 @@ RSpec.describe PKI::CertificateIssuanceService, type: :service do
         cert   = OpenSSL::X509::Certificate.new(result.certificate_pem)
 
         expect(cert.not_before).to be < cert.not_after
-        expect(cert.not_before).to be_within(1.seconds).of(result.issued_at)
-        expect(cert.not_after).to be_within(1.seconds).of(result.expires_at)
+        expect(cert.not_before).to be_within(1.second).of(result.issued_at)
+        expect(cert.not_after).to be_within(1.second).of(result.expires_at)
       end
 
       it "uses a consistent signature algorithm (RFC 5280 §4.1.1.2)" do
@@ -266,7 +271,6 @@ RSpec.describe PKI::CertificateIssuanceService, type: :service do
         # For an EC CA key, expect an ECDSA algorithm
         expect(cert.signature_algorithm).to match(/ecdsa/i)
       end
-
     end
   end
 end

@@ -1,14 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "OAuth::TokensController" do
-  before do
-    # Do nothing
-  end
-
-  after do
-    # Do nothing
-  end
-
   shared_examples "cross-origin POST request" do
     it "allows cross-origin requests" do
       expect(response.headers["Access-Control-Allow-Origin"]).to eq "*"
@@ -20,7 +12,7 @@ RSpec.describe "OAuth::TokensController" do
 
   describe "POST /oauth/token" do
     before do
-      post "/oauth/token", headers: { 'Origin': "https://wolf.dev" }
+      post "/oauth/token", headers: { Origin: "https://wolf.dev" }
     end
 
     it_behaves_like "cross-origin POST request"

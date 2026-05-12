@@ -4,13 +4,13 @@ class OAuth::DevicePreflightCheck
   attr_accessor :device_grant, :user
   private :device_grant=
   private :user=
-  
+
   validates :device_grant, presence: true
 
   validates_with OAuth::CharacterOwnershipValidator, target_field: :user
   validates_with OAuth::ScopeCompatibilityValidator, target_field: :oauth_client
 
-  def initialize(device_grant, user, attributes = {})
+  def initialize(device_grant, user, attributes = { })
     self.device_grant = device_grant
     self.user = user
     super(attributes)

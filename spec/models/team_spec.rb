@@ -48,7 +48,7 @@ RSpec.describe Team, type: :model do
         team = FactoryBot.create(:team)
         (Team::TEAM_DEPTH_LIMIT - 1).times do
           team = FactoryBot.create(:team, parent: team)
-        end  # should be fine
+        end
 
         child = FactoryBot.build(:team, parent: team)
 
@@ -61,7 +61,7 @@ RSpec.describe Team, type: :model do
         yancy = FactoryBot.create(:team, parent: enos)
         philip = FactoryBot.create(:team, parent: yancy)
 
-        yancy.parent = philip  # do the nasty in the pasty
+        yancy.parent = philip # do the nasty in the pasty
         expect(yancy).not_to be_valid
         expect(yancy.errors[:parent_id]).to include("cannot create a recursive hierarchy")
       end
@@ -70,7 +70,7 @@ RSpec.describe Team, type: :model do
 
   describe "#active_memberships" do
     it "does not return blocked or invited roles" do
-      team, active_membership, _ = create_root_team
+      team, active_membership, = create_root_team
 
       FactoryBot.create(:team_membership, :blocked, team: team, user: FactoryBot.create(:user))
       FactoryBot.create(:team_membership, :invited, team: team, user: FactoryBot.create(:user))
@@ -78,14 +78,14 @@ RSpec.describe Team, type: :model do
       expect(team.active_memberships).to contain_exactly(active_membership)
     end
   end
-  
+
   describe "#antecedent_memberships" do
     let(:u_admin) { FactoryBot.create(:user) }
     let(:u_member) { FactoryBot.create(:user) }
     let(:u_dev) { FactoryBot.create(:user) }
 
     it "excludes own direct memberships (ancestors only)" do
-      team, m1, _ = create_root_team(u_admin)
+      team, m1, = create_root_team(u_admin)
       m2 = FactoryBot.create(:team_membership, team: team, user: u_member)
 
       expect(team.antecedent_memberships).to be_empty
@@ -93,7 +93,7 @@ RSpec.describe Team, type: :model do
     end
 
     it "always inherits admin memberships from all ancestors regardless of inherit flag" do
-      grandparent, gp_admin, _ = create_root_team(u_admin)
+      grandparent, gp_admin, = create_root_team(u_admin)
       parent = FactoryBot.create(:team, parent: grandparent, inherit_parent_memberships: false)
       child = FactoryBot.create(:team, parent: parent, inherit_parent_memberships: false)
 
@@ -116,21 +116,21 @@ RSpec.describe Team, type: :model do
     end
 
     it "respects each ancestor's own non-admin inheritance when cascading" do
-      grandparent, gp_admin, _ = create_root_team(u_admin)
+      grandparent, gp_admin, = create_root_team(u_admin)
       parent = FactoryBot.create(:team, parent: grandparent, inherit_parent_memberships: false)
       child = FactoryBot.create(:team, parent: parent, inherit_parent_memberships: true)
 
       gp_member = FactoryBot.create(:team_membership, team: grandparent, user: u_member)
       parent_dev = FactoryBot.create(:team_membership, :developer, team: parent, user: u_dev)
 
-      # Because parent has inherit=false, child's inherited non-admins should include only parent's direct non-admin (developer),
-      # not grandparent's member. Admin from grandparent should still be inherited.
+      # Because parent has inherit=false, child's inherited non-admins should include only parent's direct non-admin
+      # (developer), not grandparent's member. Admin from grandparent should still be inherited.
       expect(child.antecedent_memberships).to include(parent_dev, gp_admin)
       expect(child.antecedent_memberships).not_to include(gp_member)
     end
 
     it "handles deep trees (3+ levels)" do
-      root, root_admin, _ = create_root_team(u_admin)
+      root, root_admin, = create_root_team(u_admin)
       a = FactoryBot.create(:team, parent: root)
       b = FactoryBot.create(:team, parent: a)
       c = FactoryBot.create(:team, parent: b, inherit_parent_memberships: true)
@@ -138,7 +138,8 @@ RSpec.describe Team, type: :model do
       a_member = FactoryBot.create(:team_membership, team: a, user: u_member)
       b_dev = FactoryBot.create(:team_membership, :developer, team: b, user: u_dev)
 
-      # c has no direct memberships but inherits admin from all ancestors and non-admins because its own inherit flag is true
+      # c has no direct memberships but inherits admin from all ancestors and non-admins because its own inherit flag
+      # is true
       expect(c.antecedent_memberships).to include(root_admin, a_member, b_dev)
 
       # Add a direct membership and ensure it's still excluded (own direct membership)
@@ -148,7 +149,7 @@ RSpec.describe Team, type: :model do
     end
 
     it "returns inherited memberships even when they're duplicated in an antecedent" do
-      grandparent, gp_admin, _ = create_root_team(u_admin)
+      grandparent, gp_admin, = create_root_team(u_admin)
       parent = FactoryBot.create(:team, parent: grandparent, inherit_parent_memberships: true)
       child = FactoryBot.create(:team, parent: parent, inherit_parent_memberships: true)
 
@@ -158,7 +159,7 @@ RSpec.describe Team, type: :model do
     end
 
     it "still permits activerecord methods on results" do
-      parent, m1, _ = create_root_team(u_admin)
+      parent, m1, = create_root_team(u_admin)
       child = FactoryBot.create(:team, parent: parent)
 
       FactoryBot.create(:team_membership, team: child, user: u_member)
@@ -168,8 +169,8 @@ RSpec.describe Team, type: :model do
       expect(child.antecedent_memberships.find_by(user: u_member)).to be_nil
     end
 
-    it "should not include blocked or invited roles from ancestors" do
-      parent, active_membership, _ = create_root_team(u_admin)
+    it "does not include blocked or invited roles from ancestors" do
+      parent, active_membership, = create_root_team(u_admin)
       child = FactoryBot.create(:team, parent: parent)
 
       blocked_user = FactoryBot.create(:user)
@@ -235,8 +236,8 @@ RSpec.describe Team, type: :model do
 
       expect(parent.descendant_memberships).to contain_exactly(m1, m2)
     end
-    
-    it "should not include blocked or invited roles from descendants" do
+
+    it "does not include blocked or invited roles from descendants" do
       parent = FactoryBot.create(:team)
       child = FactoryBot.create(:team, parent: parent)
 
@@ -305,7 +306,7 @@ RSpec.describe Team, type: :model do
 
       u2 = FactoryBot.create(:user)
 
-      FactoryBot.create(:team_membership, team: team, user: u2)   # direct
+      FactoryBot.create(:team_membership, team: team, user: u2) # direct
 
       expect(team.all_members).to contain_exactly(parent_owner, u2)
     end
@@ -318,8 +319,8 @@ RSpec.describe Team, type: :model do
       team_member = FactoryBot.create(:user)
       child_member = FactoryBot.create(:user)
 
-      FactoryBot.create(:team_membership, team: team, user: team_member)   # direct
-      FactoryBot.create(:team_membership, team: child, user: child_member)  # descendant
+      FactoryBot.create(:team_membership, team: team, user: team_member) # direct
+      FactoryBot.create(:team_membership, team: child, user: child_member) # descendant
 
       expect(team.all_members(include_descendants: true)).to contain_exactly(parent_owner, team_member, child_member)
     end
@@ -339,18 +340,18 @@ RSpec.describe Team, type: :model do
     end
 
     it "supports activerecord chaining" do
-      parent, _, _ = create_root_team
+      parent, = create_root_team
       team = FactoryBot.create(:team, parent: parent)
 
-      u_2 = FactoryBot.create(:user)
+      user2 = FactoryBot.create(:user)
 
-      FactoryBot.create(:team_membership, team: team, user: u_2)
+      FactoryBot.create(:team_membership, team: team, user: user2)
 
       expect(team.all_members.count).to eql(2)
-      expect(team.all_members.find(u_2.id)).to eql(u_2)
+      expect(team.all_members.find(user2.id)).to eql(user2)
     end
 
-    it "should not include blocked or invited roles from antecedents or descendants" do
+    it "does not include blocked or invited roles from antecedents or descendants" do
       parent, _, parent_owner = create_root_team
       team = FactoryBot.create(:team, parent: parent)
       child = FactoryBot.create(:team, parent: team)
@@ -365,7 +366,8 @@ RSpec.describe Team, type: :model do
       FactoryBot.create(:team_membership, team: team, user: active_user_direct)
       FactoryBot.create(:team_membership, team: child, user: active_user_descendant)
 
-      expect(team.all_members(include_descendants: true)).to contain_exactly(parent_owner, active_user_direct, active_user_descendant)
+      expect(team.all_members(include_descendants: true)).to contain_exactly(parent_owner, active_user_direct,
+                                                                             active_user_descendant)
     end
   end
 

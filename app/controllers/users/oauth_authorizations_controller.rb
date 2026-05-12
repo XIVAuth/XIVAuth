@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Users::OAuthAuthorizationsController < ApplicationController
   layout "portal/page"
   include Pagy::Method

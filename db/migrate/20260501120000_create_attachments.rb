@@ -9,6 +9,6 @@ class CreateAttachments < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :attachments, [:record_type, :record_id, :name]
+    add_index :attachments, %i[record_type record_id name]
   end
 end

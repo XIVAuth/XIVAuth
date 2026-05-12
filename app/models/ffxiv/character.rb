@@ -1,7 +1,7 @@
 class FFXIV::Character < ApplicationRecord
   self.implicit_order_column = "lodestone_id"
   validates :lodestone_id, presence: true, uniqueness: true
-  
+
   # We don't care about failures on updates, as the existing data is still "valid"
   # In the update case (the only other time @lodestone_data is set), we already have valid data
   # and handle the failure accordingly.
@@ -30,7 +30,8 @@ class FFXIV::Character < ApplicationRecord
   end
 
   def stale?(hours = 24, failed_refresh_timeout_mins = 15)
-    updated_at <= hours.hours.ago || (refresh_fail_reason.present? && updated_at <= failed_refresh_timeout_mins.minutes.ago)
+    updated_at <= hours.hours.ago ||
+      (refresh_fail_reason.present? && updated_at <= failed_refresh_timeout_mins.minutes.ago)
   end
 
   def verified?

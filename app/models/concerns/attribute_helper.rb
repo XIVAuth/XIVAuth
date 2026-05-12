@@ -12,7 +12,7 @@ module AttributeHelper
   def attr_ar_getter(*attributes)
     defined = []
     attributes.each do |attribute|
-      method = "#{attribute}"
+      method = attribute.to_s
       define_method(method) do
         self[attribute]
       end

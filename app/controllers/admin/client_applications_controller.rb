@@ -1,5 +1,6 @@
 class Admin::ClientApplicationsController < Admin::AdminController
   include Pagy::Method
+
   layout "portal/base"
 
   before_action :set_app, only: %i[show destroy]
@@ -19,6 +20,6 @@ class Admin::ClientApplicationsController < Admin::AdminController
   end
 
   private def set_app
-    @client_application = ClientApplication.find(params[:id])
+    @client_application = ClientApplication.find(params.expect(:id))
   end
 end

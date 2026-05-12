@@ -15,14 +15,13 @@ FactoryBot.define do
     trait :developer do
       role { "developer" }
     end
-    
+
     trait :invited do
       role { "invited" }
     end
-    
+
     trait :blocked do
       role { "blocked" }
     end
   end
 end
-

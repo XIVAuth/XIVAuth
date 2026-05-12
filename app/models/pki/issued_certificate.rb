@@ -9,8 +9,7 @@ class PKI::IssuedCertificate < ApplicationRecord
   belongs_to :certificate_authority, class_name: "PKI::CertificateAuthority"
   belongs_to :subject, polymorphic: true
 
-  belongs_to :requesting_application, class_name: "ClientApplication",
-             foreign_key: :requesting_application_id, optional: true
+  belongs_to :requesting_application, class_name: "ClientApplication", optional: true
 
   # Revocation reasons that users are allowed to select to cancel their own certs.
   # All other revocations are system-reserved.
@@ -35,20 +34,20 @@ class PKI::IssuedCertificate < ApplicationRecord
 
   validates :certificate_pem, presence: true
   validates :certificate_type, presence: true,
-            inclusion: { in: -> { PKI::IssuancePolicy::REGISTRY.keys }, message: "is not a known certificate type" }
+            inclusion: { in: -> { PKI::IssuancePolicy.registry.keys }, message: "is not a known certificate type" }
   validates :issued_at, :expires_at, presence: true
   validates :public_key_info, presence: true
   validates :certificate_fingerprint, :public_key_fingerprint, presence: true
-  validates :certificate_fingerprint, uniqueness: true  # generally validated by service, but catch here.
+  validates :certificate_fingerprint, uniqueness: true # generally validated by service, but catch here.
 
   protected attr_ar_setter :issued_at, :expires_at, :public_key_info, :certificate_fingerprint, :public_key_fingerprint
 
   # Override the certificate_pem setter to immediately derive attributes from the certificate
   def certificate_pem=(pem)
-    super(pem)
+    super
     derive_certificate_attributes if pem.present?
   end
-  
+
   def key_type
     public_key_info["type"]
   end
@@ -63,7 +62,7 @@ class PKI::IssuedCertificate < ApplicationRecord
 
   scope :active, -> { where(revoked_at: nil).where("expires_at > ?", Time.current) }
   scope :revoked, -> { where.not(revoked_at: nil) }
-  scope :expired, -> { where(revoked_at: nil).where("expires_at <= ?", Time.current) }
+  scope :expired, -> { where(revoked_at: nil).where(expires_at: ..Time.current) }
 
   def active?
     revoked_at.nil? && expires_at > Time.current
@@ -84,18 +83,18 @@ class PKI::IssuedCertificate < ApplicationRecord
   end
 
   def as_ca_gem_certificate
-    @gem_cert ||= CertificateAuthority::Certificate.from_x509_cert(certificate_pem)
+    @gem_cert ||= CertificateAuthority::Certificate.from_x509_cert(certificate_pem) # rubocop:disable Naming/MemoizedInstanceVariableName
   end
 
   def as_openssl_certificate
-    @openssl_cert ||= OpenSSL::X509::Certificate.new(certificate_pem)
+    @openssl_cert ||= OpenSSL::X509::Certificate.new(certificate_pem) # rubocop:disable Naming/MemoizedInstanceVariableName
   end
 
   def serial
     self.class.uuid_to_serial(id)
   end
 
-  def self.find_by_serial(serial_integer)
+  def self.lookup_by_serial(serial_integer)
     find_by(id: serial_to_uuid(serial_integer))
   end
 
@@ -110,11 +109,9 @@ class PKI::IssuedCertificate < ApplicationRecord
     [hex[0, 8], hex[8, 4], hex[12, 4], hex[16, 4], hex[20, 12]].join("-")
   end
 
-  private
-
   # Derives and assigns certificate attributes from the PEM certificate.
   # Called automatically when certificate_pem is assigned via the certificate_pem= setter.
-  def derive_certificate_attributes
+  private def derive_certificate_attributes
     x509_cert = as_openssl_certificate
 
     cert_der = x509_cert.to_der
@@ -129,7 +126,7 @@ class PKI::IssuedCertificate < ApplicationRecord
     self.public_key_fingerprint = calculate_public_key_fingerprint(public_key)
   end
 
-  def build_public_key_info(public_key)
+  private def build_public_key_info(public_key)
     case public_key
     when OpenSSL::PKey::RSA
       { "type" => "RSA", "bits" => public_key.n.num_bits }
@@ -140,7 +137,7 @@ class PKI::IssuedCertificate < ApplicationRecord
     end
   end
 
-  def calculate_public_key_fingerprint(public_key)
+  private def calculate_public_key_fingerprint(public_key)
     spki_der = public_key.to_der
     "sha256:#{OpenSSL::Digest::SHA256.hexdigest(spki_der)}"
   end

@@ -1,5 +1,6 @@
 class Admin::CharactersController < Admin::AdminController
   include Pagy::Method
+
   layout "portal/base"
 
   before_action :set_character, except: %i[index]
@@ -25,14 +26,14 @@ class Admin::CharactersController < Admin::AdminController
       respond_to do |format|
         format.html do
           flash[:notice] = "Character refresh was successfully enqueued."
-          redirect_back fallback_location: admin_character_path(@character.lodestone_id)
+          redirect_back_or_to(admin_character_path(@character.lodestone_id))
         end
       end
     else
       respond_to do |format|
         format.html do
           flash[:error] = "Character refresh could not be enqueued."
-          redirect_back fallback_location: admin_character_path(@character.lodestone_id)
+          redirect_back_or_to(admin_character_path(@character.lodestone_id))
         end
       end
     end
@@ -41,6 +42,6 @@ class Admin::CharactersController < Admin::AdminController
   def force_register; end
 
   private def set_character
-    @character = FFXIV::Character.find_by_lodestone_id(params[:lodestone_id])
+    @character = FFXIV::Character.find_by(lodestone_id: params[:lodestone_id])
   end
 end

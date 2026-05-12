@@ -4,12 +4,16 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   before_action :check_resource_owner_presence
   before_action :set_certificate, only: %i[show revoke]
 
-  before_action(only: %i[index show]) { doorkeeper_authorize! "certificate", "certificate:all", "certificate:issue", "certificate:revoke", "certificate:manage" }
+  before_action(only: %i[index show]) do
+    doorkeeper_authorize! "certificate", "certificate:all", "certificate:issue", "certificate:revoke",
+                          "certificate:manage"
+  end
   before_action(only: %i[request_cert]) { doorkeeper_authorize! "certificate:issue", "certificate:manage" }
   before_action(only: %i[revoke]) { doorkeeper_authorize! "certificate:revoke", "certificate:manage" }
 
   def index
-    @certificates = accessible_certificates.includes(subject: :character, requesting_application: {}).order(issued_at: :desc)
+    @certificates = accessible_certificates.includes(subject: :character,
+                                                     requesting_application: { }).order(issued_at: :desc)
     render json: @certificates
   end
 
@@ -25,14 +29,15 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     certificate_type = params.require(:certificate_type).to_s
 
     # Validate certificate type exists
-    policy_class = PKI::IssuancePolicy::REGISTRY[certificate_type]
+    policy_class = PKI::IssuancePolicy.registry[certificate_type]
     unless policy_class
       return render json: { error: "Unknown certificate_type '#{certificate_type}'" }, status: :bad_request
     end
 
     # Check that the application has permission to issue this certificate type
     unless can?(:issue, policy_class)
-      return render json: { error: "Application is not authorized to issue '#{certificate_type}' certificates" }, status: :forbidden
+      return render json: { error: "Application is not authorized to issue '#{certificate_type}' certificates" },
+                    status: :forbidden
     end
 
     subject = resolve_subject_for(certificate_type)
@@ -49,7 +54,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
         id: result.id,
         certificate: result.certificate_pem,
         fingerprint: result.public_key_fingerprint.sub(/^\w+:/, ""),
-        ca_url: ca_cert_url(result.certificate_authority.slug),
+        ca_url: ca_cert_url(result.certificate_authority.slug)
       }, status: :created
 
       # certificate was successfully issued, enable the certificates view in the UI.
@@ -70,14 +75,18 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     authorize! :revoke, @certificate
 
     # Check that the application has permission to revoke this certificate type
-    policy_class = PKI::IssuancePolicy::REGISTRY[@certificate.certificate_type]
+    policy_class = PKI::IssuancePolicy.registry[@certificate.certificate_type]
     unless can?(:revoke, policy_class)
-      return render json: { error: "Application is not authorized to revoke '#{@certificate.certificate_type}' certificates" }, status: :forbidden
+      return render status: :forbidden, json: {
+        error: "Application is not authorized to revoke '#{@certificate.certificate_type}' certificates"
+      }
     end
 
     reason = params.require(:reason).to_s
     unless PKI::IssuedCertificate::USER_REVOCATION_REASONS.include?(reason)
-      return render json: { error: "Invalid revocation reason." }, status: :bad_request
+      return render status: :bad_request, json: {
+        error: "Invalid revocation reason."
+      }
     end
 
     @certificate.revoke!(reason: reason)
@@ -86,16 +95,14 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     render json: { error: e.message }, status: :bad_request
   end
 
-  private
-
-  def set_certificate
-    @certificate = accessible_certificates.find(params[:id])
+  private def set_certificate
+    @certificate = accessible_certificates.find(params.expect(:id))
     authorize! :read, @certificate
   end
 
   # Resolve subject based on certificate_type. Each type has its own rules for how
   # the subject is determined and which scopes are required.
-  def resolve_subject_for(certificate_type)
+  private def resolve_subject_for(certificate_type)
     case certificate_type
     when "user_identification"
       resolve_user_subject
@@ -104,14 +111,15 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     when "code_signing"
       resolve_code_signing_subject
     else
-      render json: { error: "Subject resolution not supported for certificate type '#{certificate_type}'" }, status: :bad_request
+      render json: { error: "Subject resolution not supported for certificate type '#{certificate_type}'" },
+             status: :bad_request
       nil
     end
   end
 
   # user_identification: always the current user; no subject params needed.
-  def resolve_user_subject
-    unless has_user_scope?
+  private def resolve_user_subject
+    unless user_scope_granted?
       render json: { error: "User scope required for certificate issuance" }, status: :forbidden
       return
     end
@@ -120,8 +128,8 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   end
 
   # character_identification: requires subject_id (Lodestone ID of target character).
-  def resolve_character_subject
-    unless has_character_scope?
+  private def resolve_character_subject
+    unless character_scope_granted?
       render json: { error: "Character scope required for certificate issuance" }, status: :forbidden
       return
     end
@@ -137,8 +145,8 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   # or a specific entity identified by subject_type + subject_id.
   #   subject_type: "User" or "Team" (required when subject_id is present)
   #   subject_id:   UUID of the subject (required when subject_type is present)
-  def resolve_code_signing_subject
-    unless has_user_scope?
+  private def resolve_code_signing_subject
+    unless user_scope_granted?
       render json: { error: "User scope required for certificate issuance" }, status: :forbidden
       return
     end
@@ -147,13 +155,12 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     subject_id = params[:subject_id]
 
     # No subject params → default to current user
-    if subject_type.blank? && subject_id.blank?
-      return current_user
-    end
+    return current_user if subject_type.blank? && subject_id.blank?
 
     # Both must be present if either is given
     if subject_type.blank? || subject_id.blank?
-      render json: { error: "Both subject_type and subject_id are required for code_signing certificates" }, status: :bad_request
+      render json: { error: "Both subject_type and subject_id are required for code_signing certificates" },
+             status: :bad_request
       return
     end
 
@@ -172,7 +179,8 @@ class Api::V1::CertificatesController < Api::V1::ApiController
       end
       team
     else
-      render json: { error: "Invalid subject_type '#{subject_type}' for code_signing certificates" }, status: :bad_request
+      render json: { error: "Invalid subject_type '#{subject_type}' for code_signing certificates" },
+             status: :bad_request
       nil
     end
   end
@@ -184,20 +192,16 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   #
   # Additionally, to access a certificate, this context *must* be able to see the subject associated with the
   # certificate as well. This applies even for `certificate:manage`.
-  def accessible_certificates
+  private def accessible_certificates
     scope = PKI::IssuedCertificate.all
 
-    unless has_certificate_all_scope?
-      scope = scope.where(requesting_application: requesting_application)
-    end
+    scope = scope.where(requesting_application: requesting_application) unless certificate_all_scope_granted?
 
     conditions = []
 
-    if has_user_scope?
-      conditions << { subject_type: "User", subject_id: current_user.id }
-    end
+    conditions << { subject_type: "User", subject_id: current_user.id } if user_scope_granted?
 
-    if has_character_scope?
+    if character_scope_granted?
       authorized_character_ids = authorized_character_registrations(only_verified: true).pluck(:id)
       unless authorized_character_ids.empty?
         conditions << {
@@ -212,16 +216,16 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     conditions.reduce(scope.none) { |combined, condition| combined.or(scope.where(condition)) }
   end
 
-  def has_certificate_all_scope?
+  private def certificate_all_scope_granted?
     doorkeeper_token.scopes.exists?("certificate:all") ||
       doorkeeper_token.scopes.exists?("certificate:manage")
   end
 
-  def has_user_scope?
+  private def user_scope_granted?
     doorkeeper_token.scopes.exists?("user") || doorkeeper_token.scopes.exists?("user:manage")
   end
 
-  def read_csr_pem
+  private def read_csr_pem
     param = params.require(:csr_pem)
     case param
     when ActionDispatch::Http::UploadedFile
@@ -233,7 +237,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     end
   end
 
-  def requesting_application
+  private def requesting_application
     doorkeeper_token.application&.application
   end
 end

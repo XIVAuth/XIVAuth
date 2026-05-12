@@ -6,7 +6,8 @@ class CharacterRegistrationsController < ApplicationController
 
   # GET /character_registrations or /character_registrations.json
   def index
-    @pagy, @character_registrations = pagy(CharacterRegistration.where(user: current_user).includes(:character), items: 12)
+    @pagy, @character_registrations = pagy(CharacterRegistration.where(user: current_user).includes(:character),
+                                           items: 12)
 
     render :index, layout: "portal/base"
   end
@@ -80,11 +81,14 @@ class CharacterRegistrationsController < ApplicationController
       render and return
     end
 
-    redirect_to character_registrations_path, notice: "Character successfully deleted." if @character_registration.destroy
+    return unless @character_registration.destroy
+
+    redirect_to character_registrations_path,
+                notice: "Character successfully deleted."
   end
 
   def refresh
-    @character_registration = current_user.character_registrations.find(params[:character_registration_id])
+    @character_registration = current_user.character_registrations.find(params.expect(:character_registration_id))
     authorize! :update, @character_registration
 
     unless @character_registration.character.stale?
@@ -104,7 +108,7 @@ class CharacterRegistrationsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   private def set_character_registration
-    @character_registration = CharacterRegistration.find(params[:id])
+    @character_registration = CharacterRegistration.find(params.expect(:id))
     raise ActiveRecord::RecordNotFound unless can? :show, @character_registration
 
     @character = @character_registration.character
@@ -112,8 +116,8 @@ class CharacterRegistrationsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   private def character_registration_params
-    params.require(:character_registration)
-          .permit(:lodestone_url, :search_name, :search_world, :search_exact, :from_search)
+    params
+      .expect(character_registration: %i[lodestone_url search_name search_world search_exact from_search])
   end
 
   private def render_new_form_again(status: :unprocessable_content)
@@ -143,7 +147,7 @@ class CharacterRegistrationsController < ApplicationController
       "registration.result": result.to_s,
 
       # FIXME(DEPS): https://github.com/getsentry/sentry-ruby/issues/2842
-      "user.id": current_user.id,
+      "user.id": current_user.id
     }
 
     if (character = registration_request.character)

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module LogContext
   def self.add(**args)
     idx, existing = self.find_mdc

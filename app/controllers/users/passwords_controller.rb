@@ -19,14 +19,14 @@ class Users::PasswordsController < Devise::PasswordsController
 
   # protected
 
-  def after_resetting_password_path_for(resource)
+  def after_resetting_password_path_for(_resource)
     user_session_path
   end
 
   protected def assert_reset_token_passed
-    if params[:reset_password_token].blank?
-      set_flash_message(:alert, :no_token)
-      redirect_to new_user_session_path
-    end
+    return if params[:reset_password_token].present?
+
+    set_flash_message(:alert, :no_token)
+    redirect_to new_user_session_path
   end
 end

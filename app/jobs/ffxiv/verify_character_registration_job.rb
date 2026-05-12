@@ -84,21 +84,21 @@ wait: 2.minutes) do |job, _error|
             errors: lodestone_data.errors.as_json
     end
 
-    lodestone_data.bio.scan(CharacterRegistration::VERIFICATION_KEY_REGEX).each do |match|
-      code = match.delete_prefix(CharacterRegistration::VERIFICATION_KEY_PREFIX)
+    match = lodestone_data.bio.scan(CharacterRegistration::VERIFICATION_KEY_REGEX).find do |m|
+      code = m.delete_prefix(CharacterRegistration::VERIFICATION_KEY_PREFIX)
       candidate = CharacterRegistration::VERIFICATION_KEY_PREFIX + Crockford.normalize(code).upcase
-
-      next unless candidate == registration.verification_key
-
-      registration.verify!("lodestone_code", clobber: true)
-      self.report_result("success")
-      self.record_verify_metric("success")
-      return
+      candidate == registration.verification_key
     end
 
-    self.report_result("retry")
-    raise FFXIV::VerifyCharacterRegistrationJob::VerificationKeyMissingError,
-          "Verification failed for #{registration.id} - key was not found."
+    if match
+      registration.verify!("lodestone_code", clobber: true)
+      report_result("success")
+      record_verify_metric("success")
+    else
+      report_result("retry")
+      raise FFXIV::VerifyCharacterRegistrationJob::VerificationKeyMissingError,
+            "Verification failed for #{registration.id} - key was not found."
+    end
   end
 
   def report_result(partial_name)

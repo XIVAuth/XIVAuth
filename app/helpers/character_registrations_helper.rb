@@ -1,13 +1,14 @@
 module CharacterRegistrationsHelper
-  # A more relaxed regex variant meant for just grabbing data from things.
-  LODESTONE_URL_REGEX = %r{(?:(?:https?://)?(?<region>[a-z]{2})\.finalfantasyxiv\.com/lodestone/character/)?(?<lodestone_id>\d+)(?:/.*)?}
+  # A more relaxed regex variant to extract metadata from a Lodestone URI.
+  LODESTONE_URL_REGEX =
+    %r{(?:(?:https?://)?(?<region>[a-z]{2})\.finalfantasyxiv\.com/lodestone/character/)?(?<lodestone_id>\d+)(?:/.*)?}
 
   def extract_data(id_or_url)
     if (res = LODESTONE_URL_REGEX.match(id_or_url))
       return res.named_captures.deep_symbolize_keys
     end
 
-    return {}
+    return { }
   end
 
   def can_add_characters?

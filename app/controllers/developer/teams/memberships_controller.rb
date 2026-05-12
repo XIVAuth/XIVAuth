@@ -47,19 +47,17 @@ class Developer::Teams::MembershipsController < Developer::DeveloperPortalContro
     end
   end
 
-  private
-
-  def set_team
-    @team = Team.find(params[:team_id])
+  private def set_team
+    @team = Team.find(params.expect(:team_id))
     authorize! :use, @team
   end
 
-  def set_membership
-    @membership = @team.direct_memberships.find_by!(user_id: params[:user_id])
+  private def set_membership
+    @membership = @team.direct_memberships.find_by!(user_id: params.expect(:user_id))
   end
 
-  def membership_params
-    params.require(:team_membership).permit(:role).tap do |p|
+  private def membership_params
+    params.expect(team_membership: [:role]).tap do |p|
       allowed = if can?(:manage, @team)
                   %w[admin manager developer member]
                 else
@@ -69,15 +67,15 @@ class Developer::Teams::MembershipsController < Developer::DeveloperPortalContro
     end
   end
 
-  def manager_restricted?
+  private def manager_restricted?
     !can?(:manage, @team)
   end
 
-  def target_is_privileged?
+  private def target_is_privileged?
     @membership.role.in?(%w[admin manager])
   end
 
-  def privileged_role_requested?
+  private def privileged_role_requested?
     params.dig(:team_membership, :role).in?(%w[admin manager])
   end
 end

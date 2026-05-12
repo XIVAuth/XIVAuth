@@ -2,16 +2,15 @@ require "rails_helper"
 
 RSpec.describe User::SessionManageable, type: :model do
   let(:user) { FactoryBot.create(:user) }
+  let(:sid_near) { SecureRandom.urlsafe_base64(32) }
+  let(:sid_far) { SecureRandom.urlsafe_base64(32) }
+  let(:expiry_date_near) { 3.days.from_now }
+  let(:expiry_date_far) { 7.days.from_now }
   let(:redis_double) { instance_double(Redis) }
 
   before do
     allow(XivAuthSessionStore).to receive(:with_index_redis).and_yield(redis_double)
   end
-
-  let(:private_id_1) { SecureRandom.urlsafe_base64(32) }
-  let(:private_id_2) { SecureRandom.urlsafe_base64(32) }
-  let(:expiry_1) { 3.days.from_now }
-  let(:expiry_2) { 7.days.from_now }
 
   def index_key
     "#{XivAuthSessionStore::USER_INDEX_PREFIX}#{user.id}"
@@ -29,33 +28,33 @@ RSpec.describe User::SessionManageable, type: :model do
     context "when all sessions have live Redis keys" do
       before do
         allow(redis_double).to receive(:zrange).and_return([
-          [private_id_1, expiry_1.to_f],
-          [private_id_2, expiry_2.to_f]
-        ])
+                                                             [sid_near, expiry_date_near.to_f],
+                                                             [sid_far, expiry_date_far.to_f]
+                                                           ])
         allow(redis_double).to receive(:get)
         allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([nil, nil, 1, 1])
         allow(redis_double).to receive(:exists)
       end
 
       it "returns both sessions" do
-        expect(user.get_sessions.length).to eq(2)
+        expect(user.active_sessions.length).to eq(2)
       end
 
       it "returns hashes with :sid and :expires_at" do
-        sessions = user.get_sessions
-        expect(sessions.first[:sid]).to eq(private_id_1)
-        expect(sessions.first[:expires_at]).to be_within(1.second).of(expiry_1)
-        expect(sessions.last[:sid]).to eq(private_id_2)
-        expect(sessions.last[:expires_at]).to be_within(1.second).of(expiry_2)
+        sessions = user.active_sessions
+        expect(sessions.first[:sid]).to eq(sid_near)
+        expect(sessions.first[:expires_at]).to be_within(1.second).of(expiry_date_near)
+        expect(sessions.last[:sid]).to eq(sid_far)
+        expect(sessions.last[:expires_at]).to be_within(1.second).of(expiry_date_far)
       end
     end
 
     context "when a session is in the index but its Redis key no longer exists" do
       before do
         allow(redis_double).to receive(:zrange).and_return([
-          [private_id_1, expiry_1.to_f],
-          [private_id_2, expiry_2.to_f]
-        ])
+                                                             [sid_near, expiry_date_near.to_f],
+                                                             [sid_far, expiry_date_far.to_f]
+                                                           ])
         # private_id_2 no longer exists
         allow(redis_double).to receive(:get)
         allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([nil, nil, 1, 0])
@@ -63,9 +62,9 @@ RSpec.describe User::SessionManageable, type: :model do
       end
 
       it "excludes the stale session" do
-        sessions = user.get_sessions
+        sessions = user.active_sessions
         expect(sessions.length).to eq(1)
-        expect(sessions.first[:sid]).to eq(private_id_1)
+        expect(sessions.first[:sid]).to eq(sid_near)
       end
     end
 
@@ -75,7 +74,7 @@ RSpec.describe User::SessionManageable, type: :model do
       end
 
       it "returns an empty array" do
-        expect(user.get_sessions).to eq([])
+        expect(user.active_sessions).to eq([])
       end
     end
 
@@ -84,7 +83,7 @@ RSpec.describe User::SessionManageable, type: :model do
       expect(redis_double).to receive(:zremrangebyscore).with(
         index_key, 0, be_within(2).of(Time.now.to_i)
       )
-      user.get_sessions
+      user.active_sessions
     end
   end
 
@@ -92,9 +91,9 @@ RSpec.describe User::SessionManageable, type: :model do
     it "returns the number of sessions that truly exist in Redis" do
       allow(redis_double).to receive(:zremrangebyscore)
       allow(redis_double).to receive(:zrange).and_return([
-        [private_id_1, expiry_1.to_f],
-        [private_id_2, expiry_2.to_f]
-      ])
+                                                           [sid_near, expiry_date_near.to_f],
+                                                           [sid_far, expiry_date_far.to_f]
+                                                         ])
       allow(redis_double).to receive(:get)
       allow(redis_double).to receive(:pipelined).and_yield(redis_double).and_return([nil, nil, 1, 0])
       allow(redis_double).to receive(:exists)
@@ -113,15 +112,15 @@ RSpec.describe User::SessionManageable, type: :model do
     end
 
     it "deletes each session's canonical Redis key" do
-      expect(pipeline_double).to receive(:del).with(session_key(private_id_1))
-      expect(pipeline_double).to receive(:del).with(session_key(private_id_2))
-      user.destroy_sessions([private_id_1, private_id_2])
+      expect(pipeline_double).to receive(:del).with(session_key(sid_near))
+      expect(pipeline_double).to receive(:del).with(session_key(sid_far))
+      user.destroy_sessions([sid_near, sid_far])
     end
 
     it "removes each session from the user index" do
-      expect(pipeline_double).to receive(:zrem).with(index_key, private_id_1)
-      expect(pipeline_double).to receive(:zrem).with(index_key, private_id_2)
-      user.destroy_sessions([private_id_1, private_id_2])
+      expect(pipeline_double).to receive(:zrem).with(index_key, sid_near)
+      expect(pipeline_double).to receive(:zrem).with(index_key, sid_far)
+      user.destroy_sessions([sid_near, sid_far])
     end
 
     it "is a no-op when given an empty array" do

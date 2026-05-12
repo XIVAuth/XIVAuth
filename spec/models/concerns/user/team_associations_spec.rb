@@ -1,11 +1,11 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe User::TeamAssociations, type: :model do
   let(:user) { FactoryBot.create(:user) }
 
-  describe '#teams_by_membership_scope' do
-    context 'with admin scope' do
-      it 'returns teams where user is directly an admin' do
+  describe "#teams_by_membership_scope" do
+    context "with admin scope" do
+      it "returns teams where user is directly an admin" do
         team = FactoryBot.build(:team, :no_initial_admin, name: "Admin Team")
         team.direct_memberships.build(user: user, role: "admin")
         team.save!
@@ -13,7 +13,7 @@ RSpec.describe User::TeamAssociations, type: :model do
         expect(user.teams_by_membership_scope(:admins)).to contain_exactly(team)
       end
 
-      it 'includes all descendants regardless of inherit_parent_memberships flag' do
+      it "includes all descendants regardless of inherit_parent_memberships flag" do
         parent = FactoryBot.build(:team, :no_initial_admin, name: "Parent")
         parent.direct_memberships.build(user: user, role: "admin")
         parent.save!
@@ -25,7 +25,7 @@ RSpec.describe User::TeamAssociations, type: :model do
         expect(user.teams_by_membership_scope(:admins)).to contain_exactly(parent, child_no_inherit, child_with_inherit)
       end
 
-      it 'includes deeply nested descendants' do
+      it "includes deeply nested descendants" do
         grandparent = FactoryBot.build(:team, :no_initial_admin, name: "Grandparent")
         grandparent.direct_memberships.build(user: user, role: "admin")
         grandparent.save!
@@ -38,8 +38,8 @@ RSpec.describe User::TeamAssociations, type: :model do
       end
     end
 
-    context 'with developers scope' do
-      it 'returns teams where user is a developer or admin' do
+    context "with developers scope" do
+      it "returns teams where user is a developer or admin" do
         admin_team = FactoryBot.build(:team, :no_initial_admin, name: "Admin Team")
         admin_team.direct_memberships.build(user: user, role: "admin")
         admin_team.save!
@@ -50,7 +50,7 @@ RSpec.describe User::TeamAssociations, type: :model do
         expect(user.teams_by_membership_scope(:developers)).to contain_exactly(admin_team, dev_team)
       end
 
-      it 'only includes descendants with inherit_parent_memberships = true' do
+      it "only includes descendants with inherit_parent_memberships = true" do
         parent = FactoryBot.create(:team)
         FactoryBot.create(:team_membership, :developer, team: parent, user: user)
 
@@ -62,7 +62,7 @@ RSpec.describe User::TeamAssociations, type: :model do
         expect(user.teams_by_membership_scope(:developers)).not_to include(child_no_inherit)
       end
 
-      it 'stops traversing when inherit_parent_memberships is false' do
+      it "stops traversing when inherit_parent_memberships is false" do
         parent = FactoryBot.create(:team)
         FactoryBot.create(:team_membership, :developer, team: parent, user: user)
 
@@ -75,8 +75,8 @@ RSpec.describe User::TeamAssociations, type: :model do
       end
     end
 
-    context 'with active scope' do
-      it 'returns teams where user has any active membership' do
+    context "with active scope" do
+      it "returns teams where user has any active membership" do
         admin_team = FactoryBot.build(:team, :no_initial_admin, name: "Admin Team")
         admin_team.direct_memberships.build(user: user, role: "admin")
         admin_team.save!
@@ -90,7 +90,7 @@ RSpec.describe User::TeamAssociations, type: :model do
         expect(user.teams_by_membership_scope(:active)).to contain_exactly(admin_team, dev_team, member_team)
       end
 
-      it 'respects inherit_parent_memberships flag' do
+      it "respects inherit_parent_memberships flag" do
         parent = FactoryBot.create(:team)
         FactoryBot.create(:team_membership, team: parent, user: user, role: "member")
 
@@ -101,7 +101,7 @@ RSpec.describe User::TeamAssociations, type: :model do
         expect(user.teams_by_membership_scope(:active)).not_to include(child_no_inherit)
       end
 
-      it 'excludes blocked and invited memberships' do
+      it "excludes blocked and invited memberships" do
         team = FactoryBot.create(:team)
         FactoryBot.create(:team_membership, :blocked, team: team, user: user)
 
@@ -110,8 +110,8 @@ RSpec.describe User::TeamAssociations, type: :model do
     end
   end
 
-  describe '#associated_teams' do
-    it 'returns all teams user has access to via any membership' do
+  describe "#associated_teams" do
+    it "returns all teams user has access to via any membership" do
       admin_team = FactoryBot.build(:team, :no_initial_admin, name: "Admin Team")
       admin_team.direct_memberships.build(user: user, role: "admin")
       admin_team.save!
@@ -125,7 +125,7 @@ RSpec.describe User::TeamAssociations, type: :model do
       expect(user.associated_teams).to contain_exactly(admin_team, dev_team, member_team)
     end
 
-    it 'combines admin teams (ignoring inherit) with developer teams (respecting inherit)' do
+    it "combines admin teams (ignoring inherit) with developer teams (respecting inherit)" do
       # Admin team with child that doesn't inherit
       admin_parent = FactoryBot.build(:team, :no_initial_admin, name: "Admin Parent")
       admin_parent.direct_memberships.build(user: user, role: "admin")
@@ -142,7 +142,7 @@ RSpec.describe User::TeamAssociations, type: :model do
       expect(user.associated_teams).not_to include(dev_child_no_inherit)
     end
 
-    it 'does not double-count teams where user has multiple memberships' do
+    it "does not double-count teams where user has multiple memberships" do
       team = FactoryBot.build(:team, :no_initial_admin, name: "Team")
       team.direct_memberships.build(user: user, role: "admin")
       team.save!
@@ -152,7 +152,7 @@ RSpec.describe User::TeamAssociations, type: :model do
       expect(result.where(id: team.id).count).to eq(1)
     end
 
-    it 'handles complex inheritance scenarios' do
+    it "handles complex inheritance scenarios" do
       # Grandparent where user is admin
       grandparent = FactoryBot.build(:team, :no_initial_admin, name: "Grandparent")
       grandparent.direct_memberships.build(user: user, role: "admin")
@@ -168,7 +168,7 @@ RSpec.describe User::TeamAssociations, type: :model do
       expect(user.associated_teams).to contain_exactly(grandparent, parent, child)
     end
 
-    it 'returns unique teams when admin and developer overlap' do
+    it "returns unique teams when admin and developer overlap" do
       # Team where user is both admin directly
       team = FactoryBot.build(:team, :no_initial_admin, name: "Team")
       team.direct_memberships.build(user: user, role: "admin")

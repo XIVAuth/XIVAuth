@@ -16,6 +16,18 @@ class Developer::TeamsController < Developer::DeveloperPortalController
     end
   end
 
+  def show
+    unless can?(:show, @team)
+      redirect_to developer_teams_path, alert: "You don't have permission to view this team's details."
+      return
+    end
+
+    respond_to do |format|
+      format.html { render :show }
+      format.json { render json: @team, as_owner: true }
+    end
+  end
+
   def new
     @team = Team.new
     @team.parent_id = params[:parent_id] if params[:parent_id].present?
@@ -37,18 +49,6 @@ class Developer::TeamsController < Developer::DeveloperPortalController
       redirect_to developer_team_path(@team), notice: "Team was successfully created."
     else
       render :new, status: :unprocessable_content
-    end
-  end
-
-  def show
-    unless can?(:show, @team)
-      redirect_to developer_teams_path, alert: "You don't have permission to view this team's details."
-      return
-    end
-
-    respond_to do |format|
-      format.html { render :show }
-      format.json { render json: @team, as_owner: true }
     end
   end
 
@@ -104,7 +104,7 @@ class Developer::TeamsController < Developer::DeveloperPortalController
   end
 
   private def set_team
-    @team = Team.find(params[:id])
+    @team = Team.find(params.expect(:id))
 
     authorize! :use, @team
 
@@ -121,11 +121,11 @@ class Developer::TeamsController < Developer::DeveloperPortalController
   end
 
   private def create_team_params
-    params.require(:team).permit(:name, :parent_id)
+    params.expect(team: %i[name parent_id])
   end
 
   private def update_team_params
-    params.require(:team).permit(:name, :inherit_parent_memberships, :icon)
+    params.expect(team: %i[name inherit_parent_memberships icon])
   end
 
   private def check_team_list_access

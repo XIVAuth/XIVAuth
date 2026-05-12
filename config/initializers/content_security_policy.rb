@@ -1,4 +1,4 @@
-require 'environment_info'
+require "environment_info"
 
 # Be sure to restart your server when you modify this file.
 
@@ -17,13 +17,13 @@ Rails.application.configure do
 
     if (csp_base_uri = Rails.application.credentials.dig(:sentry, :csp_report_uri))
       policy.report_uri csp_base_uri +
-                        "&sentry_environment=#{EnvironmentInfo.environment}" +
+                        "&sentry_environment=#{EnvironmentInfo.environment}" \
                         "&sentry_release=#{EnvironmentInfo.commit_hash}"
     end
   end
 
-  config.content_security_policy_nonce_generator = ->(request) { SecureRandom.hex(16) }
-  config.content_security_policy_nonce_directives = %w(script-src)
+  config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.hex(16) }
+  config.content_security_policy_nonce_directives = %w[script-src]
   config.content_security_policy_nonce_auto = true
 
   # Report violations without enforcing the policy.

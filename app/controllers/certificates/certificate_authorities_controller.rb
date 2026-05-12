@@ -12,17 +12,23 @@ class Certificates::CertificateAuthoritiesController < ApplicationController
   end
 
   def show
-    @certificate_authority = PKI::CertificateAuthority.find_by!(slug: params[:slug])
+    @certificate_authority = PKI::CertificateAuthority.find_by!(slug: params.expect(:slug))
 
     respond_to do |format|
-      format.pem  { send_data @certificate_authority.certificate_pem,
-                              type: "application/x-pem-file", disposition: "inline" }
-      format.der  { send_data OpenSSL::X509::Certificate.new(@certificate_authority.certificate_pem).to_der,
-                              type: "application/pkix-cert", disposition: "inline" }
+      format.pem  do
+        send_data @certificate_authority.certificate_pem,
+                  type: "application/x-pem-file", disposition: "inline"
+      end
+      format.der do
+        send_data OpenSSL::X509::Certificate.new(@certificate_authority.certificate_pem).to_der,
+                  type: "application/pkix-cert", disposition: "inline"
+      end
 
       # default to PEM for compatibility. HTML still renders the page.
-      format.any  { send_data @certificate_authority.certificate_pem,
-                              type: "application/x-pem-file", disposition: "inline" }
+      format.any do
+        send_data @certificate_authority.certificate_pem,
+                  type: "application/x-pem-file", disposition: "inline"
+      end
     end
   end
 

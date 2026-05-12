@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Developer::Teams", type: :request do
   let(:user) { FactoryBot.create(:user, :developer) }
@@ -11,9 +11,9 @@ RSpec.describe "Developer::Teams", type: :request do
   describe "POST /developer/teams (create)" do
     context "when creating a standalone team" do
       it "creates a team and makes the user an admin" do
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "My Team" } }
-        }.to change(Team, :count).by(1)
+        end.to change(Team, :count).by(1)
 
         team = Team.last
         expect(team.name).to eq("My Team")
@@ -44,9 +44,9 @@ RSpec.describe "Developer::Teams", type: :request do
       end
 
       it "creates a subteam when user is an admin of the parent" do
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "Child Team", parent_id: parent_team.id } }
-        }.to change(Team, :count).by(1)
+        end.to change(Team, :count).by(1)
 
         team = Team.last
         expect(team.name).to eq("Child Team")
@@ -64,9 +64,9 @@ RSpec.describe "Developer::Teams", type: :request do
         non_admin_team = FactoryBot.create(:team)
         # User is not a member at all
 
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "Child Team", parent_id: non_admin_team.id } }
-        }.not_to change(Team, :count)
+        end.not_to change(Team, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -75,9 +75,9 @@ RSpec.describe "Developer::Teams", type: :request do
         member_team = FactoryBot.create(:team)
         FactoryBot.create(:team_membership, team: member_team, user: user, role: "member")
 
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "Child Team", parent_id: member_team.id } }
-        }.not_to change(Team, :count)
+        end.not_to change(Team, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -86,9 +86,9 @@ RSpec.describe "Developer::Teams", type: :request do
         dev_team = FactoryBot.create(:team)
         FactoryBot.create(:team_membership, :developer, team: dev_team, user: user)
 
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "Child Team", parent_id: dev_team.id } }
-        }.not_to change(Team, :count)
+        end.not_to change(Team, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -100,9 +100,9 @@ RSpec.describe "Developer::Teams", type: :request do
 
         parent = FactoryBot.create(:team, parent: grandparent, name: "Parent")
 
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "Child Team", parent_id: parent.id } }
-        }.to change(Team, :count).by(1)
+        end.to change(Team, :count).by(1)
 
         team = Team.last
         expect(team.parent_id).to eq(parent.id)
@@ -113,9 +113,9 @@ RSpec.describe "Developer::Teams", type: :request do
         other_user_team.direct_memberships.build(user: other_user, role: "admin")
         other_user_team.save!
 
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "Child Team", parent_id: other_user_team.id } }
-        }.not_to change(Team, :count)
+        end.not_to change(Team, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -126,9 +126,9 @@ RSpec.describe "Developer::Teams", type: :request do
           team = FactoryBot.create(:team, parent: team)
         end
 
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "Too Deep", parent_id: team.id } }
-        }.not_to change(Team, :count)
+        end.not_to change(Team, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -136,9 +136,9 @@ RSpec.describe "Developer::Teams", type: :request do
       it "respects the subteam limit" do
         5.times { FactoryBot.create(:team, parent: parent_team) }
 
-        expect {
+        expect do
           post developer_teams_path, params: { team: { name: "Sixth Child", parent_id: parent_team.id } }
-        }.not_to change(Team, :count)
+        end.not_to change(Team, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -232,17 +232,17 @@ RSpec.describe "Developer::Teams", type: :request do
       dev_team = FactoryBot.create(:team)
       FactoryBot.create(:team_membership, :developer, team: dev_team, user: user)
 
-      expect {
+      expect do
         patch developer_team_path(dev_team), params: { team: { name: "Dev Updated" } }
-      }.to raise_error(CanCan::AccessDenied)
+      end.to raise_error(CanCan::AccessDenied)
     end
 
     it "prevents non-admins from updating the team" do
       sign_in other_user
 
-      expect {
+      expect do
         patch developer_team_path(team), params: { team: { name: "Hacked Name" } }
-      }.to raise_error(CanCan::AccessDenied)
+      end.to raise_error(CanCan::AccessDenied)
     end
 
     it "prevents updating system teams (readonly)" do
@@ -267,9 +267,9 @@ RSpec.describe "Developer::Teams", type: :request do
     end
 
     it "allows deleting a team with no children" do
-      expect {
+      expect do
         delete developer_team_path(team)
-      }.to change(Team, :count).by(-1)
+      end.to change(Team, :count).by(-1)
 
       expect(response).to redirect_to(developer_teams_path)
     end
@@ -300,34 +300,34 @@ RSpec.describe "Developer::Teams", type: :request do
       manager_team = FactoryBot.create(:team)
       FactoryBot.create(:team_membership, :manager, team: manager_team, user: user)
 
-      expect {
+      expect do
         delete developer_team_path(manager_team)
-      }.to raise_error(CanCan::AccessDenied)
+      end.to raise_error(CanCan::AccessDenied)
     end
 
     it "prevents non-admins from deleting the team" do
       sign_in other_user
 
-      expect {
+      expect do
         delete developer_team_path(team)
-      }.to raise_error(CanCan::AccessDenied)
+      end.to raise_error(CanCan::AccessDenied)
     end
 
     it "prevents a direct admin from deleting their own subteam" do
       subteam = FactoryBot.create(:team, parent: team)
       FactoryBot.create(:team_membership, :admin, team: subteam, user: user)
 
-      expect {
+      expect do
         delete developer_team_path(subteam)
-      }.to raise_error(CanCan::AccessDenied)
+      end.to raise_error(CanCan::AccessDenied)
     end
 
     it "allows a parent admin to delete a child subteam" do
       subteam = FactoryBot.create(:team, parent: team)
 
-      expect {
+      expect do
         delete developer_team_path(subteam)
-      }.to change(Team, :count).by(-1)
+      end.to change(Team, :count).by(-1)
     end
   end
 end

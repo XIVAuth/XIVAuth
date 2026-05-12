@@ -9,7 +9,7 @@ class FFXIV::LodestoneSearch
     @name = name
     @world = world
     @datacenter = datacenter
-    @exact = !!exact
+    @exact = exact
     @error = nil
     @error_status = nil
   end
@@ -48,9 +48,7 @@ class FFXIV::LodestoneSearch
     error.present? || error_status.present?
   end
 
-  private
-
-  def fetch_results
+  private def fetch_results
     flarestone_base_url = Rails.application.credentials.dig(:flarestone, :host) || "https://flarestone.xivauth.net"
 
     params = { name: name }
@@ -75,17 +73,17 @@ class FFXIV::LodestoneSearch
       else
         @error = "An error occurred while searching. Please try again."
       end
-      return {}
+      return { }
     end
 
     JSON.parse(response.body)
   rescue Faraday::Error
     @error = "Network error. Unable to reach the character search service."
     @error_status = "network"
-    {}
+    { }
   rescue JSON::ParserError
     @error = "Invalid response from character search service. Please try again."
     @error_status = "parse_error"
-    {}
+    { }
   end
 end

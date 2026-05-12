@@ -58,8 +58,8 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def destroy_all_sessions
-    # Note: will not terminate own current session.
-    @user.destroy_sessions(@user.get_sessions.map { |s| s[:sid] })
+    # NOTE: will not terminate own current session.
+    @user.destroy_sessions(@user.active_sessions.pluck(:sid))
     redirect_back_or_to admin_user_path(@user), notice: "All sessions for #{@user.email} have been terminated."
   end
 
@@ -74,6 +74,6 @@ class Admin::UsersController < Admin::AdminController
   end
 
   private def set_user
-    @user = User.find(params[:id])
+    @user = User.find(params.expect(:id))
   end
 end

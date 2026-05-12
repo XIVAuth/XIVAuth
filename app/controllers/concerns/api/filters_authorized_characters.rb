@@ -7,14 +7,14 @@ module Api::FiltersAuthorizedCharacters
   # @return [ActiveRecord::Relation<CharacterRegistration>] Authorized character registrations
   def authorized_character_registrations(only_verified: false)
     # Return empty set if no character scope is present
-    return CharacterRegistration.none unless has_character_scope?
+    return CharacterRegistration.none unless character_scope_granted?
 
     registrations = CharacterRegistration.accessible_by(current_ability)
 
     # If the token has character:manage scope, grant full access to all user's characters
     # Note: check only_verified here to avoid double-filtering after the chain.
-    return registrations if has_character_manage_scope? && !only_verified
-    return registrations.verified if has_character_manage_scope? && only_verified
+    return registrations if character_manage_scope_granted? && !only_verified
+    return registrations.verified if character_manage_scope_granted? && only_verified
 
     # Otherwise, filter to verified characters only
     registrations = registrations.verified
@@ -25,7 +25,7 @@ module Api::FiltersAuthorizedCharacters
       # Filter in-memory, then convert back to a relation to maintain chainability
       authorized_ids = registrations.select { |r| policy.can_access_resource?(r) }.map(&:id)
       registrations = CharacterRegistration.where(id: authorized_ids)
-    elsif !has_bulk_character_scope?
+    elsif !bulk_character_scope_granted?
       # Default-deny `character` scope if there's no policy (somehow)
       # Note: character:all without a policy does request *all* characters, so this is just pure character.
       return CharacterRegistration.none
@@ -37,23 +37,22 @@ module Api::FiltersAuthorizedCharacters
   # Check if the current OAuth token has the character:manage scope
   #
   # @return [Boolean] true if character:manage scope is present
-  def has_character_manage_scope?
+  def character_manage_scope_granted?
     doorkeeper_token.scopes.include?("character:manage")
   end
 
   # Check if the current OAuth token has any character scope
   #
   # @return [Boolean] true if any character scope is present
-  def has_character_scope?
+  def character_scope_granted?
     doorkeeper_token.scopes.exists?("character") ||
       doorkeeper_token.scopes.exists?("character:all") ||
       doorkeeper_token.scopes.exists?("character:manage") ||
       doorkeeper_token.scopes.exists?("character:jwt")
   end
 
-  def has_bulk_character_scope?
+  def bulk_character_scope_granted?
     doorkeeper_token.scopes.exists?("character:all") ||
       doorkeeper_token.scopes.exists?("character:manage")
   end
 end
-

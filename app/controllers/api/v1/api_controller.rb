@@ -12,8 +12,9 @@ class Api::V1::ApiController < ActionController::API
 
   def current_user
     return unless doorkeeper_token[:resource_owner_type] == "User"
+    return @current_user if defined?(@current_user)
 
-    @current_user ||= User.find_by(id: doorkeeper_token[:resource_owner_id])
+    @current_user = User.find_by(id: doorkeeper_token[:resource_owner_id])
   end
 
   def current_client_app
@@ -24,9 +25,9 @@ class Api::V1::ApiController < ActionController::API
     return @current_ability if defined?(@current_ability)
 
     @current_ability = Abilities::ClientAppAbility.new(current_client_app)
-    if current_user.present?
-      @current_ability = @current_ability.merge(Abilities::UserAbility.new(current_user))
-    end
+    return @current_ability if @current_user.blank?
+
+    @current_ability = @current_ability.merge(Abilities::UserAbility.new(current_user))
   end
 
   private def check_resource_owner_presence
@@ -42,7 +43,7 @@ class Api::V1::ApiController < ActionController::API
 
     ctx = {
       client_id: doorkeeper_token.application_id,
-      scopes: doorkeeper_token.scopes,
+      scopes: doorkeeper_token.scopes
     }
 
     if current_user.present?

@@ -10,7 +10,7 @@ if @social_identities.present?
 end
 
 json.mfa_enabled @user.mfa_enabled_or_passwordless?
-json.verified_characters @user.has_verified_characters?
+json.verified_characters @user.verified_characters_present?
 
 json.created_at @user.created_at
 json.updated_at @user.updated_at

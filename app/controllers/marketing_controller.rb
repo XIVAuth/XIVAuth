@@ -7,7 +7,7 @@ class MarketingController < ApplicationController
       users: User.count,
       characters: CharacterRegistration.verified.count,
       applications: ClientApplication.count,
-      headpats: Rails.cache.read("marketing:headpats", raw: true).to_i,
+      headpats: Rails.cache.read("marketing:headpats", raw: true).to_i
     }
 
     render :index

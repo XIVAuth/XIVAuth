@@ -7,9 +7,9 @@ class ClientApplication < ApplicationRecord
                         validate: [
                           ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
                         ],
-                        derivatives: ->(pipeline) {
+                        derivatives: lambda { |pipeline|
                           {
-                            large:  pipeline.resize_to_fill!(256, 256)
+                            large: pipeline.resize_to_fill!(256, 256)
                           }
                         }
 
@@ -58,13 +58,11 @@ class ClientApplication < ApplicationRecord
 
     if owner.is_a?(Team)
       return true if owner.direct_members.include?(user)
-      return true if owner.antecedent_memberships.admins.where(user_id: user.id).exists?
+      return true if owner.antecedent_memberships.admins.exists?(user_id: user.id)
     end
 
     user_match = acls.find_by(principal: user)
-    if user_match
-      return !user_match.deny?
-    end
+    return !user_match.deny? if user_match
 
     acls.where(principal_type: "Team").order(deny: :desc).each do |a|
       team = a.principal
@@ -78,15 +76,15 @@ class ClientApplication < ApplicationRecord
     false
   end
 
-  def has_entitlement?(name)
+  def entitlement_granted?(name)
     entitlements.include?(name.to_s)
   end
 
   def validate_owner_has_mfa
     return unless owner.is_a?(User)
 
-    unless owner.mfa_enabled_or_passwordless?
-      errors.add(:owner, :mfa_required, message: "must be protected with MFA.")
-    end
+    return if owner.mfa_enabled_or_passwordless?
+
+    errors.add(:owner, :mfa_required, message: "must be protected with MFA.")
   end
 end

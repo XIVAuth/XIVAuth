@@ -124,20 +124,20 @@ class ClientApp < ActiveRecord::Migration[8.0]
             secret: oauth_client.client_secret,
             scopes: oauth_client.scopes.to_s,
             redirect_uri: oauth_client.redirect_uris.join("\n"),
-            confidential: oauth_client.confidential,
+            confidential: oauth_client.confidential
           }
         )
       end
 
       legacy_app = OAuth::ClientApplication.create!(attrs)
 
-      if oauth_client.present?
-        OAuth::AccessGrant.where(application_id: oauth_client.id).update_all(application_id: legacy_app.id)
-        OAuth::AccessToken.where(application_id: oauth_client.id).update_all(application_id: legacy_app.id)
+      next unless oauth_client.present?
 
-        Doorkeeper::DeviceAuthorizationGrant::DeviceGrant.where(application_id: oauth_client.id)
-                                                         .update_all(application_id: legacy_app.id)
-      end
+      OAuth::AccessGrant.where(application_id: oauth_client.id).update_all(application_id: legacy_app.id)
+      OAuth::AccessToken.where(application_id: oauth_client.id).update_all(application_id: legacy_app.id)
+
+      Doorkeeper::DeviceAuthorizationGrant::DeviceGrant.where(application_id: oauth_client.id)
+                                                       .update_all(application_id: legacy_app.id)
     end
   end
 end

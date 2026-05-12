@@ -14,4 +14,3 @@ FactoryBot.define do
     confidential { true }
   end
 end
-

@@ -10,7 +10,7 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
     @ca&.destroy
   end
 
-  let(:user)         { FactoryBot.create(:user) }
+  let(:user) { FactoryBot.create(:user) }
   let(:oauth_client) { FactoryBot.create(:oauth_client) }
   let(:other_oauth_client) { FactoryBot.create(:oauth_client) }
 
@@ -21,25 +21,29 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "returns user's certificates" do
-        mine  = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
-        other = FactoryBot.create(:pki_issued_certificate, certificate_authority: @ca, requesting_application: oauth_client.application)
+        mine = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
+        other = FactoryBot.create(:pki_issued_certificate, certificate_authority: @ca,
+                                  requesting_application: oauth_client.application)
 
         get api_v1_certificates_path, headers: headers
 
         expect(response).to have_http_status(:ok)
-        ids = JSON.parse(response.body).map { |c| c["id"] }
+        ids = response.parsed_body.pluck("id")
         expect(ids).to include(mine.id)
         expect(ids).not_to include(other.id)
       end
 
       it "returns empty list without user scope" do
-        FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
-        token_without_user = OAuth::AccessToken.create(application: oauth_client, resource_owner: user, scopes: "certificate:all")
+        FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                          requesting_application: oauth_client.application)
+        token_without_user = OAuth::AccessToken.create(application: oauth_client, resource_owner: user,
+                                                       scopes: "certificate:all")
 
         get api_v1_certificates_path, headers: { "Authorization" => "Bearer #{token_without_user.token}" }
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to be_empty
+        expect(response.parsed_body).to be_empty
       end
     end
 
@@ -50,46 +54,52 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       it "returns all verified character certificates" do
         verified_char1 = FactoryBot.create(:verified_registration, user: user)
         verified_char2 = FactoryBot.create(:verified_registration, user: user)
-        cert1 = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char1, certificate_authority: @ca, requesting_application: oauth_client.application)
-        cert2 = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char2, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert1 = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char1,
+                                  certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert2 = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char2,
+                                  certificate_authority: @ca, requesting_application: oauth_client.application)
 
         get api_v1_certificates_path, headers: headers
 
         expect(response).to have_http_status(:ok)
-        ids = JSON.parse(response.body).map { |c| c["id"] }
+        ids = response.parsed_body.pluck("id")
         expect(ids).to include(cert1.id, cert2.id)
       end
 
       it "does not return unverified character certificates" do
         unverified_char = FactoryBot.create(:character_registration, user: user)
-        FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: unverified_char, certificate_authority: @ca, requesting_application: oauth_client.application)
+        FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: unverified_char,
+                          certificate_authority: @ca, requesting_application: oauth_client.application)
 
         get api_v1_certificates_path, headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to be_empty
+        expect(response.parsed_body).to be_empty
       end
 
       it "does not return other user's character certificates" do
         other_user = FactoryBot.create(:user)
         other_char = FactoryBot.create(:verified_registration, user: other_user)
-        FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: other_char, certificate_authority: @ca, requesting_application: oauth_client.application)
+        FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: other_char,
+                          certificate_authority: @ca, requesting_application: oauth_client.application)
 
         get api_v1_certificates_path, headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to be_empty
+        expect(response.parsed_body).to be_empty
       end
 
       it "returns empty list without character scope" do
         verified_char = FactoryBot.create(:verified_registration, user: user)
-        FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char, certificate_authority: @ca, requesting_application: oauth_client.application)
-        token_without_char = OAuth::AccessToken.create(application: oauth_client, resource_owner: user, scopes: "certificate:all")
+        FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char,
+                          certificate_authority: @ca, requesting_application: oauth_client.application)
+        token_without_char = OAuth::AccessToken.create(application: oauth_client, resource_owner: user,
+                                                       scopes: "certificate:all")
 
         get api_v1_certificates_path, headers: { "Authorization" => "Bearer #{token_without_char.token}" }
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)).to be_empty
+        expect(response.parsed_body).to be_empty
       end
     end
 
@@ -105,13 +115,15 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "returns only policy-allowed character certificates" do
-        allowed_cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: allowed_char, certificate_authority: @ca, requesting_application: oauth_client.application)
-        other_cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: other_char, certificate_authority: @ca, requesting_application: oauth_client.application)
+        allowed_cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: allowed_char,
+                                         certificate_authority: @ca, requesting_application: oauth_client.application)
+        other_cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: other_char,
+                                       certificate_authority: @ca, requesting_application: oauth_client.application)
 
         get api_v1_certificates_path, headers: headers
 
         expect(response).to have_http_status(:ok)
-        ids = JSON.parse(response.body).map { |c| c["id"] }
+        ids = response.parsed_body.pluck("id")
         expect(ids).to include(allowed_cert.id)
         expect(ids).not_to include(other_cert.id)
       end
@@ -122,13 +134,15 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "returns certificates from all applications" do
-        cert1 = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
-        cert2 = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: other_oauth_client.application)
+        cert1 = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                  requesting_application: oauth_client.application)
+        cert2 = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                  requesting_application: other_oauth_client.application)
 
         get api_v1_certificates_path, headers: headers
 
         expect(response).to have_http_status(:ok)
-        ids = JSON.parse(response.body).map { |c| c["id"] }
+        ids = response.parsed_body.pluck("id")
         expect(ids).to include(cert1.id, cert2.id)
       end
     end
@@ -139,27 +153,30 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "returns user certificate" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
 
         get api_v1_certificate_path(cert), headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)["id"]).to eq(cert.id)
+        expect(response.parsed_body["id"]).to eq(cert.id)
       end
 
       it "returns character certificate" do
         verified_char = FactoryBot.create(:verified_registration, user: user)
-        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char,
+                                 certificate_authority: @ca, requesting_application: oauth_client.application)
 
         get api_v1_certificate_path(cert), headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)["id"]).to eq(cert.id)
+        expect(response.parsed_body["id"]).to eq(cert.id)
       end
 
       it "returns 404 for other user's certificate" do
         other_user = FactoryBot.create(:user)
-        cert = FactoryBot.create(:pki_issued_certificate, subject: other_user, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: other_user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
 
         without_detailed_exceptions do
           get api_v1_certificate_path(cert), headers: headers
@@ -170,7 +187,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
 
       it "returns 404 for unverified character certificate" do
         unverified_char = FactoryBot.create(:character_registration, user: user)
-        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: unverified_char, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: unverified_char,
+                                 certificate_authority: @ca, requesting_application: oauth_client.application)
 
         without_detailed_exceptions do
           get api_v1_certificate_path(cert), headers: headers
@@ -180,8 +198,10 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       end
 
       it "returns 404 without user scope" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
-        token_without_user = OAuth::AccessToken.create(application: oauth_client, resource_owner: user, scopes: "certificate:all")
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
+        token_without_user = OAuth::AccessToken.create(application: oauth_client, resource_owner: user,
+                                                       scopes: "certificate:all")
 
         without_detailed_exceptions do
           get api_v1_certificate_path(cert), headers: { "Authorization" => "Bearer #{token_without_user.token}" }
@@ -192,8 +212,10 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
 
       it "returns 404 without character scope" do
         verified_char = FactoryBot.create(:verified_registration, user: user)
-        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char, certificate_authority: @ca, requesting_application: oauth_client.application)
-        token_without_char = OAuth::AccessToken.create(application: oauth_client, resource_owner: user, scopes: "certificate:all")
+        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char,
+                                 certificate_authority: @ca, requesting_application: oauth_client.application)
+        token_without_char = OAuth::AccessToken.create(application: oauth_client, resource_owner: user,
+                                                       scopes: "certificate:all")
 
         without_detailed_exceptions do
           get api_v1_certificate_path(cert), headers: { "Authorization" => "Bearer #{token_without_char.token}" }
@@ -215,16 +237,18 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "allows access to policy-allowed certificate" do
-        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: allowed_char, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: allowed_char,
+                                 certificate_authority: @ca, requesting_application: oauth_client.application)
 
         get api_v1_certificate_path(cert), headers: headers
 
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)["id"]).to eq(cert.id)
+        expect(response.parsed_body["id"]).to eq(cert.id)
       end
 
       it "returns 404 for policy-denied certificate" do
-        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: denied_char, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: denied_char,
+                                 certificate_authority: @ca, requesting_application: oauth_client.application)
 
         without_detailed_exceptions do
           get api_v1_certificate_path(cert), headers: headers
@@ -240,7 +264,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "blocks access to certificates issued to other applications" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: other_oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: other_oauth_client.application)
 
         without_detailed_exceptions do
           get api_v1_certificate_path(cert), headers: headers
@@ -260,11 +285,11 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
         let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
         it "issues a certificate for the authenticated user" do
-          expect {
+          expect do
             post request_api_v1_certificates_path,
                  params: { certificate_type: "user_identification", csr_pem: csr_pem },
                  headers: headers
-          }.to change(PKI::IssuedCertificate, :count).by(1)
+          end.to change(PKI::IssuedCertificate, :count).by(1)
 
           expect(response).to have_http_status(:created)
         end
@@ -277,7 +302,7 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
                headers: headers
 
           expect(response).to have_http_status(:unprocessable_content)
-          expect(JSON.parse(response.body)["errors"]).to be_present
+          expect(response.parsed_body["errors"]).to be_present
         end
 
         it "sets requesting_application from the doorkeeper token" do
@@ -286,7 +311,7 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
                headers: headers
 
           expect(response).to have_http_status(:created)
-          cert = PKI::IssuedCertificate.find(JSON.parse(response.body)["id"])
+          cert = PKI::IssuedCertificate.find(response.parsed_body["id"])
           expect(cert.requesting_application).to eq(oauth_client.application)
         end
 
@@ -298,7 +323,7 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
                headers: spoofed_headers
 
           expect(response).to have_http_status(:created)
-          cert = OpenSSL::X509::Certificate.new(JSON.parse(response.body)["certificate"])
+          cert = OpenSSL::X509::Certificate.new(response.parsed_body["certificate"])
 
           url_extensions = cert.extensions.select { |e| %w[authorityInfoAccess crlDistributionPoints].include?(e.oid) }
           expect(url_extensions).not_to be_empty
@@ -306,7 +331,7 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
           url_extensions.each do |ext|
             ext.value.scan(%r{https?://[^\s,]+}).each do |url|
               expect(url).to start_with("http://test.xivauth.net"),
-                "Expected #{ext.oid} URL #{url.inspect} to use default_url_options host, not the request Host header"
+                             "Expected #{ext.oid} URL #{url.inspect} to use default_url_options host"
             end
           end
         end
@@ -334,11 +359,12 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
         let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
         it "issues a certificate for a verified character" do
-          expect {
+          expect do
             post request_api_v1_certificates_path,
-                 params: { certificate_type: "character_identification", subject_id: verified_char.character.lodestone_id, csr_pem: csr_pem },
+                 params: { certificate_type: "character_identification",
+                           subject_id: verified_char.character.lodestone_id, csr_pem: csr_pem },
                  headers: headers
-          }.to change(PKI::IssuedCertificate, :count).by(1)
+          end.to change(PKI::IssuedCertificate, :count).by(1)
 
           expect(response).to have_http_status(:created)
         end
@@ -348,7 +374,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
 
           without_detailed_exceptions do
             post request_api_v1_certificates_path,
-                 params: { certificate_type: "character_identification", subject_id: unverified_char.id, csr_pem: csr_pem },
+                 params: { certificate_type: "character_identification", subject_id: unverified_char.id,
+                           csr_pem: csr_pem },
                  headers: headers
           end
 
@@ -367,7 +394,6 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
 
           expect(response).to have_http_status(:not_found)
         end
-
       end
 
       context "with character scope and permissible policy" do
@@ -382,11 +408,12 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
         let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
         it "issues certificate for allowed character" do
-          expect {
+          expect do
             post request_api_v1_certificates_path,
-                 params: { certificate_type: "character_identification", subject_id: allowed_char.character.lodestone_id, csr_pem: csr_pem },
+                 params: { certificate_type: "character_identification",
+                           subject_id: allowed_char.character.lodestone_id, csr_pem: csr_pem },
                  headers: headers
-          }.to change(PKI::IssuedCertificate, :count).by(1)
+          end.to change(PKI::IssuedCertificate, :count).by(1)
 
           expect(response).to have_http_status(:created)
         end
@@ -409,7 +436,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
         it "returns 403 when character scope is missing" do
           without_detailed_exceptions do
             post request_api_v1_certificates_path,
-                 params: { certificate_type: "character_identification", subject_id: verified_char.id, csr_pem: csr_pem },
+                 params: { certificate_type: "character_identification", subject_id: verified_char.id,
+                           csr_pem: csr_pem },
                  headers: headers
           end
 
@@ -428,17 +456,17 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
              headers: headers
 
         expect(response).to have_http_status(:forbidden)
-        expect(JSON.parse(response.body)["error"]).to include("not authorized to issue")
+        expect(response.parsed_body["error"]).to include("not authorized to issue")
       end
 
       it "allows code_signing certificates with entitlement" do
         oauth_client.application.update!(entitlements: ["code_signing_certificates"])
 
-        expect {
+        expect do
           post request_api_v1_certificates_path,
                params: { certificate_type: "code_signing", csr_pem: csr_pem },
                headers: headers
-        }.to change(PKI::IssuedCertificate, :count).by(1)
+        end.to change(PKI::IssuedCertificate, :count).by(1)
 
         expect(response).to have_http_status(:created)
       end
@@ -469,12 +497,12 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:token) { OAuth::AccessToken.create(application: oauth_client, resource_owner: user, scopes: "certificate:issue user character:all") }
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
-      # hack around our before/after blocks, since these tests explicitly want no active CAs.
+      # HACK: around our before/after blocks, since these tests explicitly want no active CAs.
       around do |example|
-        @ca.update_column(:active, false)
+        @ca.update_column(:active, false) # rubocop:disable Rails/SkipsModelValidations
         example.run
       ensure
-        @ca.update_column(:active, true)
+        @ca.update_column(:active, true) # rubocop:disable Rails/SkipsModelValidations
       end
 
       it "returns 503 for user certificate type" do
@@ -483,18 +511,19 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
              headers: headers
 
         expect(response).to have_http_status(:service_unavailable)
-        expect(JSON.parse(response.body)["error"]).to include("No active CA certificate for certificate type")
+        expect(response.parsed_body["error"]).to include("No active CA certificate for certificate type")
       end
 
       it "returns 503 for character certificate type" do
         verified_char = FactoryBot.create(:verified_registration, user: user)
 
         post request_api_v1_certificates_path,
-             params: { certificate_type: "character_identification", subject_id: verified_char.character.lodestone_id, csr_pem: csr_pem },
+             params: { certificate_type: "character_identification", subject_id: verified_char.character.lodestone_id,
+                       csr_pem: csr_pem },
              headers: headers
 
         expect(response).to have_http_status(:service_unavailable)
-        expect(JSON.parse(response.body)["error"]).to include("No active CA certificate for certificate type")
+        expect(response.parsed_body["error"]).to include("No active CA certificate for certificate type")
       end
     end
   end
@@ -505,7 +534,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "revokes user certificate" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
 
         post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: headers
 
@@ -515,7 +545,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
 
       it "revokes character certificate" do
         verified_char = FactoryBot.create(:verified_registration, user: user)
-        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char,
+                                 certificate_authority: @ca, requesting_application: oauth_client.application)
 
         post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: headers
 
@@ -524,7 +555,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       end
 
       it "revokes certificate from another application" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: other_oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: other_oauth_client.application)
 
         post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: headers
 
@@ -533,7 +565,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       end
 
       it "returns 400 when reason is missing" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
 
         post revoke_api_v1_certificate_path(cert), headers: headers
 
@@ -541,7 +574,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       end
 
       it "returns 400 for invalid revocation reason" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
 
         post revoke_api_v1_certificate_path(cert), params: { reason: "ca_compromise" }, headers: headers
 
@@ -550,7 +584,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
 
       it "returns 404 for other user's certificate" do
         other_user = FactoryBot.create(:user)
-        cert = FactoryBot.create(:pki_issued_certificate, subject: other_user, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: other_user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
 
         without_detailed_exceptions do
           post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: headers
@@ -560,11 +595,14 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       end
 
       it "returns 404 without user scope" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
-        token_without_user = OAuth::AccessToken.create(application: oauth_client, resource_owner: user, scopes: "certificate:revoke certificate:all")
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
+        token_without_user = OAuth::AccessToken.create(application: oauth_client, resource_owner: user,
+                                                       scopes: "certificate:revoke certificate:all")
 
         without_detailed_exceptions do
-          post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: { "Authorization" => "Bearer #{token_without_user.token}" }
+          post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" },
+               headers: { "Authorization" => "Bearer #{token_without_user.token}" }
         end
 
         expect(response).to have_http_status(:not_found)
@@ -572,11 +610,14 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
 
       it "returns 404 without character scope" do
         verified_char = FactoryBot.create(:verified_registration, user: user)
-        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char, certificate_authority: @ca, requesting_application: oauth_client.application)
-        token_without_char = OAuth::AccessToken.create(application: oauth_client, resource_owner: user, scopes: "certificate:revoke certificate:all")
+        cert = FactoryBot.create(:pki_issued_certificate, :for_character_registration, subject: verified_char,
+                                 certificate_authority: @ca, requesting_application: oauth_client.application)
+        token_without_char = OAuth::AccessToken.create(application: oauth_client, resource_owner: user,
+                                                       scopes: "certificate:revoke certificate:all")
 
         without_detailed_exceptions do
-          post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: { "Authorization" => "Bearer #{token_without_char.token}" }
+          post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" },
+               headers: { "Authorization" => "Bearer #{token_without_char.token}" }
         end
 
         expect(response).to have_http_status(:not_found)
@@ -588,7 +629,8 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "blocks revocation of certificates from other applications" do
-        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca, requesting_application: other_oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, subject: user, certificate_authority: @ca,
+                                 requesting_application: other_oauth_client.application)
 
         without_detailed_exceptions do
           post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: headers
@@ -603,19 +645,21 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
 
       it "returns 403 when revoking code_signing certificate without entitlement" do
-        cert = FactoryBot.create(:pki_issued_certificate, :code_signing, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, :code_signing, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
 
         without_detailed_exceptions do
           post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: headers
         end
 
         expect(response).to have_http_status(:forbidden)
-        expect(JSON.parse(response.body)["error"]).to include("not authorized to revoke")
+        expect(response.parsed_body["error"]).to include("not authorized to revoke")
       end
 
       it "allows revoking code_signing certificate with entitlement" do
         oauth_client.application.update!(entitlements: ["code_signing_certificates"])
-        cert = FactoryBot.create(:pki_issued_certificate, :code_signing, subject: user, certificate_authority: @ca, requesting_application: oauth_client.application)
+        cert = FactoryBot.create(:pki_issued_certificate, :code_signing, subject: user, certificate_authority: @ca,
+                                 requesting_application: oauth_client.application)
 
         post revoke_api_v1_certificate_path(cert), params: { reason: "superseded" }, headers: headers
 

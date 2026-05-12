@@ -72,7 +72,7 @@ Rails.application.configure do
   config.active_record.encryption.encryptor = ActiveRecord::Encryption::NullEncryptor.new
 
   # Don't spam log by default.
-  config.log_level = ENV["LOG_LEVEL"]&.downcase&.strip&.to_sym || :info
+  config.log_level = ENV.fetch("LOG_LEVEL", "info").downcase.strip.to_sym
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true

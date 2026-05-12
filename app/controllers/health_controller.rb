@@ -6,24 +6,26 @@ class HealthController < ApplicationController
   def show
     respond_to do |format|
       format.html { render }
-      format.json { render json: {
-        status: "ok",
-        queue: get_queue_metrics,
-        webserver: get_webserver_metrics,
-      } }
+      format.json do
+        render json: {
+          status: "ok",
+          queue: queue_metrics,
+          webserver: webserver_metrics
+        }
+      end
     end
   end
 
-  def get_queue_metrics
-    Sidekiq::Queue.all.each_with_object({}) do |queue, hash|
-      hash[queue.name] = {
+  private def queue_metrics
+    Sidekiq::Queue.all.to_h do |queue|
+      [queue.name, {
         size: queue.size,
         latency: queue.latency
-      }
+      }]
     end
   end
 
-  def get_webserver_metrics
+  private def webserver_metrics
     response = {
       backlog: 0
     }

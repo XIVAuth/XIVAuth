@@ -49,9 +49,9 @@ RSpec.describe PKI::CertificateAuthority, type: :model do
       cert.subject    = OpenSSL::X509::Name.parse("CN=Not A CA")
       cert.issuer     = cert.subject
       cert.public_key = key
-      cert.not_before = Time.now - 1
-      cert.not_after  = Time.now + 10.years
-      cert.sign(key, OpenSSL::Digest::SHA256.new)
+      cert.not_before = 1.minute.ago
+      cert.not_after  = 10.years.from_now
+      cert.sign(key, OpenSSL::Digest.new("SHA256"))
 
       ca = FactoryBot.build(:pki_certificate_authority, certificate_pem: cert.to_pem, private_key: key.to_pem)
       expect(ca).not_to be_valid
@@ -66,8 +66,8 @@ RSpec.describe PKI::CertificateAuthority, type: :model do
       cert.subject    = OpenSSL::X509::Name.parse("CN=Bad CA")
       cert.issuer     = cert.subject
       cert.public_key = key
-      cert.not_before = Time.now - 1
-      cert.not_after  = Time.now + 10.years
+      cert.not_before = 1.minute.ago
+      cert.not_after  = 10.years.from_now
 
       ef = OpenSSL::X509::ExtensionFactory.new
       ef.subject_certificate = cert
@@ -75,7 +75,7 @@ RSpec.describe PKI::CertificateAuthority, type: :model do
       cert.add_extension(ef.create_extension("basicConstraints", "CA:TRUE", true))
       # keyUsage with only digitalSignature - missing keyCertSign
       cert.add_extension(ef.create_extension("keyUsage", "digitalSignature", true))
-      cert.sign(key, OpenSSL::Digest::SHA256.new)
+      cert.sign(key, OpenSSL::Digest.new("SHA256"))
 
       ca = FactoryBot.build(:pki_certificate_authority, certificate_pem: cert.to_pem, private_key: key.to_pem)
       expect(ca).not_to be_valid
@@ -156,9 +156,10 @@ RSpec.describe PKI::CertificateAuthority, type: :model do
     end
 
     it "raises when no active CA exists for the certificate type" do
-      expect {
+      expect do
         PKI::CertificateAuthority.current_for(certificate_type: "user_identification")
-      }.to raise_error(PKI::CertificateAuthority::NoCertificateAuthorityError, /No active CA certificate for certificate type/)
+      end.to raise_error(PKI::CertificateAuthority::NoCertificateAuthorityError,
+                         /No active CA certificate for certificate type/)
     end
   end
 

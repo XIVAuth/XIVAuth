@@ -10,7 +10,7 @@ require "utilities/crockford"
 class CharacterRegistration < ApplicationRecord
   VERIFICATION_KEY_PREFIX = "XIVAUTH:".freeze
   VERIFICATION_KEY_LENGTH = 24
-  VERIFICATION_KEY_REGEX = /#{VERIFICATION_KEY_PREFIX}[#{Crockford::ENCODER.join('')}]{#{VERIFICATION_KEY_LENGTH}}/i
+  VERIFICATION_KEY_REGEX = /#{VERIFICATION_KEY_PREFIX}[#{Crockford::ENCODER.join}]{#{VERIFICATION_KEY_LENGTH}}/i
 
   belongs_to :user
   belongs_to :character, class_name: "FFXIV::Character"
@@ -31,7 +31,7 @@ class CharacterRegistration < ApplicationRecord
   validate :owner_can_create, on: :create
 
   has_many :pki_issued_certificates, class_name: "PKI::IssuedCertificate",
-           as: :subject
+           as: :subject, dependent: nil
 
   after_update  :broadcast_card_update
   after_update  :revoke_pki_certificates_if_unverified
@@ -44,8 +44,8 @@ class CharacterRegistration < ApplicationRecord
     verified_at.present?
   end
 
-  # Mark the targeted CharacterRegistration as verified, optionally unverifying any other registrations that may be present.
-  # This method will attempt to save all modified CharacterRegistrations.
+  # Mark the targeted CharacterRegistration as verified, optionally unverifying any other registrations that may be
+  # present. This method will attempt to save all modified CharacterRegistrations.
   # @param clobber [Boolean] When true, unverify the prior CharacterRegistration.
   # @param send_email [Boolean] When true, email the prior owner if their character was clobbered.
   def verify!(verification_type, clobber: false, send_email: false)
@@ -71,7 +71,7 @@ class CharacterRegistration < ApplicationRecord
   end
 
   def verify(verification_type)
-    self.verified_at = DateTime.now
+    self.verified_at = Time.current
     self.verification_type = verification_type
   end
 
@@ -88,7 +88,7 @@ class CharacterRegistration < ApplicationRecord
     "#{VERIFICATION_KEY_PREFIX}#{Crockford.encode_string(hmac)&.truncate(VERIFICATION_KEY_LENGTH, omission: '')}"
   end
 
-  # Generates a "entangled ID" suitable for unique, consistent, and private identification of a single Character 
+  # Generates a "entangled ID" suitable for unique, consistent, and private identification of a single Character
   # Registration. This ID should be used for any authentication systems that want to verify based on character ID while
   # ensuring user guarantees.
   def entangled_id(higher_order_id: nil)
@@ -107,7 +107,7 @@ class CharacterRegistration < ApplicationRecord
   # @param lodestone_id [String, Integer] The Lodestone character ID
   # @param extra_data [Hash] Optional extra data to merge (e.g., { region: "na" })
   # @return [CharacterRegistration] Unsaved registration (call .save to persist)
-  def self.build_from_lodestone(user:, lodestone_id:, extra_data: {})
+  def self.build_from_lodestone(user:, lodestone_id:, extra_data: { })
     character = FFXIV::Character.for_lodestone_id(lodestone_id)
     registration = new(character: character, user: user)
     registration.extra_data.merge!(extra_data) if extra_data.present?
@@ -129,6 +129,7 @@ class CharacterRegistration < ApplicationRecord
 
   private def revoke_pki_certificates_if_unverified
     return unless saved_change_to_verified_at? && verified_at.nil?
+
     pki_issued_certificates.active.find_each { |c| c.revoke!(reason: "affiliation_changed") }
   end
 
@@ -143,7 +144,7 @@ class CharacterRegistration < ApplicationRecord
   end
 
   private def character_not_banned
-    return if character.nil?  # handled elsewhere
+    return if character.nil? # handled elsewhere
 
     # Character bans exist to prevent users from trying to register certain "VIP" or other high-profile charcters.
     # Rather than waste time and resources on verifying them, we simply wait for admin intervention.

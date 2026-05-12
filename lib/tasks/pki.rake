@@ -15,8 +15,8 @@ namespace :pki do
     cert.subject    = OpenSSL::X509::Name.parse("CN=#{cn}")
     cert.issuer     = cert.subject
     cert.public_key = key
-    cert.not_before = Time.now
-    cert.not_after  = Time.now + 10.years
+    cert.not_before = Time.now.utc
+    cert.not_after  = Time.now.utc + 10.years
 
     ef = OpenSSL::X509::ExtensionFactory.new
     ef.subject_certificate = cert
@@ -25,14 +25,14 @@ namespace :pki do
     cert.add_extension(ef.create_extension("keyUsage", "keyCertSign,cRLSign", true))
     cert.add_extension(ef.create_extension("subjectKeyIdentifier", "hash"))
 
-    cert.sign(key, OpenSSL::Digest::SHA256.new)
+    cert.sign(key, OpenSSL::Digest.new("SHA256"))
 
     ca = PKI::CertificateAuthority.create!(
       slug:            slug,
       certificate_pem: cert.to_pem,
       private_key:     key.to_pem,
       active:          true,
-      allowed_certificate_types: PKI::IssuancePolicy::REGISTRY.keys
+      allowed_certificate_types: PKI::IssuancePolicy.registry.keys
     )
 
     puts "Created PKI::CertificateAuthority:"
@@ -47,7 +47,7 @@ namespace :pki do
 
   desc "Import an existing CA key and certificate into the database"
   task import_ca: :environment do
-    slug    = ENV.fetch("SLUG")    { abort "SLUG env var required" }
+    slug = ENV.fetch("SLUG") { abort "SLUG env var required" }
     cert_file = ENV.fetch("CERT") { abort "CERT env var (path to PEM cert) required" }
     key_file  = ENV.fetch("KEY")  { abort "KEY env var (path to PEM key) required" }
 

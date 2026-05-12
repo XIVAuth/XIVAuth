@@ -28,7 +28,7 @@ FactoryBot.define do
       serial = cert_uuid.delete("-").to_i(16)
       PkiSupport.generate_leaf_pem(
         certificate_authority.as_openssl_certificate, certificate_authority.as_openssl_pkey,
-        cn: "user:#{subject&.id || 'test'}", serial: serial
+        common_name: "user:#{subject&.id || 'test'}", serial: serial
       )
     end
 

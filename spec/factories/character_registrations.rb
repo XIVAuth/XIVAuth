@@ -4,7 +4,7 @@ FactoryBot.define do
     character { association :ffxiv_character }
 
     factory :verified_registration do
-      verified_at { DateTime.now }
+      verified_at { Time.current }
       verification_type { "test_suite" }
     end
   end

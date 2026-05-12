@@ -1,6 +1,6 @@
-require 'utilities/crockford'
+require "utilities/crockford"
 
-class OAuth::DeviceAuthorizationsController < ::Doorkeeper::DeviceAuthorizationGrant::DeviceAuthorizationsController
+class OAuth::DeviceAuthorizationsController < Doorkeeper::DeviceAuthorizationGrant::DeviceAuthorizationsController
   include OAuth::BuildsPermissiblePolicies
 
   def index
@@ -66,7 +66,9 @@ class OAuth::DeviceAuthorizationsController < ::Doorkeeper::DeviceAuthorizationG
     device_grant.save!
 
     respond_to do |format|
-      format.html { redirect_to oauth_device_authorizations_complete_path, flash: { device_authorization_id: device_grant.id } }
+      format.html do
+        redirect_to oauth_device_authorizations_complete_path, flash: { device_authorization_id: device_grant.id }
+      end
       format.json { head :no_content }
     end
   end
@@ -85,7 +87,7 @@ class OAuth::DeviceAuthorizationsController < ::Doorkeeper::DeviceAuthorizationG
     model_id = flash[:device_authorization_id]
     @device_grant = device_grant_model.find_by(id: model_id)
 
-    unless @device_grant.present?
+    if @device_grant.blank?
       redirect_to oauth_device_authorizations_index_path
       return
     end
@@ -94,8 +96,10 @@ class OAuth::DeviceAuthorizationsController < ::Doorkeeper::DeviceAuthorizationG
   end
 
   private def device_grant
+    return @device_grant if defined?(@device_grant)
+
     normalized = Crockford.normalize(user_code)
-    @device_grant ||= device_grant_model.find_by(user_code: normalized)
+    @device_grant = device_grant_model.find_by(user_code: normalized)
   end
 
   private def render_preflight_error

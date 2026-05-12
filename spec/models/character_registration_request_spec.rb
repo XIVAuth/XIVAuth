@@ -45,7 +45,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
         user: user
       )
 
-      # Note: This only validates format, not that it processes successfully
+      # NOTE: This only validates format, not that it processes successfully
       expect(request.errors[:lodestone_url]).to be_empty
     end
 
@@ -69,11 +69,11 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           user: user
         )
 
-        expect {
+        expect do
           result = request.process!
           expect(result).to eq(:success)
-        }.to change(CharacterRegistration, :count).by(1)
-          .and change(FFXIV::Character, :count).by(1)
+        end.to change(CharacterRegistration, :count).by(1)
+                                                    .and change(FFXIV::Character, :count).by(1)
 
         registration = CharacterRegistration.last
         expect(registration.user).to eq(user)
@@ -106,11 +106,11 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           user: user
         )
 
-        expect {
+        expect do
           result = request.process!
           expect(result).to eq(:invalid)
           expect(request.errors[:lodestone_url]).to be_present
-        }.not_to change { CharacterRegistration.count }
+        end.not_to(change { CharacterRegistration.count })
       end
 
       it "returns :failed and adds error for hidden character" do
@@ -121,14 +121,14 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           user: user
         )
 
-        expect {
+        expect do
           result = request.process!
           expect(result).to eq(:failed)
           # Hidden character is a character-origin error, not a user input error
           expect(request.errors[:character]).to be_present
           expect(request.errors[:character].first).to include("hidden")
           expect(request.errors[:lodestone_url]).to be_empty
-        }.not_to change(CharacterRegistration, :count)
+        end.not_to change(CharacterRegistration, :count)
       end
 
       it "does not add duplicate errors" do
@@ -192,7 +192,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           name: "Abe Eon",
           world: "Gilgamesh",
           results: [
-            { lodestone_id: 56781234, name: "Abe Eon", world: "Gilgamesh", datacenter: "Aether", avatar_url: "https://example.com/avatar.jpg" }
+            { lodestone_id: 56_781_234, name: "Abe Eon", world: "Gilgamesh", datacenter: "Aether", avatar_url: "https://example.com/avatar.jpg" }
           ]
         )
 
@@ -202,10 +202,10 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           user: user
         )
 
-        expect {
+        expect do
           result = request.process!
           expect(result).to eq(:success)
-        }.to change(CharacterRegistration, :count).by(1)
+        end.to change(CharacterRegistration, :count).by(1)
 
         registration = CharacterRegistration.last
         expect(registration.character.lodestone_id).to eq("56781234")
@@ -218,8 +218,9 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           name: "John Doe",
           world: "Gilgamesh",
           results: [
-            { lodestone_id: 11111111, name: "John Doe", world: "Gilgamesh", datacenter: "Aether", avatar_url: "https://example.com/1.jpg" },
-            { lodestone_id: 22222222, name: "John Doe", world: "Gilgamesh", datacenter: "Aether", avatar_url: "https://example.com/2.jpg" }
+            { lodestone_id: 11_111_111, name: "John Doe", world: "Gilgamesh", datacenter: "Aether",
+              avatar_url: "https://example.com/1.jpg" },
+            { lodestone_id: 22_222_222, name: "John Doe", world: "Gilgamesh", datacenter: "Aether", avatar_url: "https://example.com/2.jpg" }
           ]
         )
 
@@ -229,12 +230,13 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
           user: user
         )
 
-        expect {
+        # No registration created yet
+        expect do
           result = request.process!
           expect(result).to eq(:confirm)
           expect(request.candidates.count).to eq(2)
-          expect(request.candidates.first[:lodestone_id]).to eq(11111111)
-        }.not_to change(CharacterRegistration, :count) # No registration created yet
+          expect(request.candidates.first[:lodestone_id]).to eq(11_111_111)
+        end.not_to change(CharacterRegistration, :count)
       end
     end
 
@@ -369,7 +371,7 @@ RSpec.describe CharacterRegistrationRequest, type: :model do
         name: "Hidden Character",
         world: "Gilgamesh",
         results: [
-          { lodestone_id: 88888888, name: "Hidden Character", world: "Gilgamesh", datacenter: "Aether", avatar_url: "https://example.com/avatar.jpg" }
+          { lodestone_id: 88_888_888, name: "Hidden Character", world: "Gilgamesh", datacenter: "Aether", avatar_url: "https://example.com/avatar.jpg" }
         ]
       )
 

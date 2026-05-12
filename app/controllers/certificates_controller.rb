@@ -4,18 +4,23 @@ class CertificatesController < ApplicationController
   before_action :set_certificate, only: %i[show revoke]
 
   def index
-    @certificates = accessible_certificates.includes(subject: :character, requesting_application: {}).order(issued_at: :desc)
+    @certificates = accessible_certificates.includes(subject: :character,
+                                                     requesting_application: { }).order(issued_at: :desc)
   end
 
   def show
     respond_to do |format|
       format.html
-      format.pem { send_data @certificate.certificate_pem,
-                             type: "application/x-pem-file", disposition: "attachment",
-                             filename: "#{@certificate.id}.pem" }
-      format.der { send_data OpenSSL::X509::Certificate.new(@certificate.certificate_pem).to_der,
-                             type: "application/pkix-cert", disposition: "attachment",
-                             filename: "#{@certificate.id}.der" }
+      format.pem do
+        send_data @certificate.certificate_pem,
+                  type: "application/x-pem-file", disposition: "attachment",
+                        filename: "#{@certificate.id}.pem"
+      end
+      format.der do
+        send_data OpenSSL::X509::Certificate.new(@certificate.certificate_pem).to_der,
+                  type: "application/pkix-cert", disposition: "attachment",
+                        filename: "#{@certificate.id}.der"
+      end
     end
   end
 
@@ -23,9 +28,9 @@ class CertificatesController < ApplicationController
     authorize! :revoke, @certificate
 
     # If no form params, the user just clicked the button - show the modal.
-    render and return if params.dig(:revocation_reason).nil?
+    render and return if params[:revocation_reason].nil?
 
-    reason = params.dig(:revocation_reason).presence || "unspecified"
+    reason = params[:revocation_reason].presence || "unspecified"
     unless PKI::IssuedCertificate::USER_REVOCATION_REASONS.include?(reason)
       return redirect_to certificate_path(@certificate), alert: "Invalid revocation reason."
     end
@@ -36,14 +41,12 @@ class CertificatesController < ApplicationController
     redirect_to certificate_path(@certificate), alert: "Could not revoke certificate."
   end
 
-  private
-
-  def set_certificate
-    @certificate = PKI::IssuedCertificate.find(params[:id])
+  private def set_certificate
+    @certificate = PKI::IssuedCertificate.find(params.expect(:id))
     authorize! :read, @certificate
   end
 
-  def accessible_certificates
+  private def accessible_certificates
     user_cert_ids = PKI::IssuedCertificate.where(subject_type: "User", subject_id: current_user.id)
     cr_ids = current_user.character_registrations.verified.select(:id)
     char_cert_ids = PKI::IssuedCertificate.where(subject_type: "CharacterRegistration", subject_id: cr_ids)

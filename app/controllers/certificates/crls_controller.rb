@@ -1,8 +1,8 @@
-class Certificates::CrlsController < ActionController::Base
+class Certificates::CrlsController < ActionController::Base # rubocop:disable Rails/ApplicationController
   def show
     head :service_unavailable and return
-    
-    ca_record = PKI::CertificateAuthority.find_by!(slug: params[:slug])
+
+    ca_record = PKI::CertificateAuthority.find_by!(slug: params.expect(:slug))
 
     # TODO: Full CRL population with revoked entries is deferred.
     # I don't want to generate this on the fly, so we're just... not going to do that yet.

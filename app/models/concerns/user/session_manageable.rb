@@ -8,7 +8,7 @@ module User::SessionManageable
   # Each entry: { sid: String, expires_at: Time, data: Hash | nil }
   # The +sid+ is the private session ID (the Redis key suffix, a SHA-based digest).
   # +data+ is the full deserialized session hash.
-  def get_sessions
+  def active_sessions
     XivAuthSessionStore.with_index_redis do |r|
       r.zremrangebyscore(_session_index_key, 0, Time.now.to_i)
       entries = r.zrange(_session_index_key, 0, -1, with_scores: true)
@@ -16,15 +16,17 @@ module User::SessionManageable
 
       n = entries.length
       results = r.pipelined do |pipe|
-        entries.each { |private_id, _| pipe.get(_canonical_session_key(private_id)) }
-        entries.each { |private_id, _| pipe.exists(_canonical_session_key(private_id)) }
+        entries.each do |private_id|
+          pipe.get(_canonical_session_key(private_id))
+          pipe.exists(_canonical_session_key(private_id))
+        end
       end
 
       get_results    = results[0...n]
       exists_results = results[n..]
 
       entries.zip(get_results, exists_results).filter_map do |(private_id, score), raw_data, exists|
-        next unless exists > 0
+        next unless exists.positive?
 
         data = begin
           MessagePack.unpack(raw_data)&.with_indifferent_access
@@ -32,19 +34,19 @@ module User::SessionManageable
           nil
         end
 
-        { sid: private_id, expires_at: Time.at(score.to_i), data: data }
+        { sid: private_id, expires_at: Time.zone.at(score.to_i), data: data }
       end
     end
   end
 
   def active_session_count
-    get_sessions.length
+    active_sessions.length
   end
 
   # Destroys all sessions except the one identified by +except_sid+.
   # Pass nil to destroy all sessions.
   def destroy_sessions_except(except_sid)
-    sids = get_sessions.filter_map { |s| s[:sid] unless s[:sid] == except_sid }
+    sids = active_sessions.filter_map { |s| s[:sid] unless s[:sid] == except_sid }
     destroy_sessions(sids)
   end
 
@@ -63,15 +65,13 @@ module User::SessionManageable
     end
   end
 
-  private
-
-  def _session_index_key
+  private def _session_index_key
     "#{XivAuthSessionStore::USER_INDEX_PREFIX}#{id}"
   end
 
   # Constructs the Redis key where Rack stores the session data for a given
   # private session ID. Mirrors RedisSessionStore's prefixed(sid.private_id).
-  def _canonical_session_key(private_id)
+  private def _canonical_session_key(private_id)
     "#{XivAuthSessionStore::SESSION_KEY_PREFIX}#{private_id}"
   end
 end

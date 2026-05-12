@@ -1,7 +1,6 @@
 class User::SocialIdentity < ApplicationRecord
   belongs_to :user
   validates :external_id, uniqueness: { scope: [:provider] }
-  validates :user_id, uniqueness: { scope: %i[provider external_id] }
 
   alias_attribute :uid, :external_id
 
@@ -22,7 +21,7 @@ class User::SocialIdentity < ApplicationRecord
   end
 
   def touch_used_at
-    self.last_used_at = DateTime.now
+    self.last_used_at = Time.current
     save(touch: false)
   end
 end

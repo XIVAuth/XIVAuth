@@ -1,4 +1,4 @@
-require 'environment_info'
+require "environment_info"
 
 Sentry.init do |config|
   config.dsn = Rails.application.credentials.dig(:sentry, :dsn, :backend)
@@ -6,7 +6,7 @@ Sentry.init do |config|
 
   config.environment = EnvironmentInfo.environment.to_s.downcase
   config.release = EnvironmentInfo.commit_hash
-  
+
   config.traces_sample_rate = 0.1
   config.profiles_sample_rate = 0.1
 

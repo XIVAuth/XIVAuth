@@ -2,15 +2,15 @@ class Users::RecoveryController < ApplicationController
   helper Users::SessionsHelper
   layout "login/signin"
 
-  RECOVERY_MESSAGE = "Your recovery request was received. If your email is in our system, you should receive a " +
-                     "recovery email shortly."
+  RECOVERY_MESSAGE = "Your recovery request was received. If your email is in our system, you should receive a " \
+                     "recovery email shortly.".freeze
 
   skip_before_action :authenticate_user!
   prepend_before_action :check_captcha, only: [:create]
 
   def new
     @user = User.new
-    render 'devise/recovery/new'
+    render "devise/recovery/new"
   end
 
   def create
@@ -29,10 +29,10 @@ class Users::RecoveryController < ApplicationController
       return
     end
 
-    if !@user.confirmed?
-      @user.resend_confirmation_instructions
-    else
+    if @user.confirmed?
       @user.send_reset_password_instructions
+    else
+      @user.resend_confirmation_instructions
     end
 
     redirect_to new_user_session_path, notice: RECOVERY_MESSAGE
@@ -45,7 +45,7 @@ class Users::RecoveryController < ApplicationController
   end
 
   def permitted_params
-    params.require(:user).permit(:email)
+    params.expect(user: [:email])
   end
 
   private def check_captcha
@@ -53,6 +53,6 @@ class Users::RecoveryController < ApplicationController
 
     flash.now[:alert] = "CAPTCHA verification failed. Please try again."
     @user = User.new
-    render 'devise/recovery/new', status: :unprocessable_content
+    render "devise/recovery/new", status: :unprocessable_content
   end
 end

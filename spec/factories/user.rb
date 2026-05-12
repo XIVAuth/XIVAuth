@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :user do
     email { Faker::Internet.email(domain: "example.test") }
     password { Faker::Internet.password }
-    confirmed_at { DateTime.now }
+    confirmed_at { Time.current }
     webauthn_id { WebAuthn.generate_user_id }
 
     profile { association :users_profile, user: instance }

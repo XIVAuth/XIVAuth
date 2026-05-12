@@ -66,16 +66,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   protected def update_resource(resource, params)
     # Block update of protected fields (email, password) if the user has a password.
-    if resource.has_password?
+    if resource.password_set?
       return super if params[:password].present? || params[:password_confirmation].present?
       return super if params[:email].present? && params[:email] != current_user.email
 
       # If the user provides a current_password, validate it regardless.
       return super if params[:current_password].present?
-    else
-      if params[:password].present?
-        resource.set_initial_password(params[:password], params[:password_confirmation])
-      end
+    elsif params[:password].present?
+      resource.set_initial_password(params[:password], params[:password_confirmation])
     end
 
     # NOTE: Devise filters params for us, so this is safe.
@@ -84,22 +82,22 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   protected def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [profile_attributes: [:display_name]])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [{ profile_attributes: [:display_name] }])
   end
 
   protected def configure_account_update_params
-    devise_parameter_sanitizer.permit(:account_update, keys: [:avatar, profile_attributes: [:display_name]])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:avatar, { profile_attributes: [:display_name] }])
   end
 
-  def after_sign_up_path_for(resource)
+  def after_sign_up_path_for(_resource)
     character_registrations_path
   end
 
-  def after_inactive_sign_up_path_for(resource)
+  def after_inactive_sign_up_path_for(_resource)
     new_user_session_path
   end
 
-  protected def after_update_path_for(resource)
+  protected def after_update_path_for(_resource)
     edit_user_path
   end
 
@@ -122,7 +120,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   private def set_layout
-    if action_name == "new" || action_name == "create"
+    if %w[new create].include?(action_name)
       "login/signin"
     elsif action_name == "edit"
       "portal/base"

@@ -13,7 +13,7 @@
     </div>
     <div class="card-body">
       <div class="btn-toolbar gap-2 mb-3" role="toolbar">
-        <% if resource.has_password? %>
+        <% if resource.password_set? %>
           <% if resource.totp_credential.present? %>
             <%= button_to user_totp_credential_path, class: "btn btn-outline-danger", method: :delete, data: { turbo_stream: "remote_modal" } do %>
               <i class="bi bi-calculator"></i> Remove Authenticator App
