@@ -22,7 +22,7 @@
     "esbuild": "^0.28.0",
     "jquery": "^4.0.0",
     "sass": "^1.99.0",
-    "tom-select": "^2.6.0",
+    "tom-select": "^2.6.1",
     "zxcvbn": "^4.4.2"
   },
   "scripts": {
