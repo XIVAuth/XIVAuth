@@ -4,9 +4,9 @@ module ApplicationHelper
       "#{prefix}_ip":       request.ip,
       "#{prefix}_at":       Time.now.utc.iso8601,
       "#{prefix}_location": {
-        country: request.headers["CF-IPCountry"],
-        region:  request.headers["CF-Region"],
-        city:    request.headers["CF-IPCity"]
+        country: request.headers["CF-IPCountry"]&.encode("UTF-8"),
+        region:  request.headers["CF-Region"]&.encode("UTF-8"),
+        city:    request.headers["CF-IPCity"]&.encode("UTF-8")
       }.compact.presence
     }
   end

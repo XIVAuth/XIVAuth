@@ -150,7 +150,7 @@ class Users::SessionsController < Devise::SessionsController
 
     auth_data[:created_at] = Time.now.utc.iso8601
     auth_data[:initial_ip] = request.remote_ip
-    auth_data[:initial_ua] = request.user_agent
+    auth_data[:initial_ua] = request.user_agent&.encode("UTF-8")
 
     session[:auth_data] = auth_data
 

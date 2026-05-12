@@ -16,8 +16,9 @@ class ApplicationController < ActionController::Base
 
     auth_data = session[:auth_data] || {}
     auth_data.merge!(helpers.build_auth_data("current"))
-    if auth_data.dig(:current_browser, :user_agent) != request.user_agent
-      auth_data[:current_browser] = helpers.parse_user_agent(request.user_agent)
+    ua = request.user_agent&.encode("UTF-8")
+    if auth_data.dig(:current_browser, :user_agent) != ua
+      auth_data[:current_browser] = helpers.parse_user_agent(ua)
     end
 
     session[:auth_data] = auth_data

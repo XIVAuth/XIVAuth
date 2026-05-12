@@ -119,7 +119,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     current_user
   end
 
-  # character_identification: requires subject_id (CharacterRegistration UUID).
+  # character_identification: requires subject_id (Lodestone ID of target character).
   def resolve_character_subject
     unless has_character_scope?
       render json: { error: "Character scope required for certificate issuance" }, status: :forbidden
@@ -129,7 +129,8 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     subject_id = params.require(:subject_id)
 
     authorized_character_registrations(only_verified: true)
-      .find_by!(id: subject_id)
+      .joins(:character)
+      .find_by!("character.lodestone_id": subject_id)
   end
 
   # code_signing: subject is the current user when no subject params are given,

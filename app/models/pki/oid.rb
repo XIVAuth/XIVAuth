@@ -11,4 +11,8 @@ module PKI::OID
   EKU_ARC = "#{ROOT_OID}.3"
   EKU_CharacterIdentification = "#{EKU_ARC}.1"
   EKU_UserIdentification = "#{EKU_ARC}.2"
+
+  EXTENSION_ARC = "#{ROOT_OID}.4"
+  EXT_GLOBAL_ARC = "#{EXTENSION_ARC}.1"
+  EXT_RequestingApplicationID = "#{EXT_GLOBAL_ARC}.1"
 end
