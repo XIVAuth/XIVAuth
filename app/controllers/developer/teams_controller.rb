@@ -3,7 +3,7 @@ class Developer::TeamsController < Developer::DeveloperPortalController
   include Pagy::Method
 
   before_action :load_parent_teams, only: %i[new create]
-  before_action :set_team, only: %i[show edit update destroy regenerate leave]
+  before_action :set_team, only: %i[show update destroy leave]
   skip_before_action :check_developer_role, only: %i[index leave]
   before_action :check_team_list_access, only: %i[index]
 

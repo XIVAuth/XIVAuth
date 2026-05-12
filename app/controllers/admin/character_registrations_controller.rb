@@ -1,5 +1,5 @@
 class Admin::CharacterRegistrationsController < Admin::AdminController
-  before_action :set_context, only: %i[show update destroy verify unverify]
+  before_action :set_context, only: %i[destroy verify unverify]
 
   def verify
     if @registration.verified?

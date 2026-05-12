@@ -9,7 +9,7 @@ RSpec.describe FFXIV::Character, type: :model do
 
   def mock_lodestone_profile(lodestone_id, fixture_file)
     json_object = load_fixture(fixture_file)
-    allow(FFXIV::LodestoneProfile).to receive(:new).with(lodestone_id).and_return(
+    allow(FFXIV::LodestoneProfile).to receive(:new).with(lodestone_id, force_fresh: true).and_return(
       FFXIV::LodestoneProfile.new(lodestone_id, json_object: json_object)
     )
   end

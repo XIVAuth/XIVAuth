@@ -4,7 +4,7 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
   helper Doorkeeper::DashboardHelper
 
   before_action :load_available_owners, only: %i[new create]
-  before_action :set_application, only: %i[show edit update destroy regenerate transfer update_transfer]
+  before_action :set_application, only: %i[show update destroy transfer update_transfer]
 
   def index
     @pagy, @applications = pagy(accessible_applications, items: 24)

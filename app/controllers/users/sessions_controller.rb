@@ -3,7 +3,7 @@ class Users::SessionsController < Devise::SessionsController
   include Users::AuthenticatesViaPasskey
   layout "login/signin"
 
-  before_action :authenticate_user!, only: %i[destroy_others destroy_all evacuate]
+  before_action :authenticate_user!, only: %i[destroy_others destroy_all]
   before_action :reset_mfa_attempt!, only: [:new]
   before_action :generate_discoverable_challenge, only: [:new]
 

@@ -2,7 +2,7 @@ class CharacterRegistrationsController < ApplicationController
   include Pagy::Method
 
   layout "portal/page"
-  before_action :set_character_registration, only: %i[show destroy]
+  before_action :set_character_registration, only: %i[destroy]
 
   # GET /character_registrations or /character_registrations.json
   def index

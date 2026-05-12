@@ -336,7 +336,7 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
         it "issues a certificate for a verified character" do
           expect {
             post request_api_v1_certificates_path,
-                 params: { certificate_type: "character_identification", subject_id: verified_char.id, csr_pem: csr_pem },
+                 params: { certificate_type: "character_identification", subject_id: verified_char.character.lodestone_id, csr_pem: csr_pem },
                  headers: headers
           }.to change(PKI::IssuedCertificate, :count).by(1)
 
@@ -384,7 +384,7 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
         it "issues certificate for allowed character" do
           expect {
             post request_api_v1_certificates_path,
-                 params: { certificate_type: "character_identification", subject_id: allowed_char.id, csr_pem: csr_pem },
+                 params: { certificate_type: "character_identification", subject_id: allowed_char.character.lodestone_id, csr_pem: csr_pem },
                  headers: headers
           }.to change(PKI::IssuedCertificate, :count).by(1)
 
@@ -490,7 +490,7 @@ RSpec.describe "Api::V1::CertificatesController", type: :request do
         verified_char = FactoryBot.create(:verified_registration, user: user)
 
         post request_api_v1_certificates_path,
-             params: { certificate_type: "character_identification", subject_id: verified_char.id, csr_pem: csr_pem },
+             params: { certificate_type: "character_identification", subject_id: verified_char.character.lodestone_id, csr_pem: csr_pem },
              headers: headers
 
         expect(response).to have_http_status(:service_unavailable)
