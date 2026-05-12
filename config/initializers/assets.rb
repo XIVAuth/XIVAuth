@@ -14,6 +14,3 @@ Rails.application.config.assets.paths << Rails.root.join("node_modules/@fortawes
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
 
 Rails.application.config.assets.integrity_hash_algorithm = "sha256"
-Rails.application.config.public_file_server.headers = {
-  "Cache-Control" => "public, max-age=#{1.month.to_i}"
-}
