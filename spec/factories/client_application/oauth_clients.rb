@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :oauth_client, class: "ClientApplication::OAuthClient" do
-    association :application, factory: :client_application
+    application factory: %i[client_application]
 
     name { "OAuth Client #{SecureRandom.hex(4)}" }
     enabled { true }

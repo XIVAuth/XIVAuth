@@ -1,5 +1,6 @@
 plugins:
   - rubocop-rails
+  - rubocop-factory_bot
 
 AllCops:
   NewCops: enable
@@ -74,6 +75,9 @@ Metrics/PerceivedComplexity:
 
 Metrics/ParameterLists:
   CountKeywordArgs: false
+
+FactoryBot/SyntaxMethods:
+  Enabled: false
 
 # lol. lmao even.
 Style/Documentation:

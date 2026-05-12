@@ -16,7 +16,7 @@ FactoryBot.define do
     end
 
     trait :with_parent do
-      association :parent, factory: :team
+      parent factory: %i[team]
     end
 
     # Ensure root teams have at least one admin via nested attributes

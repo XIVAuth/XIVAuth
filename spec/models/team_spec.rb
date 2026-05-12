@@ -37,7 +37,7 @@ RSpec.describe Team, type: :model do
     describe "#team_recursion_control" do
       it "limits a team to five subteams" do
         parent = FactoryBot.create(:team)
-        5.times { FactoryBot.create(:team, parent: parent) }
+        FactoryBot.create_list(:team, 5, parent: parent)
         sixth = FactoryBot.build(:team, parent: parent)
 
         expect(sixth).not_to be_valid
