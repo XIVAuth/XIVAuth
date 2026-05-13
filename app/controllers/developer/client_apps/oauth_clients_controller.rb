@@ -25,7 +25,9 @@ class Developer::ClientApps::OAuthClientsController < Developer::DeveloperPortal
       redirect_to developer_oauth_client_path(@oauth_client)
     else
       flash.now[:error] = "Could not create OAuth client."
-      render :new, status: :unprocessable_content
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_content }
+      end
     end
   end
 

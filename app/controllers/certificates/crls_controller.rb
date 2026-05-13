@@ -1,13 +1,15 @@
 class Certificates::CrlsController < ActionController::Base # rubocop:disable Rails/ApplicationController
   def show
-    head :service_unavailable and return
+    ca_record = PKI::CertificateAuthority.find_by(slug: params.expect(:slug))
+    if ca_record.nil?
+      head :not_found
+      return
+    end
 
-    ca_record = PKI::CertificateAuthority.find_by!(slug: params.expect(:slug))
-
-    # TODO: Full CRL population with revoked entries is deferred.
-    # I don't want to generate this on the fly, so we're just... not going to do that yet.
-    # For now, always return an empty (but valid) CRL.
-    revoked = []
+    revoked = ca_record.issued_certificates
+                       .where.not(revocation_reason: nil)
+                       .where(revoked_at: ..Time.current)
+                       .where(expires_at: 3.months.ago..)
 
     crl = CertificateAuthority::CertificateRevocationList.new
     crl.parent = ca_record.as_ca_gem_issuer
@@ -15,7 +17,7 @@ class Certificates::CrlsController < ActionController::Base # rubocop:disable Ra
 
     revoked.each do |issued_cert|
       serial = CertificateAuthority::SerialNumber.new
-      serial.number = issued_cert.id.delete("-").to_i(16)
+      serial.number = issued_cert.serial
       serial.revoke!(issued_cert.revoked_at)
       crl << serial
     end
@@ -23,7 +25,5 @@ class Certificates::CrlsController < ActionController::Base # rubocop:disable Ra
     crl.sign!
 
     send_data crl.crl_body.to_der, type: "application/pkix-crl", disposition: "inline"
-  rescue ActiveRecord::RecordNotFound
-    head :not_found
   end
 end

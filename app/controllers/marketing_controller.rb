@@ -10,7 +10,6 @@ class MarketingController < ApplicationController
       headpats: Rails.cache.read("marketing:headpats", raw: true).to_i
     }
 
-    render :index
   end
 
   rate_limit to: 1, within: 1.minute, by: -> { request.remote_ip },

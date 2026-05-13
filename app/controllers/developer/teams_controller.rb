@@ -41,14 +41,18 @@ class Developer::TeamsController < Developer::DeveloperPortalController
     else
       unless @available_parent_teams.find_by(id: @team.parent_id)
         @team.errors.add(:parent_id, "you must be an admin of the parent team")
-        return render :new, status: :unprocessable_content
+        return respond_to do |format|
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
     end
 
     if @team.save
       redirect_to developer_team_path(@team), notice: "Team was successfully created."
     else
-      render :new, status: :unprocessable_content
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_content }
+      end
     end
   end
 
@@ -81,7 +85,9 @@ class Developer::TeamsController < Developer::DeveloperPortalController
       flash[:notice] = "Team updated successfully."
       redirect_to developer_team_path(@team)
     else
-      render :show, status: :unprocessable_content
+      respond_to do |format|
+        format.html { render :show, status: :unprocessable_content }
+      end
     end
   end
 

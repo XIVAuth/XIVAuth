@@ -37,6 +37,7 @@ class Application < Rails::Application
   }
 
   config.action_dispatch.rescue_responses["CanCan::AccessDenied"] = :unauthorized
+  config.action_dispatch.rescue_responses["ActionController::UnknownFormat"] = :not_acceptable
 
   # heroku compat for now
   if ENV["APP_ENV"].present?

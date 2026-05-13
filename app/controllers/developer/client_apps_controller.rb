@@ -36,7 +36,9 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
       unless can? :create_apps, owning_team
         @application.errors.add(:owner_id, :not_developer,
                                 message: "you do not have permission to create applications for this team")
-        return render :new, status: :unprocessable_content
+        return respond_to do |format|
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
       @application.owner = owning_team
     else
@@ -117,13 +119,19 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
 
     if target_team_id.blank?
       @application.errors.add(:owner_id, "must be selected")
-      return render :transfer, status: :unprocessable_content
+      return respond_to do |format|
+        format.html { render :transfer, status: :unprocessable_content }
+        format.turbo_stream { render :transfer, status: :unprocessable_content }
+      end
     end
 
     target_team = @transferable_teams.find_by(id: target_team_id)
     unless target_team
       @application.errors.add(:owner_id, "is not a valid transfer target")
-      return render :transfer, status: :unprocessable_content
+      return respond_to do |format|
+        format.html { render :transfer, status: :unprocessable_content }
+        format.turbo_stream { render :transfer, status: :unprocessable_content }
+      end
     end
 
     @application.owner = target_team
@@ -134,7 +142,10 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
         format.html { redirect_to developer_application_path(@application) }
       end
     else
-      render :transfer, status: :unprocessable_content
+      respond_to do |format|
+        format.html { render :transfer, status: :unprocessable_content }
+        format.turbo_stream { render :transfer, status: :unprocessable_content }
+      end
     end
   end
 

@@ -88,7 +88,9 @@ class Users::SessionsController < Devise::SessionsController
 
     # recall all the new session things
     generate_discoverable_challenge
-    render :new, status: :unprocessable_content
+    respond_to do |format|
+      format.html { render :new, status: :unprocessable_content }
+    end
   end
 
   def evaluate_login_flow
@@ -105,8 +107,9 @@ class Users::SessionsController < Devise::SessionsController
         self.flash.now[:alert] = "Security key presented is not registered."
 
         self.resource = resource_class.new
-        render :new, status: :unprocessable_content
-
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_content }
+        end
         return
       end
     elsif user_params[:email].present?
@@ -123,7 +126,9 @@ class Users::SessionsController < Devise::SessionsController
           # generate a new page
           self.resource = resource_class.new sign_in_params
           generate_discoverable_challenge
-          render :new, status: :unprocessable_content
+          respond_to do |format|
+            format.html { render :new, status: :unprocessable_content }
+          end
         end
 
         if self.resource.mfa_enabled?
