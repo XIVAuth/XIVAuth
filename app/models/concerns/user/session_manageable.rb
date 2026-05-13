@@ -16,14 +16,14 @@ module User::SessionManageable
 
       n = entries.length
       results = r.pipelined do |pipe|
-        entries.each do |private_id|
+        entries.each do |(private_id, _)|
           pipe.get(_canonical_session_key(private_id))
           pipe.exists(_canonical_session_key(private_id))
         end
       end
 
-      get_results    = results[0...n]
-      exists_results = results[n..]
+      get_results    = results.each_slice(2).map(&:first)
+      exists_results = results.each_slice(2).map(&:last)
 
       entries.zip(get_results, exists_results).filter_map do |(private_id, score), raw_data, exists|
         next unless exists.positive?
