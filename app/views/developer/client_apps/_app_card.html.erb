@@ -6,6 +6,9 @@
       <div class="ps-2">
         <h5 class="card-title">
           <%= application.name %>
+          <% if application.verified? %>
+            <i class="bi bi-patch-check-fill text-success" title="Verified App"></i>
+          <% end %>
         </h5>
         <p class="small">Owned by:
           <% if application.owner_type == "User" %>

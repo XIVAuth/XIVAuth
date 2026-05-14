@@ -6,6 +6,7 @@ declare global {
         Stimulus: Application;
         gon: {
             app_env: string;
+            user_preferences?: Record<string, unknown>;
         }
     }
 }

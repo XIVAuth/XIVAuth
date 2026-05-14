@@ -78,6 +78,14 @@
 
     <div class="col-md-6">
       <%= f.fields_for :profile, @application.profile do |pf| %>
+        <% if @application.verified? %>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Verification Status</label>
+          <div class="form-control-plaintext">
+            <i class="bi bi-patch-check-fill text-success"></i> Application was verified.
+          </div>
+        </div>
+        <% end %>
         <div class="mb-3">
           <%= pf.label :homepage_url, "Homepage URL", class: "form-label fw-semibold" %>
           <%= pf.url_field :homepage_url, class: "form-control" %>

@@ -1,15 +1,35 @@
 import {Controller} from "@hotwired/stimulus";
+import {GonConfig} from "../../gon_config";
+
+interface TimePreferences {
+    "time.use_24h": boolean;
+    "time.use_iso8601": boolean;
+}
+
+const config = GonConfig.UserPreferences<TimePreferences>();
+
+function getDisplayFormat(format: StaticFormatType, overrides: Intl.DateTimeFormatOptions = {}): Intl.DateTimeFormatOptions {
+    const base = DISPLAY_FORMATS[format] ?? DISPLAY_FORMATS.datetime;
+    const prefOverrides: Intl.DateTimeFormatOptions = {};
+
+    if (config.has("time.use_24h")) {
+        prefOverrides.hour12 = !config.get("time.use_24h");
+    }
+
+    return { ...base, ...prefOverrides, ...overrides };
+}
 
 type StaticFormatType = "datetime" | "date" | "short" | "time" | "timeNoSeconds";
-type DynamicFormatType = "dotiw" | "adaptive";
+type DynamicFormatType = "dotiw" | "adaptive" | "dotiw_smart";
 
 // Supported display format types:
-//   dotiw    – relative "distance of time in words" (e.g. "3 hours ago", "in 2 days")
-//   datetime – full localized date + time (default when format is set)
-//   date     – localized long date only (e.g. "April 20, 2026")
-//   short    – localized short date (e.g. "Apr 20, 2026")
-//   time     – localized time only (e.g. "14:32:15 UTC")
-//   adaptive – time (HH:MM) if today, short date otherwise; good for compact badges
+//   dotiw       – relative "distance of time in words" (e.g. "3 hours ago", "in 2 days")
+//   datetime    – full localized date + time (default when format is set)
+//   date        – localized long date only (e.g. "April 20, 2026")
+//   short       – localized short date (e.g. "Apr 20, 2026")
+//   time        – localized time only (e.g. "14:32:15 UTC")
+//   adaptive    – time (HH:MM) if today, short date otherwise; good for compact badges
+//   dotiw_smart - DOTIW up until one week ago, then short date.
 type FormatType = StaticFormatType | DynamicFormatType;
 
 const DOTIW_REFRESH_MS = 1_000;
@@ -72,7 +92,7 @@ export default class HoverDateTimeController extends Controller<HTMLElement> {
         this.render();
 
         const format = this.formatValue as FormatType;
-        if (this.hasFormatValue && (format === "dotiw" || format === "adaptive")) {
+        if (this.hasFormatValue && (format === "dotiw" || format === "adaptive" || format === "dotiw_smart")) {
             this.refreshTimer = setInterval(() => this.render(), DOTIW_REFRESH_MS);
         }
     }
@@ -97,16 +117,16 @@ export default class HoverDateTimeController extends Controller<HTMLElement> {
     }
 
     private formatDate(date: Date, format: FormatType): string {
-        if (format === "dotiw") {
-            return this.formatRelative(date);
+        switch (format) {
+            case "dotiw":
+                return this.formatRelative(date);
+            case "dotiw_smart":
+                return this.formatRelativeSmart(date);
+            case "adaptive":
+                return this.formatAdaptive(date);
         }
 
-        if (format === "adaptive") {
-            return this.formatAdaptive(date);
-        }
-
-        const options = DISPLAY_FORMATS[format] ?? DISPLAY_FORMATS.datetime;
-        return date.toLocaleString(undefined, options);
+        return date.toLocaleString(undefined, getDisplayFormat(format));
     }
 
     private formatAdaptive(date: Date): string {
@@ -116,8 +136,8 @@ export default class HoverDateTimeController extends Controller<HTMLElement> {
             date.getDate() === now.getDate();
 
         return isToday
-            ? date.toLocaleTimeString(undefined, DISPLAY_FORMATS.timeNoSeconds)
-            : date.toLocaleDateString(undefined, DISPLAY_FORMATS.short);
+            ? date.toLocaleTimeString(undefined, getDisplayFormat("timeNoSeconds"))
+            : date.toLocaleDateString(undefined, getDisplayFormat("short"));
     }
 
     private formatRelative(date: Date): string {
@@ -126,7 +146,8 @@ export default class HoverDateTimeController extends Controller<HTMLElement> {
         const diffSecs = Math.round(diffMs / 1000);
         const absSecs = Math.abs(diffSecs);
 
-        if (absSecs < 15) return "just now";
+        if (-15 < diffSecs && diffSecs <= 0) return "just now";
+        if (0 < diffSecs && diffSecs < 15) return "in a moment";
         if (absSecs < 60) return rtf.format(diffSecs, "second");
 
         const diffMins = Math.round(diffMs / 60_000);
@@ -146,5 +167,16 @@ export default class HoverDateTimeController extends Controller<HTMLElement> {
 
         const diffYears = Math.round(diffMs / 31_536_000_000);
         return rtf.format(diffYears, "year");
+    }
+
+    private formatRelativeSmart(date: Date, cutoffDays: number = 7): string {
+        const diffMs = date.getTime() - Date.now();
+        const diffDays = Math.round(diffMs / 86_400_000);
+
+        if (Math.abs(diffDays) < cutoffDays) {
+            return this.formatRelative(date);
+        } else {
+            return this.formatDate(date, "short");
+        }
     }
 }
