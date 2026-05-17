@@ -36,7 +36,7 @@ Rails.application.configure do
   config.active_storage.service = :local
   config.active_storage.variant_processor = :disabled
 
-  config.active_job.queue_adapter = :sidekiq
+  config.active_job.queue_adapter = :sidekiq if ENV["DEV_USE_SIDEKIQ"].present?
 
   routes.default_url_options[:host] = ENV["APP_URL"] || "http://localhost:3000"
 

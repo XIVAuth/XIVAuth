@@ -1,4 +1,4 @@
 web: unset PORT && ./bin/rails server -b [::]
-worker: ./bin/sidekiq
+worker: bundle exec rails work
 js: pnpm build --watch
 css: pnpm build:css --watch
