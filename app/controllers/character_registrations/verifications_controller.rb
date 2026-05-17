@@ -15,7 +15,25 @@ class CharacterRegistrations::VerificationsController < ApplicationController
   def create
     authorize! :update, @character_registration
 
-    @job = FFXIV::VerifyCharacterRegistrationJob.perform_later @character_registration
+    begin
+      @job = FFXIV::VerifyCharacterRegistrationJob.perform_later @character_registration
+    rescue SidekiqUniqueJobs::Conflict
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update(
+            "character_wizard_modal-content",
+            partial: "character_registrations/verifications/wizard_modals/already_pending",
+            locals: {registration: @character_registration, character: @character}
+          )
+        end
+        format.html do
+          redirect_to character_registrations_path, error:
+          "A verification attempt for this character is already in progress. Please try again in a few minutes."
+        end
+      end
+
+      return
+    end
 
     respond_to do |format|
       if @job

@@ -1,0 +1,17 @@
+<%# locals: registration, character %>
+<div class="modal-header">
+  <div class="d-block">
+    <%= render 'character_registrations/wizard/step_indicator', current: 1, step_state: :pending %>
+    <h5 class="modal-title">Verification Already In Progress</h5>
+  </div>
+  <button type="button" class="btn-close align-self-start" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+  <p>
+    A verification attempt for <strong><%= character.name %></strong> is already in progress.
+    Please wait a few minutes for it to complete before trying again.
+  </p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>

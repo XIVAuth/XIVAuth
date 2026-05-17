@@ -36,6 +36,8 @@ Rails.application.configure do
   config.active_storage.service = :local
   config.active_storage.variant_processor = :disabled
 
+  config.active_job.queue_adapter = :sidekiq
+
   routes.default_url_options[:host] = ENV["APP_URL"] || "http://localhost:3000"
 
   # Don't care if the mailer can't send.
