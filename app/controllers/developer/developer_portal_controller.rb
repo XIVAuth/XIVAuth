@@ -1,5 +1,7 @@
 class Developer::DeveloperPortalController < ApplicationController
   before_action :check_developer_role
+
+  skip_before_action :authenticate_user!, only: %i[docs]
   skip_before_action :check_developer_role, only: %i[docs]
 
   def docs
