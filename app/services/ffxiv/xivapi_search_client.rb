@@ -12,12 +12,15 @@ class FFXIV::XIVAPISearchClient
   # @param query [String, nil] Optional query filter (e.g., "IsPublic=true")
   # @return [Array<Hash>] Array of result hashes from XIVAPI
   # @raise [StandardError] If the API request fails
-  def self.search(sheet:, fields:, query: nil)
+  def self.search(sheet:, fields:, schema:, language:, query: nil)
     params = {
       sheets: sheet,
-      fields: fields.join(",")
+      fields: fields.join(","),
+      schema: schema,
+      language: language,
+      query: query
     }
-    params[:query] = query if query.present?
+    params.compact!
 
     conn = Faraday.new do |f|
       f.options.timeout = 5 # Total request timeout in seconds

@@ -4,8 +4,10 @@ class FFXIV::WorldList
   CACHE_KEY = "ffxiv:worlds".freeze
   CACHE_EXPIRY = 1.week
   EXCLUDE_REGIONS = [
-    "7" # Cloud DC (Beta)
+    "NA_CLOUD"
   ].freeze
+
+  XIVAPI_SCHEMA_VERSION = "exdschema@2:rev:75f674655bb89d6172effa3a5a2d93bcfc7deb51"
 
   class << self
     def all
@@ -63,8 +65,10 @@ class FFXIV::WorldList
     private def fetch_from_api
       results = FFXIV::XIVAPISearchClient.search(
         sheet: "World",
-        fields: %w[Name DataCenter.Name DataCenter.Region],
-        query: "IsPublic=true"
+        fields: %w[Name DataCenter.Name DataCenter.Region.Name],
+        query: "IsPublic=true",
+        schema: XIVAPI_SCHEMA_VERSION,
+        language: "en"
       )
 
       # Use fallback if API returned nothing
@@ -84,7 +88,7 @@ class FFXIV::WorldList
         {
           name: fields["Name"],
           datacenter: datacenter_fields["Name"],
-          region: normalize_region(datacenter_fields["Region"])
+          region: normalize_region(datacenter_fields.dig("Region", "value"))
         }
       end
 
@@ -96,11 +100,11 @@ class FFXIV::WorldList
     # Normalize region codes (e.g., 1 => "JP", 2 => "NA", 3 => "EU")
     private def normalize_region(region_code)
       case region_code
-      when 1, "1" then "JP"
-      when 2, "2" then "NA"
-      when 3, "3" then "EU"
-      when 4, "4" then "OCE"
-      when 7, "7" then "NA_CLOUD"
+      when 1, "1", "Japan" then "JP"
+      when 2, "2", "North America" then "NA"
+      when 3, "3", "Europe" then "EU"
+      when 4, "4", "Oceania" then "OCE"
+      when 7, "7", "NA Cloud" then "NA_CLOUD"
       else
         Rails.logger.warn("Unknown XIVAPI region code: #{region_code}")
         region_code.to_s
