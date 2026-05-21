@@ -13,6 +13,15 @@ class ClientApplication < ApplicationRecord
                           }
                         }
 
+  has_upload_attachment :oauth_background, content_types: %w[image/png image/jpeg],
+                        max_size: 5.megabytes,
+                        derivatives: lambda { |pipeline|
+                          {
+                            hd: pipeline.resize_to_limit!(3840, 2160),
+                            thumb: pipeline.resize_to_fill!(160, 90)
+                          }
+                        }
+
   belongs_to :owner, polymorphic: true, optional: true
 
   has_one :profile, class_name: "ClientApplication::Profile", dependent: :destroy, required: true, autosave: true,
@@ -39,6 +48,7 @@ class ClientApplication < ApplicationRecord
   accepts_nested_attributes_for :profile, update_only: true
 
   validate :validate_owner_has_mfa, on: :create
+  validate :validate_oauth_background_requires_verification
 
   def profile
     super || build_profile
@@ -78,6 +88,12 @@ class ClientApplication < ApplicationRecord
 
   def entitlement_granted?(name)
     entitlements.include?(name.to_s)
+  end
+
+  def validate_oauth_background_requires_verification
+    return if verified? || oauth_background.nil? || oauth_background.persisted?
+
+    errors.add(:oauth_background, :unverified, message: "can only be set on verified applications.")
   end
 
   def validate_owner_has_mfa

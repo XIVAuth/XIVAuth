@@ -79,12 +79,32 @@
     <div class="col-md-6">
       <%= f.fields_for :profile, @application.profile do |pf| %>
         <% if @application.verified? %>
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Verification Status</label>
-          <div class="form-control-plaintext">
-            <i class="bi bi-patch-check-fill text-success"></i> Application was verified.
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Verification Status</label>
+            <div class="form-control-plaintext">
+              <i class="bi bi-patch-check-fill text-success"></i> Application was verified.
+            </div>
           </div>
-        </div>
+
+          <div class="mb-3">
+            <%= f.label :oauth_background, "OAuth Consent Background", class: "form-label fw-semibold" %>
+            <div class="d-flex align-items-start gap-3">
+              <% if (bg = @application.oauth_background) %>
+                <%= image_tag bg.url(derivative: :thumb), class: "rounded flex-shrink-0", style: "width: 160px; height: 90px; object-fit: cover;", alt: "Current background" %>
+              <% end %>
+              <div class="flex-grow-1">
+                <%= f.file_field :oauth_background, class: "form-control form-control-sm", accept: "image/png,image/jpeg" %>
+                <% if @application.oauth_background.present? %>
+                  <div class="form-check mt-1">
+                    <%= check_box_tag "client_application[remove_oauth_background]", "1", false, class: "form-check-input", id: "client_application_remove_oauth_background" %>
+                    <%= label_tag "client_application_remove_oauth_background", "Remove current background", class: "form-check-label" %>
+                  </div>
+                <% end %>
+                <div class="form-text">PNG or JPG. Max 5 MB. Displayed behind the consent screen for verified apps.
+                </div>
+              </div>
+            </div>
+          </div>
         <% end %>
         <div class="mb-3">
           <%= pf.label :homepage_url, "Homepage URL", class: "form-label fw-semibold" %>

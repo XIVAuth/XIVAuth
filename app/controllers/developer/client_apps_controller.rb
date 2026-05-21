@@ -68,6 +68,7 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
     authorize! :update, @application
 
     @application.icon&.destroy if params.dig(:client_application, :remove_icon) == "1"
+    @application.oauth_background&.destroy if params.dig(:client_application, :remove_oauth_background) == "1"
 
     if @application.update(application_params)
       flash[:notice] = "Application updated successfully"
@@ -171,8 +172,8 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
 
   private def application_params
     params
-      .expect(client_application: [:name, :private, :icon, { profile_attributes: %i[homepage_url privacy_policy_url
-                                                                                    terms_of_service_url] }])
+      .expect(client_application: [:name, :private, :icon, :oauth_background,
+                                   { profile_attributes: %i[homepage_url privacy_policy_url terms_of_service_url] }])
   end
 
   private def create_application_params

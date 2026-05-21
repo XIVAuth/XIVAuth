@@ -1,6 +1,8 @@
 class OAuth::AuthorizationsController < Doorkeeper::AuthorizationsController
   include OAuth::BuildsPermissiblePolicies
 
+  before_action :set_client_application
+
   def new
     pre_auth.validate # need to validate first to populate info for preflight
 
@@ -50,6 +52,13 @@ class OAuth::AuthorizationsController < Doorkeeper::AuthorizationsController
         "user.id": @authorize_response.issued_token.resource_owner_id
       }
     )
+  end
+
+  private def set_client_application
+    return unless params[:client_id].present?
+
+    oauth_client = ClientApplication::OAuthClient.find_by(uid: params[:client_id])
+    @client_application = oauth_client&.application
   end
 
   private def render_preflight_error
