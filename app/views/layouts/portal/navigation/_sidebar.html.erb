@@ -43,7 +43,7 @@
           badge_html: "<span class='badge bg-warning'><span class='bi bi-flask'></i> Beta</span>"
         } %>
         <li class="nav-item">
-          <%= link_to developer_docs_path, class: 'nav-link' do %>
+          <%= link_to developer_docs_path, class: 'nav-link', data: { "turbo-prefetch": false } do %>
             <i class="bi bi-book"></i>
             <span class="item-name">API Documentation</span>
           <% end %>

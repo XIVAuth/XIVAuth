@@ -21,7 +21,8 @@
 
 <p class="text-muted small">
   Try your request again in a few minutes. If you keep having problems, please report this in the
-  <%= link_to "XIVAuth Discord", discord_path %> so that a developer can take a look at it.
+  <%= link_to "XIVAuth Discord", discord_path, data: { "turbo-prefetch": false } %> so that a developer can take a look
+  at it.
 </p>
 
 <div class="text-center">

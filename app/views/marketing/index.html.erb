@@ -88,7 +88,7 @@
         </div>
       </div>
       <div class="d-none d-lg-block">
-        <%= link_to developer_docs_path, class: "btn btn-primary" do %>
+        <%= link_to developer_docs_path, class: "btn btn-primary", data: { "turbo-prefetch": false } do %>
           <i class="bi bi-book"></i> Developer Docs
         <% end %>
       </div>

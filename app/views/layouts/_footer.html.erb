@@ -35,9 +35,11 @@
 
   <ul class="nav bg-transparent col justify-content-end">
     <li class="nav-item"><a href="https://github.com/XIVAuth/XIVAuth" class="nav-link px-2 text-muted">GitHub</a></li>
-    <li class="nav-item"><%= link_to "Discord", discord_path, class: "nav-link px-2 text-muted" %></li>
+    <li class="nav-item"><%= link_to "Discord", discord_path, class: "nav-link px-2 text-muted",
+                                     data: { "turbo-prefetch": false } %></li>
     <li class="nav-item">
-      <%= link_to "API Docs", developer_docs_path, class: "nav-link px-2 text-muted" %>
+      <%= link_to "API Docs", developer_docs_path, class: "nav-link px-2 text-muted",
+                  data: { "turbo-prefetch": false } %>
     </li>
   </ul>
 </footer>

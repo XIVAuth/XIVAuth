@@ -68,8 +68,8 @@
               <div class="ms-4 text-muted small">
                 While not required, joining the
                 <%= link_to "XIVAuth Discord server", discord_path, class: "text-decoration-none",
-                            target: "_blank", rel: "noopener" %> is highly recommended to get updates and to receive
-                support.
+                            target: "_blank", rel: "noopener", data: { "turbo-prefetch": false } %> is highly
+                recommended to get updates and to receive support.
               </div>
             </li>
           </ul>

@@ -6,4 +6,8 @@
 @use "@fortawesome/fontawesome-free/scss/brands";
 @use "@fortawesome/fontawesome-free/scss/fontawesome";
 
+@use "@mdi/font/scss/materialdesignicons" with (
+  $mdi-font-path: './fonts',
+);
+
 @use "bootstrap-icons/font/bootstrap-icons";

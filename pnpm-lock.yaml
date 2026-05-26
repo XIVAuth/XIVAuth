@@ -20,6 +20,9 @@ importers:
       '@hotwired/turbo-rails':
         specifier: ^8.0.23
         version: 8.0.23
+      '@mdi/font':
+        specifier: ^7.4.47
+        version: 7.4.47
       '@popperjs/core':
         specifier: ^2.11.8
         version: 2.11.8
@@ -246,6 +249,9 @@ packages:
   '@hotwired/turbo@8.0.23':
     resolution: {integrity: sha512-GZ7cijxEZ6Ig71u7rD6LHaRv/wcE/hNsc+nEfiWOkLNqUgLOwo5MNGWOy5ZV9ZUDSiQx1no7YxjTNnT4O6//cQ==}
     engines: {node: '>= 18'}
+
+  '@mdi/font@7.4.47':
+    resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
 
   '@orchidjs/sifter@1.1.0':
     resolution: {integrity: sha512-mYwHCfr736cIWWdhhSZvDbf90AKt2xyrJspKFC3qyIJG1LtrJeJunYEqCGG4Aq2ijENbc4WkOjszcvNaIAS/pQ==}
@@ -538,6 +544,8 @@ snapshots:
       '@rails/actioncable': 8.1.300
 
   '@hotwired/turbo@8.0.23': {}
+
+  '@mdi/font@7.4.47': {}
 
   '@orchidjs/sifter@1.1.0':
     dependencies:
