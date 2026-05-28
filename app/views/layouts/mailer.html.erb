@@ -1,13 +1,194 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <style>
-      /* Email styles need to be inline */
-    </style>
-  </head>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XIVAuth</title>
+  <style>
+      body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 
-  <body>
-    <%= yield %>
-  </body>
+      /* ── Light mode (default) ───────────────────────────────────── */
+      body { margin: 0 !important; padding: 0 !important; background-color: #f0f2f5; }
+
+      .email-outer {
+          background-color: #f0f2f5;
+          padding: 32px 16px;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      .email-container {
+          max-width: 600px;
+          margin: 0 auto;
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Header — background-color is the fallback when images are blocked */
+      .email-header {
+          background-color: #c8d4df;
+          background-image: url('https://cdn.xivauth.net/static/images/email/header_day.png');
+          background-size: cover;
+          background-position: center;
+      }
+      .email-header-overlay {
+          background-color: rgba(240, 244, 248, 0.78);
+          padding: 20px 40px;
+          text-align: center;
+      }
+      .email-logo {
+          display: inline-block;
+          height: 60px;
+          width: auto;
+
+          /* Text fallback for clients that support it. */
+          font-size: 3em;
+          font-weight: 700;
+          color: #212529;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif
+      }
+      .email-logo svg path { fill: #00A8E8; }
+
+      /* Body */
+      .email-body {
+          background-color: #ffffff;
+          padding: 36px 40px;
+          color: #212529;
+          font-size: 15px;
+          line-height: 1.65;
+      }
+      .email-body h1 {
+          font-size: 20px;
+          font-weight: 700;
+          color: #111827;
+          margin: 0 0 16px 0;
+      }
+      .email-body p { margin: 0 0 16px 0; }
+      .email-body p:last-child { margin-bottom: 0; }
+      .email-body a:not(.btn-cta) { color: #0d6efd; }
+
+      /* CTA button */
+      .btn-cta-wrap { text-align: center; margin: 24px 0; }
+      .btn {
+          display: inline-block;
+          color: #ffffff !important;
+          text-decoration: none;
+          padding: 12px 28px;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 15px;
+      }
+
+      .bg-primary   { background-color: #0d6efd; }
+      .bg-secondary { background-color: #6c757d; }
+      .bg-success   { background-color: #198754; }
+      .bg-danger    { background-color: #dc3545; }
+      .bg-warning   { background-color: #ffc107; color: #000 !important; }
+      .bg-info      { background-color: #0dcaf0; color: #000 !important; }
+      .bg-light     { background-color: #f8f9fa; color: #000 !important; }
+      .bg-dark      { background-color: #212529; }
+
+      /* Callout boxes */
+      .callout {
+          background-color: #eef4fe;
+          border-left: 4px solid #0d6efd;
+          border-radius: 4px;
+          padding: 12px 16px;
+          color: #1a4a8a;
+          font-size: 14px;
+          margin: 20px 0;
+      }
+      .callout-warning {
+          background-color: #fff8e6;
+          border-left-color: #f59e0b;
+          color: #78350f;
+      }
+
+      .divider { border: none; border-top: 1px solid #e9ecef; margin: 24px 0; }
+      .fine-print { font-size: 13px; color: #6c757d; line-height: 1.5; }
+
+      /* Footer */
+      .email-footer {
+          background-color: #f8f9fa;
+          border-top: 1px solid #e9ecef;
+          padding: 20px 40px;
+          text-align: center;
+          font-size: 13px;
+          color: #6c757d;
+          line-height: 1.7;
+      }
+      .email-footer a { color: #6c757d; text-decoration: underline; }
+      .email-footer p { margin: 3px 0; }
+
+      /* ── Responsive ─────────────────────────────────────────────── */
+      @media (max-width: 480px) {
+          .email-header-overlay { padding: 16px 20px; }
+          .email-body { padding: 24px 20px; }
+          .email-footer { padding: 16px 20px; }
+      }
+
+      /* ── Dark mode ──────────────────────────────────────────────── */
+      @media (prefers-color-scheme: dark) {
+          body { background-color: #0d1117 !important; }
+
+          .email-outer { background-color: #0d1117 !important; }
+          .email-container { box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5) !important; }
+
+          .email-header {
+              background-color: #1a1d23 !important;
+              background-image: url('https://cdn.xivauth.net/static/images/email/header_night.png') !important;
+          }
+          .email-header-overlay { background-color: rgba(8, 12, 22, 0.72) !important; }
+          .email-logo {
+              color: #dee2e6 !important;
+          }
+
+          .email-body { background-color: #1e2128 !important; color: #dee2e6 !important; }
+          .email-body h1 { color: #f8f9fa !important; }
+          .email-body a:not(.btn-cta) { color: #6ea8fe !important; }
+
+          .callout { background-color: #1a2d4a !important; color: #93c5fd !important; }
+          .callout-warning { background-color: #2d2008 !important; color: #fcd34d !important; }
+          .divider { border-top-color: #2d3139 !important; }
+
+          .email-footer {
+              background-color: #13161d !important;
+              border-top-color: rgba(255, 255, 255, 0.08) !important;
+              color: rgba(255, 255, 255, 0.4) !important;
+          }
+          .email-footer a { color: rgba(255, 255, 255, 0.5) !important; }
+      }
+  </style>
+</head>
+<body>
+<div class="email-outer">
+  <div class="email-container">
+
+    <div class="email-header">
+      <div class="email-header-overlay">
+        <img class="email-logo" src="https://cdn.xivauth.net/static/images/email/header_logo.png" alt="XIVAuth">
+      </div>
+    </div>
+
+    <div class="email-body">
+      <%= yield %>
+    </div>
+
+    <div class="email-footer">
+      <p>&copy;2023&ndash;<%= DateTime.current.year %> XIVAuth and KazWolfe. All rights reserved.</p>
+      <p>
+        <%= link_to root_url, "XIVAuth" %>
+        &bull;
+        <a href="https://github.com/XIVAuth/XIVAuth">GitHub</a>
+        &bull;
+        <%= link_to discord_url, "Discord" %>
+      </p>
+      <p style="margin-top: 10px; font-size: 12px;">
+        This is a service communication from XIVAuth. If you were not expecting this email, you may ignore it.
+        You may also <a href="{{{ pm:unsubscribe }}}">unsubscribe</a> if you'd prefer to not receive any more emails from us.
+      </p>
+    </div>
+  </div>
+</div>
+</body>
 </html>
