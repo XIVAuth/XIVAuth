@@ -28,6 +28,6 @@ class ThemeManager {
     }
 }
 
-if (window.matchMedia && document.documentElement.hasAttribute("data-bs-theme")) {
+if (window.matchMedia != undefined && document.documentElement.hasAttribute("data-bs-theme")) {
     new ThemeManager();
 }

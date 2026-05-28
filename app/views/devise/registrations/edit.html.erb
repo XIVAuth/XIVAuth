@@ -13,8 +13,6 @@
       </div>
       <%= form_for(resource, as: resource_name, url: user_path, html: { method: :put, multipart: true }) do |f| %>
         <div class="card-body">
-          <%= render "devise/shared/error_messages", resource: resource %>
-
           <div class="mb-3">
             <p class="form-label fw-semibold mb-2">Profile Picture</p>
             <% avatar_source = params.dig(:user, :avatar_source).presence || (resource.avatar.present? ? "custom" : "gravatar") %>
