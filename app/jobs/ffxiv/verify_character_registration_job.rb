@@ -92,7 +92,7 @@ wait: 2.minutes) do |job, _error|
     end
 
     if match
-      registration.verify!("lodestone_code", clobber: true)
+      registration.verify!("lodestone_code", clobber: true, send_email: true)
       report_result("success")
       record_verify_metric("success")
     else
