@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="auto">
 <head>
-  <title><%= yield(:title).presence || 'XIVAuth' %></title>
+  <%= display_meta_tags site: 'XIVAuth', separator: '—', noindex: true %>
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
   <%= include_gon(nonce: content_security_policy_nonce) %>

@@ -1,6 +1,9 @@
+<% set_meta_tags title: "Create Account",
+                 description: "Create a new account on XIVAuth to manage your characters and access services!" %>
+
 <h2 class="mb-4">Register An Account</h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), data: {controller: "form--turnstile"}) do |f| %>
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), data: { controller: "form--turnstile" }) do |f| %>
   <div class="form-group field mb-2">
     <%= f.label :email, class: "form-label" %><br/>
     <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', placeholder: "#{eegg_random_npc_email}" %>

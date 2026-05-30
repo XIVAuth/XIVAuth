@@ -1,5 +1,5 @@
 <% status_text = Rack::Utils::HTTP_STATUS_CODES[status] || "HTTP Error #{status}" %>
-<% content_for :title, "XIVAuth — #{status}: #{status_text}" %>
+<% set_meta_tags title: "#{status}: #{status_text}" %>
 
 <div class="text-center">
   <p class="display-1 fw-bold text-muted mb-0"><%= status %></p>
