@@ -16,6 +16,7 @@ class Users::SessionsController < Devise::SessionsController
   # manually, not skipping this action would cause a "You are already signed
   # in." error message to be shown upon successful login.
   skip_before_action :require_no_authentication, only: [:create], raise: false
+  skip_before_action :allow_params_authentication!
 
   # CSRF tokens are part of the session, which we change on login. Oops!
   skip_before_action :verify_authenticity_token, only: [:create]
@@ -134,9 +135,9 @@ class Users::SessionsController < Devise::SessionsController
         if self.resource.mfa_enabled?
           reset_mfa_attempt!
           prompt_for_mfa(status_code: :unprocessable_content, pwned: pwned)
+        else
+          sign_in(resource_name, self.resource)
         end
-      else
-        # implicit; use devise default flow (password only)
       end
     elsif session["mfa"]
       @user = User.find(session["mfa"]["user_id"])
@@ -144,6 +145,8 @@ class Users::SessionsController < Devise::SessionsController
 
       authenticate_with_mfa
     end
+
+    # all other chains: fail authentication.
   end
 
   def other_sessions_list
