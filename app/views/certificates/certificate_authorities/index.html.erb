@@ -1,3 +1,6 @@
+<% set_meta_tags title: "Certificate Authorities",
+                 description: "Download XIVAuth's certificate authorities and related metadata." %>
+
 <% content_for(:page_header) do %>
   <div>
     <h1>Certificate Authorities</h1>
@@ -24,11 +27,11 @@
 
 <% if lower_environment? %>
   <div class="alert alert-info d-flex">
-      <i class="bi bi-info-circle-fill me-2"></i>
-      <div>
-        The certificate displayed below is only used in production. It is not part of the trust chain in development
-        or staging environments.
-      </div>
+    <i class="bi bi-info-circle-fill me-2"></i>
+    <div>
+      The certificate displayed below is only used in production. It is not part of the trust chain in development
+      or staging environments.
+    </div>
   </div>
 <% end %>
 
@@ -42,23 +45,23 @@
 <p>Verify the certificate using the fingerprints below before using it.</p>
 <table class="table table-sm table-borderless table-transparent mb-3">
   <tbody>
-    <tr>
-      <th scope="row" class="text-muted ps-0" style="width: 5rem">MD5</th>
-      <td><code>037e 27d1 aba9 eec1 09c1 f415 3a29 de42</code></td>
-    </tr>
-    <tr>
-      <th scope="row" class="text-muted ps-0">SHA1</th>
-      <td><code>6ae7 0907 005b c980 d8d9 a372 f07e f1dc 2027 7a37</code></td>
-    </tr>
-    <tr>
-      <th scope="row" class="text-muted ps-0">SHA256</th>
-      <td>
-        <code>
-          8121 ca12 401c 650e 9dbc 46a8 a638 1349<br>
-          1955 28d4 1e79 c7be 8e42 146f 67dc 2dad
-        </code>
-      </td>
-    </tr>
+  <tr>
+    <th scope="row" class="text-muted ps-0" style="width: 5rem">MD5</th>
+    <td><code>037e 27d1 aba9 eec1 09c1 f415 3a29 de42</code></td>
+  </tr>
+  <tr>
+    <th scope="row" class="text-muted ps-0">SHA1</th>
+    <td><code>6ae7 0907 005b c980 d8d9 a372 f07e f1dc 2027 7a37</code></td>
+  </tr>
+  <tr>
+    <th scope="row" class="text-muted ps-0">SHA256</th>
+    <td>
+      <code>
+        8121 ca12 401c 650e 9dbc 46a8 a638 1349<br>
+        1955 28d4 1e79 c7be 8e42 146f 67dc 2dad
+      </code>
+    </td>
+  </tr>
   </tbody>
 </table>
 <div class="btn-toolbar gap-2">
@@ -108,9 +111,12 @@
             <% end %>
           </td>
           <td><%= ca.allowed_certificate_types.map(&:titleize).join(", ") %></td>
-          <td><% if ca.expires_at %><span data-controller="utilities--hover-dt"
-                data-utilities--hover-dt-ts-value="<%= ca.expires_at.to_i %>"
-                data-utilities--hover-dt-format-value="datetime"><%= ca.expires_at.strftime("%Y-%m-%d %H:%M") %></span><% else %>-<% end %></td>
+          <td>
+            <% if ca.expires_at %><span data-controller="utilities--hover-dt"
+                                        data-utilities--hover-dt-ts-value="<%= ca.expires_at.to_i %>"
+                                        data-utilities--hover-dt-format-value="datetime"><%= ca.expires_at.strftime("%Y-%m-%d %H:%M") %></span>
+            <% else %>-
+            <% end %></td>
           <td>
             <% hex = ca.certificate_fingerprint.sub(/^\w+:/, "") %>
             <code class="small" title="<%= hex.scan(/../).join(":") %>">
