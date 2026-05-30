@@ -130,6 +130,7 @@ class Users::SessionsController < Devise::SessionsController
           respond_to do |format|
             format.html { render :new, status: :unprocessable_content }
           end
+          return
         end
 
         if self.resource.mfa_enabled?
@@ -138,6 +139,9 @@ class Users::SessionsController < Devise::SessionsController
         else
           sign_in(resource_name, self.resource)
         end
+      else
+        # Wrong password (confirmed): fallback to Warden's own behavior for devise compat.
+        allow_params_authentication!
       end
     elsif session["mfa"]
       @user = User.find(session["mfa"]["user_id"])
