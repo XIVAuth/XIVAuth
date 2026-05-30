@@ -42,7 +42,7 @@ jobs:
           bundler-cache: true
 
       # Set up NodeJS and dependencies
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 10
       - name: Setup Node
