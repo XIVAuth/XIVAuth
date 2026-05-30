@@ -26,8 +26,9 @@ gem "gon", "~> 7.0"
 
 # Asset management
 gem "aws-sdk-s3", "~> 1.0", require: false
-gem "image_processing", "~> 1.14"
+gem "image_processing", "~> 2.0"
 gem "marcel", "~> 1.0"
+gem "ruby-vips", "~> 2.0"
 gem "shrine", "~> 3.6"
 
 # JSON API
@@ -102,6 +103,7 @@ gem "rexml", "~> 3.4.2"
 
 # Helpers
 gem "browser", "~> 6.0"
+gem "meta-tags", "~> 2.23"
 gem "pagy", "~> 43.0"
 
 group :production do
