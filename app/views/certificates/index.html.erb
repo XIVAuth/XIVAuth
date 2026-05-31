@@ -8,7 +8,12 @@
     <% end %>
   </div>
   <div>
-    <p>X.509-compliant certificates issued to your account and verified characters.</p>
+    <p>
+      X.509-compliant certificates issued to your account and verified characters.
+      <%= link_to why_certificates_path do %>
+        <span class="small">(Why use this?)</span>
+      <% end %>
+    </p>
   </div>
 <% end %>
 

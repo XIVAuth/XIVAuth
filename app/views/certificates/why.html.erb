@@ -1,0 +1,108 @@
+<% content_for(:page_header) do %>
+  <div>
+    <h1>About XIVAuth Certificates</h1>
+    <p>Certificates are an advanced feature. Most users will never need them.</p>
+  </div>
+<% end %>
+
+<div class="alert alert-info">
+  <details>
+    <summary><strong>Document too long? Have a TL;DR!</strong></summary>
+    <p class="pt-2 mb-0">
+      Certificates allow you to use XIVAuth like a notary. You can use it to prove that something actually came from
+      you, or to make sure that only you can read some information sent to you. Since certificates can be verified
+      offline, they can unlock powerful use cases for building trust. However, it's important to keep in mind that
+      certificates are not a silver bullet. They're primarily intended for high-assurance or decentralized systems and
+      require careful implementation. Certificates are <strong>not</strong> a prerequisite for a system to be secure or
+      trustworthy, and there are good reasons to not use them.
+    </p>
+  </details>
+</div>
+
+<h2>What is a certificate?</h2>
+
+<p>
+  A certificate is, fundamentally, a digital or mathematical proof of an identity. Certificates have two major uses:
+  <em>signing</em> data (proving it came from you) and <em>encrypting</em> data (scrambling it so only the intended
+  recipient can read it). In the former case, a certificate is the functional equivalent of a wax seal on an official
+  document certifying it came from a specific entity. In the latter, the certificate is the equivalent of a lockbox and
+  key; anyone may place anything into a lockbox, but only the owner can open it.
+</p>
+
+<p>
+  When you create a certificate, your computer generates two mathematically linked keys: a private key and a public
+  key. The private key is kept secret and is known only to you (or your computer), while the public key can be shared
+  freely with anyone. Only the holder of the private key may sign (or "apply the seal") or decrypt ("open the lockbox")
+  data through the certificate.
+</p>
+
+<p>
+  XIVAuth acts as the authority that ties your public key to a verified character. When XIVAuth issues a certificate,
+  it is essentially saying <em>"we're vouching that this stamp or lockbox belongs to this character."</em> So long as
+  you trust XIVAuth to assert identities, and so long as you trust that your private key has not been stolen, you have
+  implicit trust in that certificate.
+</p>
+
+<p>
+  Certificates, however, have another special property: they can be verified fully offline and independently. This means
+  that any data signed by a certificate can be independently verified by anyone without involving XIVAuth at all. This
+  allows for trust relationships to be created quickly and efficiently and allows users to sign data without needing
+  to reach back to XIVAuth.
+</p>
+
+<h2 class="pt-3">Why would I use a certificate?</h2>
+
+Certificates have a few uses in the XIVAuth ecosystem. Ultimately, the system is flexible enough to allow developers to
+create all sorts of interesting applications, but a few key examples are listed below:
+
+<ul>
+  <li class="my-3">
+    <strong>Proving data came from your character.</strong><br>
+    By signing some data with your certificate, other parties can trust that it came from you and not from a third
+    party. This is particularly useful for proving ownership (or authenticity) of data: a digitally signed message in
+    your name means that you are the one who wrote it.
+  </li>
+  <li class="my-3">
+    <strong>Encrypting data for others.</strong><br>
+    If you have a copy of a certificate for another player, you can encrypt data that only they can read. This allows
+    the creation of secure channels for information without permitting eavesdropping by third parties. As an example,
+    you can send a private message to another character and keep it truly private.
+  </li>
+  <li class="my-3">
+    <strong>Authenticating to a service.</strong><br>
+    Some services may choose to use a certificate for authentication purposes instead of a username and password.
+    Since certificates tend to have reasonably long lives and private keys cannot be guessed, anyone holding a
+    certificate can prove who they are.
+  </li>
+</ul>
+
+<h2 class="pt-3">What's the downside?</h2>
+
+<div class="alert alert-warning">
+  Certificates are a very powerful and capable tool, but one that must be handled with care. The use of a certificate
+  does not automatically imply that a system is secure, or that it's implemented properly. Likewise, the absence of
+  certificate-based systems does not mean a system is insecure; there are many valid reasons for service owners to not
+  want (or need) to implement certificates.
+</div>
+
+<p>
+  While certificates are powerful, they do have practical limitations. Most critically, they rely on two key principles
+  to remain true: the certificate issuer (in this case, XIVAuth) must be trustworthy, and the certificate holder (in 
+  this case, the user) must retain sole control of their private key. If either of these conditions are violated, the 
+  certificate should not be considered trustworthy. 
+</p>
+
+<p>
+  Certificates are also not the right tool for every situation, and a service that does not use them is not less
+  secure for it. Most services have a central point of trust already: the service itself. If you are willing to trust
+  that the service will play fair, certificates add complexity without much practical benefit. The value shows up in
+  decentralized or high-assurance systems where there is no single trusted server, or where you explicitly cannot rely
+  on a middleman to handle things honestly. In those cases, certificates let you verify things end-to-end, independent
+  of any service in between.
+</p>
+
+<hr>
+
+<p class="text-muted">
+  Developers interested in building with XIVAuth certificates should refer to the developer documentation.
+</p>

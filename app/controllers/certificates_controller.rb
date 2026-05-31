@@ -2,10 +2,11 @@ class CertificatesController < ApplicationController
   layout "portal/base"
 
   before_action :set_certificate, only: %i[show revoke]
+  skip_before_action :authenticate_user!, only: %i[why]
 
   def index
     @certificates = accessible_certificates.includes(subject: :character,
-                                                     requesting_application: { }).order(issued_at: :desc)
+                                                     requesting_application: {}).order(issued_at: :desc)
   end
 
   def show
@@ -14,12 +15,12 @@ class CertificatesController < ApplicationController
       format.pem do
         send_data @certificate.certificate_pem,
                   type: "application/x-pem-file", disposition: "attachment",
-                        filename: "#{@certificate.id}.pem"
+                  filename: "#{@certificate.id}.pem"
       end
       format.der do
         send_data OpenSSL::X509::Certificate.new(@certificate.certificate_pem).to_der,
                   type: "application/pkix-cert", disposition: "attachment",
-                        filename: "#{@certificate.id}.der"
+                  filename: "#{@certificate.id}.der"
       end
     end
   end
@@ -41,6 +42,12 @@ class CertificatesController < ApplicationController
     redirect_to certificate_path(@certificate), alert: "Could not revoke certificate."
   end
 
+  def why
+    respond_to do |format|
+      format.html { render layout: set_layout }
+    end
+  end
+
   private def set_certificate
     @certificate = PKI::IssuedCertificate.find(params.expect(:id))
     authorize! :read, @certificate
@@ -52,5 +59,9 @@ class CertificatesController < ApplicationController
     char_cert_ids = PKI::IssuedCertificate.where(subject_type: "CharacterRegistration", subject_id: cr_ids)
 
     PKI::IssuedCertificate.where(id: user_cert_ids).or(PKI::IssuedCertificate.where(id: char_cert_ids))
+  end
+
+  private def set_layout
+    user_signed_in? ? "portal/page" : "marketing/page"
   end
 end
