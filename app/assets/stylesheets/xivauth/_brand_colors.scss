@@ -10,11 +10,19 @@ $brand-colors: (
   .btn-social-#{$brand} {
     color: #ffffff;
     background-color: $color;
-  }
 
-  .btn-social-#{$brand}:hover {
-    color: $color;
-    background-color: var(--bs-body-bg);
-    border: 1px solid $color;
+    &:hover {
+      color: #ffffff;
+      background-color: $color;
+
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($color, 0.5);
+    }
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 6px rgba($color, 0.4);
+      filter: brightness(0.95);
+    }
   }
 }

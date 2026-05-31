@@ -8,6 +8,7 @@
 
 .ts-control > input {
   color: var(--bs-body-color);
+  min-width: 3rem;
 }
 
 .ts-wrapper:not(.form-control):not(.form-select).single .ts-control,
@@ -23,9 +24,11 @@
   }
 }
 
-.ts-wrapper.multi .ts-control > div {
-  background-color: var(--bs-secondary-bg);
-  color: var(--bs-body-color);
+.ts-wrapper.multi .ts-control {
+  & > div {
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+  }
 }
 
 .ts-dropdown {

@@ -1,6 +1,6 @@
-<div class="ms-3">
-  <label for="social_identity_selector">Share the following:</label>
-  <select class="form-select" name="social_identities[]" id="social_identity_selector" data-controller="oauth--identity-select" multiple>
+<div class="ms-2 me-4">
+  <select class="form-select" name="social_identities[]" id="social_identity_selector"
+          data-controller="oauth--identity-select"  multiple>
     <% @current_resource_owner.social_identities.each do |identity| %>
       <option value="<%= identity.id %>" selected data-identity-provider="<%= identity.provider %>"
               data-identity-display-name="<%= identity.friendly_name %>"
@@ -11,7 +11,7 @@
     <% end %>
   </select>
 
-  <div class="form-check form-switch">
+  <div class="form-check form-switch mt-1">
     <%= check_box_tag :share_new_identities, true, checked: true, class: 'form-check-input' %>
     <%= label_tag :share_new_identities, class: "form-check-label" do %>
       Automatically share any new linked accounts

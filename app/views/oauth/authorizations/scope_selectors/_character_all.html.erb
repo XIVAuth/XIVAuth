@@ -1,5 +1,4 @@
-<div class="ms-3">
-  <label for="character_selector">Share the following:</label>
+<div class="ms-2 me-4">
   <select name="characters[]" id="character_selector" data-controller="oauth--character-select"
           placeholder="Add a character..." multiple autocomplete="off">
     <% @current_resource_owner.character_registrations.verified.each do |registration| %>

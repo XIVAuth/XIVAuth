@@ -1,11 +1,11 @@
-<div class="card-header bg-transparent">
-  <div class="d-flex justify-content-center pad-2 pb-2 align-self-center">
+<div class="card-header bg-transparent pt-3 pb-0">
+  <div class="d-flex justify-content-center py-2 align-self-center">
     <%= image_tag current_user.avatar_url, class: "img-fluid avatar avatar-50 rounded align-self-center", width: 72 %>
-    <span class="px-2 align-self-center"><i class="bi bi-three-dots"></i></span>
+    <span class="px-3 align-self-center"><i class="bi bi-three-dots display-6 text-muted"></i></span>
     <%= image_tag client_application.icon_url, class: "img-fluid avatar avatar-50 rounded align-self-center", width: 72, height: 72 %>
   </div>
 
-  <h4 class="text-center">
+  <h4 class="text-center mb-0">
     <%= local_assigns[:action_prefix] || 'Connect to' %> <%= client_application.name %>
     <% if client_application.verified? %>
       <i class="bi bi-patch-check-fill text-success" title="App verified by XIVAuth"></i>

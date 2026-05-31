@@ -42,9 +42,9 @@
 @import "bootstrap/scss/utilities/api";
 
 // Libs
-@import 'tom-select/src/scss/tom-select';
+// @import 'tom-select/src/scss/tom-select';
 @import 'tom-select/src/scss/tom-select.bootstrap5';
-@import 'components/tom-select-dark';
+@import 'components/tom-select';
 
 // cache buster because things are annoying
 :root {

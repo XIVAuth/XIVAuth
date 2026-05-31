@@ -69,6 +69,8 @@ body > .container:not(.toast-container) {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+  position: sticky;
+  top: 0;
   z-index: -10;
 
   background-image: url("/backgrounds/limsa_day.png");

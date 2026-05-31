@@ -3,30 +3,33 @@
 
 <%= form_tag oauth_authorization_path, method: :post, data: { turbo: "false" } do %>
   <%= render partial: 'auth_card_header', locals: { client_application: client_application, action_prefix: "Connect to" } %>
-  <div class="card-body">
+  <div class="card-body pt-0 px-4">
     <main role="main">
-      <p><%= client_application.name %> wants to use your XIVAuth account to log in.</p>
+      <p class="mb-3"><%= client_application.name %> wants to use your XIVAuth account to log in.</p>
 
       <% if @pre_auth.scopes.count > 0 %>
         <div id="oauth-permissions">
-          <p>This app is requesting permission to:</p>
+          <p class="mb-0">This app is requesting permission to:</p>
 
-          <ul>
+          <ul class="list-unstyled mb-0 px-2">
             <% @pre_auth.scopes.each do |scope| %>
-              <li>
-              <span title="<%= t(:description, scope: ["xivauth", "oauth_scopes", scope], default: "") %>">
-                <%= t(:consent, scope: ["xivauth", "oauth_scopes", scope], default: scope.humanize.titleize) %>
-              </span>
-                <% case scope %>
-                <% when 'character' %>
-                  <%= render 'oauth/authorizations/scope_selectors/character' %>
-                <% when 'character:all' %>
-                  <%= render 'oauth/authorizations/scope_selectors/character_all' %>
-                <% when 'user:social' %>
-                  <%= render 'oauth/authorizations/scope_selectors/social_identity' %>
-                <% else
-                     nil %>
-                <% end %>
+              <li class="d-flex align-items-start gap-2 py-1">
+                <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+                <div class="w-100">
+                  <span title="<%= t(:description, scope: ["xivauth", "oauth_scopes", scope], default: "") %>">
+                    <%= t(:consent, scope: ["xivauth", "oauth_scopes", scope], default: scope.humanize.titleize) %>
+                  </span>
+                  <% case scope %>
+                  <% when 'character' %>
+                    <%= render 'oauth/authorizations/scope_selectors/character' %>
+                  <% when 'character:all' %>
+                    <%= render 'oauth/authorizations/scope_selectors/character_all' %>
+                  <% when 'user:social' %>
+                    <%= render 'oauth/authorizations/scope_selectors/social_identity' %>
+                  <% else
+                       nil %>
+                  <% end %>
+                </div>
               </li>
             <% end %>
           </ul>
@@ -43,14 +46,18 @@
       <%= hidden_field_tag :code_challenge_method, @pre_auth.code_challenge_method, id: nil %>
     </main>
   </div>
-  <div class="card-footer bg-transparent pt-0">
-    <div class="actions d-flex gap-2">
-      <%= button_tag t('doorkeeper.authorizations.buttons.deny'), type: "submit",
-                     class: 'btn btn-outline-danger btn-lg col-6',
-                     name: 'disposition', value: 'deny' %>
-      <%= button_tag t('doorkeeper.authorizations.buttons.authorize'), type: "submit",
-                     class: 'btn btn-success btn-lg col-6',
-                     name: 'disposition', value: 'authorize' %>
+  <div class="card-footer bg-transparent py-0">
+    <div class="actions row g-2">
+      <div class="col-6">
+        <%= button_tag t('doorkeeper.authorizations.buttons.deny'), type: "submit",
+                       class: 'btn btn-outline-secondary btn-lg w-100',
+                       name: 'disposition', value: 'deny' %>
+      </div>
+      <div class="col-6">
+        <%= button_tag t('doorkeeper.authorizations.buttons.authorize'), type: "submit",
+                       class: 'btn btn-success btn-lg w-100',
+                       name: 'disposition', value: 'authorize' %>
+      </div>
     </div>
 
     <div class="text-muted text-center small mt-3">
