@@ -11,11 +11,6 @@
   min-width: 3rem;
 }
 
-.ts-wrapper:not(.form-control):not(.form-select).single .ts-control,
-.ts-wrapper.single:not(.form-control):not(.form-floating.form__text-area):not(.form-select) .ts-control {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23495057' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-}
-
 .ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
   border-inline-start-color: var(--bs-border-color);
 
