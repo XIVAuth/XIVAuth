@@ -1,55 +1,39 @@
-[data-bs-theme="dark"]
-{
-  .ts-control,
-  .full .ts-control,
-  .ts-wrapper.single.input-active .ts-control
-  {
-    background-color: var(--bs-body-bg);
-    border: var(--bs-border-width) solid var(--bs-border-color);
-    color: var(--bs-body-color);
+.ts-control,
+.full .ts-control,
+.ts-wrapper.single.input-active .ts-control {
+  background-color: var(--bs-body-bg);
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+.ts-control > input {
+  color: var(--bs-body-color);
+}
+
+.ts-wrapper:not(.form-control):not(.form-select).single .ts-control,
+.ts-wrapper.single:not(.form-control):not(.form-floating.form__text-area):not(.form-select) .ts-control {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23495057' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
+  border-inline-start-color: var(--bs-border-color);
+
+  &:hover {
+    background-color: var(--bs-secondary-bg);
   }
+}
 
-  .ts-control > input
-  {
-    color: var(--bs-body-color);
-  }
+.ts-wrapper.multi .ts-control > div {
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
 
-  .ts-wrapper:not(.form-control):not(.form-select).single .ts-control,
-  .ts-wrapper.single:not(.form-control):not(.form-floating.form__text-area):not(.form-select) .ts-control
-  {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23495057' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-  }
+.ts-dropdown {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
 
-  .ts-wrapper.plugin-remove_button:not(.rtl) .item .remove
-  {
-    border-inline-start-color: var(--bs-border-color);
-
-    &:hover
-    {
-      background-color: var(--bs-secondary-active-bg);
-    }
-  }
-
-  .ts-wrapper.multi .ts-control > div
-  {
+  .active {
     background-color: var(--bs-secondary-active-bg);
     color: var(--bs-white);
-  }
-
-  .ts-dropdown
-  {
-    background-color: var(--bs-body-bg);
-    color: var(--bs-body-color);
-
-    .active
-    {
-      background-color: var(--bs-secondary-active-bg);
-      color: var(--bs-white);
-    }
-
-    [data-selectable] .highlight
-    {
-      // background: #ff00ff;
-    }
   }
 }

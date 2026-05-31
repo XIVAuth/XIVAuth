@@ -108,7 +108,7 @@ class Api::V1::CharactersController < Api::V1::ApiController
 
   def lodestone
     character = @registration.character
-    force_fresh = params[:force_fresh].present? && current_client_app.entitlement_granted?(:internal)
+    force_fresh = params[:force_fresh].present? && current_client_app.entitlement_granted?(:flarestone_force_fresh)
     profile = FFXIV::LodestoneProfile.new(character.lodestone_id, force_fresh: force_fresh)
 
     character.refresh_from_lodestone(profile)

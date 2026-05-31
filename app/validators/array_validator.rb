@@ -1,3 +1,6 @@
+# Sourced from: 
+# https://gist.github.com/justalever/73a1b36df8468ec101f54381996fb9d1
+
 class ArrayValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, values)
     Array(values).each do |value|

@@ -1,4 +1,4 @@
-import {RecursivePartial, TomOption, TomSettings} from "tom-select/dist/types/types";
+import {RecursivePartial, TomOption, TomSettings} from "tom-select/src/types";
 import {escape_html} from "tom-select/src/utils";
 import TomSelectController from "../form/tomselect_controller_base";
 

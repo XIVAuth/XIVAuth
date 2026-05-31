@@ -5,7 +5,7 @@
 
 <% content_for :page_layout do %>
   <div class="wrapper">
-    <% if (bg = @client_application&.verified? && @client_application.oauth_background) %>
+    <% if (bg = @client_application.can_use_custom_background? && @client_application.oauth_background) %>
       <div class="oauth-consent-backdrop full-backdrop" style="background-image: url('<%= bg.url(derivative: :hd) %>')"></div>
     <% else %>
       <div class="oauth-consent-backdrop full-backdrop"></div>

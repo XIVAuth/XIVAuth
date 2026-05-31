@@ -85,7 +85,9 @@
               <i class="bi bi-patch-check-fill text-success"></i> Application was verified.
             </div>
           </div>
+        <% end %>
 
+        <% if @application.can_use_custom_background? %>
           <div class="mb-3">
             <%= f.label :oauth_background, "OAuth Consent Background", class: "form-label fw-semibold" %>
             <div class="d-flex align-items-start gap-3">

@@ -1,6 +1,13 @@
 class ClientApplication < ApplicationRecord
   include HasUploadAttachment
 
+  ENTITLEMENTS = [
+    :code_signing_certificates,  # Allowed to issue code signing certificates.
+    :custom_background,          # Allowed to use a custom OAuth background. Automatic for verified apps.
+    :flarestone_force_fresh,     # Allowed to bypass Flarestone caches.
+    :internal                    # Allowed to use scopes tagged as "internal."
+  ].freeze
+
   has_upload_attachment :icon,
                         content_types: %w[image/png image/jpeg image/webp image/gif],
                         max_size: 2.megabytes,
@@ -47,6 +54,8 @@ class ClientApplication < ApplicationRecord
   validates_associated :profile
   accepts_nested_attributes_for :profile, update_only: true
 
+  validates :entitlements, array: { inclusion: { in: ENTITLEMENTS.map(&:to_s) } }
+
   validate :validate_owner_has_mfa, on: :create
   validate :validate_oauth_background_requires_verification
 
@@ -90,8 +99,13 @@ class ClientApplication < ApplicationRecord
     entitlements.include?(name.to_s)
   end
 
+  def can_use_custom_background?
+    verified? || entitlement_granted?(:custom_background)
+  end
+
   def validate_oauth_background_requires_verification
-    return if verified? || oauth_background.nil? || oauth_background.persisted?
+    return if can_use_custom_background?
+    return if oauth_background.nil? || oauth_background.persisted?
 
     errors.add(:oauth_background, :unverified, message: "can only be set on verified applications.")
   end

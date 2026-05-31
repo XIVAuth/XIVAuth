@@ -1,6 +1,6 @@
 import TomSelect from "tom-select";
 import {Controller} from "@hotwired/stimulus";
-import {RecursivePartial, TomSettings} from "tom-select/dist/types/types";
+import {RecursivePartial, TomSettings} from "tom-select/src/types";
 
 export default abstract class TomSelectController extends Controller<HTMLSelectElement> {
     protected tomSelect?: TomSelect = undefined;
