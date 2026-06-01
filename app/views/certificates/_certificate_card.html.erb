@@ -73,12 +73,16 @@
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
                 <%= link_to certificate_path(certificate, format: :pem), class: "dropdown-item" do %>
-                  <i class="bi bi-file-earmark-text"></i> PEM Format
+                  <span class="d-block">
+                    <i class="bi bi-file-earmark-text"></i> PEM Format
+                  </span>
                 <% end %>
               </li>
               <li>
                 <%= link_to certificate_path(certificate, format: :der), class: "dropdown-item" do %>
-                  <i class="bi bi-file-earmark-binary"></i> DER Format
+                  <span class="d-block">
+                    <i class="bi bi-file-earmark-binary"></i> DER Format
+                  </span>
                 <% end %>
               </li>
             </ul>
