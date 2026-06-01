@@ -8,12 +8,16 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     doorkeeper_authorize! "certificate", "certificate:all", "certificate:issue", "certificate:revoke",
                           "certificate:manage"
   end
+  before_action(only: %i[request_cert revoke]) do
+    render json: {error: "Certificate issuance disabled"}, status: :service_unavailable unless Rails.env.development?
+  end
+
   before_action(only: %i[request_cert]) { doorkeeper_authorize! "certificate:issue", "certificate:manage" }
   before_action(only: %i[revoke]) { doorkeeper_authorize! "certificate:revoke", "certificate:manage" }
 
   def index
     @certificates = accessible_certificates.includes(subject: :character,
-                                                     requesting_application: { }).order(issued_at: :desc)
+                                                     requesting_application: {}).order(issued_at: :desc)
     render json: @certificates
   end
 
@@ -31,12 +35,12 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     # Validate certificate type exists
     policy_class = PKI::IssuancePolicy.registry[certificate_type]
     unless policy_class
-      return render json: { error: "Unknown certificate_type '#{certificate_type}'" }, status: :bad_request
+      return render json: {error: "Unknown certificate_type '#{certificate_type}'"}, status: :bad_request
     end
 
     # Check that the application has permission to issue this certificate type
     unless can?(:issue, policy_class)
-      return render json: { error: "Application is not authorized to issue '#{certificate_type}' certificates" },
+      return render json: {error: "Application is not authorized to issue '#{certificate_type}' certificates"},
                     status: :forbidden
     end
 
@@ -61,14 +65,14 @@ class Api::V1::CertificatesController < Api::V1::ApiController
       current_user.profile.set_feature_enabled!(:certificate_management, true)
     else
       # result is an invalid policy - return its errors
-      render json: { errors: result.errors.full_messages }, status: :unprocessable_content
+      render json: {errors: result.errors.full_messages}, status: :unprocessable_content
     end
   rescue PKI::CertificateAuthority::NoCertificateAuthorityError => e
-    render json: { error: e.message }, status: :service_unavailable
+    render json: {error: e.message}, status: :service_unavailable
   rescue PKI::CertificateIssuanceService::IssuanceError => e
-    render json: { error: e.message }, status: :unprocessable_content
+    render json: {error: e.message}, status: :unprocessable_content
   rescue ActionController::ParameterMissing => e
-    render json: { error: e.message }, status: :bad_request
+    render json: {error: e.message}, status: :bad_request
   end
 
   def revoke
@@ -92,7 +96,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     @certificate.revoke!(reason: reason)
     head :no_content
   rescue ActionController::ParameterMissing => e
-    render json: { error: e.message }, status: :bad_request
+    render json: {error: e.message}, status: :bad_request
   end
 
   private def set_certificate
@@ -111,7 +115,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     when "code_signing"
       resolve_code_signing_subject
     else
-      render json: { error: "Subject resolution not supported for certificate type '#{certificate_type}'" },
+      render json: {error: "Subject resolution not supported for certificate type '#{certificate_type}'"},
              status: :bad_request
       nil
     end
@@ -120,7 +124,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   # user_identification: always the current user; no subject params needed.
   private def resolve_user_subject
     unless user_scope_granted?
-      render json: { error: "User scope required for certificate issuance" }, status: :forbidden
+      render json: {error: "User scope required for certificate issuance"}, status: :forbidden
       return
     end
 
@@ -130,7 +134,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   # character_identification: requires subject_id (Lodestone ID of target character).
   private def resolve_character_subject
     unless character_scope_granted?
-      render json: { error: "Character scope required for certificate issuance" }, status: :forbidden
+      render json: {error: "Character scope required for certificate issuance"}, status: :forbidden
       return
     end
 
@@ -147,7 +151,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   #   subject_id:   UUID of the subject (required when subject_type is present)
   private def resolve_code_signing_subject
     unless user_scope_granted?
-      render json: { error: "User scope required for certificate issuance" }, status: :forbidden
+      render json: {error: "User scope required for certificate issuance"}, status: :forbidden
       return
     end
 
@@ -159,7 +163,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
 
     # Both must be present if either is given
     if subject_type.blank? || subject_id.blank?
-      render json: { error: "Both subject_type and subject_id are required for code_signing certificates" },
+      render json: {error: "Both subject_type and subject_id are required for code_signing certificates"},
              status: :bad_request
       return
     end
@@ -167,19 +171,19 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     case subject_type
     when "User"
       unless subject_id == current_user.id
-        render json: { error: "Cannot issue certificates for other users" }, status: :forbidden
+        render json: {error: "Cannot issue certificates for other users"}, status: :forbidden
         return
       end
       current_user
     when "Team"
       team = current_user.teams_by_membership_scope(:admins).find_by(id: subject_id)
       unless team
-        render json: { error: "Team not found or insufficient permissions" }, status: :not_found
+        render json: {error: "Team not found or insufficient permissions"}, status: :not_found
         return
       end
       team
     else
-      render json: { error: "Invalid subject_type '#{subject_type}' for code_signing certificates" },
+      render json: {error: "Invalid subject_type '#{subject_type}' for code_signing certificates"},
              status: :bad_request
       nil
     end
@@ -199,7 +203,7 @@ class Api::V1::CertificatesController < Api::V1::ApiController
 
     conditions = []
 
-    conditions << { subject_type: "User", subject_id: current_user.id } if user_scope_granted?
+    conditions << {subject_type: "User", subject_id: current_user.id} if user_scope_granted?
 
     if character_scope_granted?
       authorized_character_ids = authorized_character_registrations(only_verified: true).pluck(:id)
