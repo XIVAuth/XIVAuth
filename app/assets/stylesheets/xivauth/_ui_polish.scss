@@ -177,6 +177,12 @@
   }
 
   .dropdown-item {
+    --dropdown-item-color-rgb: var(--bs-primary-rgb);
+
+    @each $color in primary, secondary, success, danger, warning, info {
+      &.text-#{$color} { --dropdown-item-color-rgb: var(--bs-#{$color}-rgb); }
+    }
+
     transition: all 0.15s ease-in-out;
 
     &:hover {
@@ -186,19 +192,11 @@
       }
 
       [data-bs-theme="light"] & {
-        background: linear-gradient(
-                        to right,
-                        rgba(var(--bs-primary-rgb), 0.1),
-                        transparent
-        );
+        background: linear-gradient(to right, rgba(var(--dropdown-item-color-rgb), 0.1), transparent);
       }
 
       [data-bs-theme="dark"] & {
-        background: linear-gradient(
-                        to right,
-                        rgba(var(--bs-primary-rgb), 0.2),
-                        transparent
-        );
+        background: linear-gradient(to right, rgba(var(--dropdown-item-color-rgb), 0.2), transparent);
       }
     }
   }

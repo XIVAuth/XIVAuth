@@ -60,7 +60,6 @@
   // Enhanced top border with subtle glow effect
   border-top-width: 4px;
   position: relative;
-  overflow: hidden;
 
   // Avatar enhancement
   img.rounded {
@@ -115,6 +114,12 @@
 .row > [class*="col-"]:has(.card) {
   animation: slideUp 0.15s ease-out;
   animation-fill-mode: both;
+
+  // slideUp ends on transform: translateY(0), which keeps a stacking context alive via fill-mode.
+  // Elevate the column when a dropdown is open so it renders above sibling columns.
+  &:has(.dropdown-menu.show) {
+    z-index: 10;
+  }
 
   @for $i from 1 through 12 {
     &:nth-child(#{$i}) {
