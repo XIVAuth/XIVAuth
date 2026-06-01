@@ -77,9 +77,13 @@
 
 <h3 class="mb-3">Issuing CAs</h3>
 <p>
-  XIVAuth issues end-entity certificates from intermediate CAs, which are signed by XIVAuth's Root CA. Intermediate CA
-  references are embedded in AIA extensions on all issued certificates, but are also available for direct download
-  below.
+  Certificates issued directly to end users via the <%= link_to "My Certificates", certificates_path %> page will use
+  an intermediate CA signed by XIVAuth's Root CA. These certificates should be accepted anywhere XIVAuth's CA is
+  considered trusted. Application-specific certificates will be issued by the configured CA for that application.
+</p>
+<p>
+  Intermediate CA references are embedded in AIA extensions on all issued certificates, but are also available for
+  direct download below.
 </p>
 
 <% if @certificate_authorities.empty? %>

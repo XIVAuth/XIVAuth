@@ -1,7 +1,7 @@
 class CertificatesController < ApplicationController
   layout "portal/base"
 
-  before_action :set_certificate, only: %i[show revoke]
+  before_action :set_certificate, only: %i[show revoke destroy]
   skip_before_action :authenticate_user!, only: %i[why]
 
   def index
@@ -40,6 +40,16 @@ class CertificatesController < ApplicationController
     redirect_to certificates_path, notice: "Certificate revoked."
   rescue ActiveRecord::RecordInvalid
     redirect_to certificate_path(@certificate), alert: "Could not revoke certificate."
+  end
+
+  def destroy
+    authorize! :revoke, @certificate
+
+    if @certificate.destroy
+      redirect_to certificates_path, notice: "Certificate deleted."
+    else
+      redirect_to certificate_path(@certificate), alert: "Could not delete certificate."
+    end
   end
 
   def why

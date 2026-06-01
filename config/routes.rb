@@ -44,7 +44,11 @@ Rails.application.routes.draw do
 
   # Top-level /certificates (UI + PKI infrastructure)
   resources :certificates, only: %i[index show] do
-    member { post :revoke }
+    member do
+      post :revoke
+      delete :destroy, as: :destroy if Rails.env.development?
+    end
+
     collection do
       post :ocsp, controller: "certificates/ocsp", action: :respond
       # RFC 6960 §A.1: OCSP over HTTP GET - base64url-encoded DER in path

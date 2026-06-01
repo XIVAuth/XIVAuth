@@ -11,12 +11,19 @@
         </ol>
       </nav>
     </div>
-    <% if @certificate.active? %>
-      <%= button_to revoke_certificate_path(@certificate), method: :post, class: "btn btn-danger",
-                    data: { turbo_stream: "remote_modal" } do %>
-        <i class="bi bi-shield-x"></i> Revoke
+    <div class="d-flex gap-2">
+      <% if @certificate.active? %>
+        <%= button_to revoke_certificate_path(@certificate), method: :post, class: "btn btn-danger",
+                      data: { turbo_stream: "remote_modal" } do %>
+          <i class="bi bi-shield-x"></i> Revoke
+        <% end %>
       <% end %>
-    <% end %>
+      <% if Rails.env.development? %>
+        <%= button_to destroy_certificate_path(@certificate), method: :delete, class: "btn btn-danger" do %>
+          <i class="bi bi-trash"></i> Delete
+        <% end %>
+      <% end %>
+    </div>
   </div>
 <% end %>
 
@@ -50,13 +57,15 @@
 
           <dt class="col-sm-4">Issued At</dt>
           <dd class="col-sm-8"><span data-controller="utilities--hover-dt"
-              data-utilities--hover-dt-ts-value="<%= @certificate.issued_at.to_i %>"
-              data-utilities--hover-dt-format-value="datetime"><%= @certificate.issued_at.to_fs(:long) %></span></dd>
+                                     data-utilities--hover-dt-ts-value="<%= @certificate.issued_at.to_i %>"
+                                     data-utilities--hover-dt-format-value="datetime"><%= @certificate.issued_at.to_fs(:long) %></span>
+          </dd>
 
           <dt class="col-sm-4">Expires At</dt>
           <dd class="col-sm-8"><span data-controller="utilities--hover-dt"
-              data-utilities--hover-dt-ts-value="<%= @certificate.expires_at.to_i %>"
-              data-utilities--hover-dt-format-value="datetime"><%= @certificate.expires_at.to_fs(:long) %></span></dd>
+                                     data-utilities--hover-dt-ts-value="<%= @certificate.expires_at.to_i %>"
+                                     data-utilities--hover-dt-format-value="datetime"><%= @certificate.expires_at.to_fs(:long) %></span>
+          </dd>
 
           <% if @certificate.revoked? %>
             <dt class="col-sm-4">Revoked At</dt>
@@ -106,10 +115,10 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="mb-0"><i class="bi bi-file-text"></i> Certificate Data</h3>
         <div class="btn-toolbar gap-2">
-          <%= link_to certificate_path(@certificate, format: :pem), class: "btn btn-sm btn-outline-primary" do %>
+          <%= link_to certificate_path(@certificate, format: :pem), class: "btn btn-primary" do %>
             <i class="bi bi-download"></i> PEM
           <% end %>
-          <%= link_to certificate_path(@certificate, format: :der), class: "btn btn-sm btn-outline-primary" do %>
+          <%= link_to certificate_path(@certificate, format: :der), class: "btn btn-outline-primary" do %>
             <i class="bi bi-download"></i> DER
           <% end %>
         </div>

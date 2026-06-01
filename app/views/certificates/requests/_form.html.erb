@@ -11,13 +11,15 @@
     </div>
   <% end %>
 
-  <div class="alert alert-primary d-flex">
-    <i class="bi bi-info-circle-fill me-2"></i>
-    <div>
-      Please ensure you've read through the <%= link_to "Why Certificates", why_certificates_path, target: "_blank" %>
-      page to understand the principles of certificates before requesting one.
+  <% unless current_user.any_certificates? %>
+    <div class="alert alert-primary d-flex">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <div>
+        Please read through the <%= link_to "Why Certificates", why_certificates_path, target: "_blank" %> page to
+        understand the principles of certificates before requesting one.
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <div class="mb-3">
     <label class="form-label fw-semibold">Certificate Type</label>

@@ -29,7 +29,7 @@ class User < ApplicationRecord
          :validatable, :omniauthable
   devise :pwned_password unless Rails.env.local?
 
-  validates :email, exclusion: { in: Users::SessionsHelper::RANDOM_NPC_EMAILS, message: " is an NPC's email.... Nice try." }
+  validates :email, exclusion: {in: Users::SessionsHelper::RANDOM_NPC_EMAILS, message: " is an NPC's email.... Nice try."}
   validates :email, email: true
   validates :unconfirmed_email, email: true, allow_blank: true
 
@@ -129,9 +129,16 @@ class User < ApplicationRecord
     end
   end
 
+  # Check if the user has any certificates, either directly or owned by one of their characters.
+  def any_certificates?
+    active = PKI::IssuedCertificate.active
+    active.where(subject: [ self, *character_registrations.verified ])
+          .exists?
+  end
+
   # Get the list of providers that can be used for authentication purposes.
   def self.omniauth_login_providers
-    social_only_providers = [:patreon]
+    social_only_providers = [ :patreon ]
 
     omniauth_providers - social_only_providers
   end
