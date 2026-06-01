@@ -1,0 +1,5 @@
+<%= turbo_stream.append "body" do %>
+  <%= render "container" do %>
+    <%= render "modal_form", cert_request: @request %>
+  <% end %>
+<% end %>

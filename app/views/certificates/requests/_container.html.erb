@@ -1,0 +1,9 @@
+<%= turbo_frame_tag "certificate_request_modal", target: "_top" do %>
+  <div class="modal fade" tabindex="-1" data-controller="utilities--remote-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" id="certificate_request_modal-content">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+<% end %>

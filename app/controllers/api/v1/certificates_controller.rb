@@ -16,8 +16,8 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   before_action(only: %i[revoke]) { doorkeeper_authorize! "certificate:revoke", "certificate:manage" }
 
   def index
-    @certificates = accessible_certificates.includes(subject: :character,
-                                                     requesting_application: {}).order(issued_at: :desc)
+    @certificates = accessible_certificates.includes(subject: :character, requesting_application: { })
+                                           .order(issued_at: :desc)
     render json: @certificates
   end
 
@@ -47,9 +47,19 @@ class Api::V1::CertificatesController < Api::V1::ApiController
     subject = resolve_subject_for(certificate_type)
     return unless subject
 
+    cert_request = PKI::CertificateRequest.new(
+      certificate_type: certificate_type,
+      csr_pem: read_csr_pem,
+      subject: subject
+    )
+
+    unless cert_request.valid?
+      return render json: {errors: cert_request.errors.full_messages}, status: :unprocessable_content
+    end
+
     service = PKI::CertificateIssuanceService.new(subject: subject, certificate_type: certificate_type)
     result = service.issue!(
-      csr_pem: read_csr_pem,
+      csr_pem: cert_request.csr_pem,
       requesting_application: requesting_application
     )
 
@@ -60,9 +70,6 @@ class Api::V1::CertificatesController < Api::V1::ApiController
         fingerprint: result.public_key_fingerprint.sub(/^\w+:/, ""),
         ca_url: ca_cert_url(result.certificate_authority.slug)
       }, status: :created
-
-      # certificate was successfully issued, enable the certificates view in the UI.
-      current_user.profile.set_feature_enabled!(:certificate_management, true)
     else
       # result is an invalid policy - return its errors
       render json: {errors: result.errors.full_messages}, status: :unprocessable_content
@@ -199,11 +206,11 @@ class Api::V1::CertificatesController < Api::V1::ApiController
   private def accessible_certificates
     scope = PKI::IssuedCertificate.all
 
-    scope = scope.where(requesting_application: requesting_application) unless certificate_all_scope_granted?
+    scope = scope.where(requesting_application: [requesting_application, nil]) unless certificate_all_scope_granted?
 
     conditions = []
 
-    conditions << {subject_type: "User", subject_id: current_user.id} if user_scope_granted?
+    conditions << { subject_type: "User", subject_id: current_user.id } if user_scope_granted?
 
     if character_scope_granted?
       authorized_character_ids = authorized_character_registrations(only_verified: true).pluck(:id)

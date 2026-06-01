@@ -3,9 +3,17 @@
 <% content_for(:page_header) do %>
   <div class="d-flex justify-content-between align-items-center">
     <h1>My Certificates</h1>
-    <%= link_to ca_certs_path, class: "btn btn-primary" do %>
-      <i class="bi bi-shield-lock"></i> Certificate Authorities
-    <% end %>
+    <div class="d-flex gap-2">
+      <% if Flipper.enabled?(:certificate_management, current_user) %>
+        <%= link_to new_certificate_request_path, class: "btn btn-primary",
+              data: { turbo_stream: "remote_modal" } do %>
+          <i class="bi bi-plus"></i> Request Certificate
+        <% end %>
+      <% end %>
+      <%= link_to ca_certs_path, class: "btn btn-secondary" do %>
+        <i class="bi bi-shield-lock"></i> Certificate Authorities
+      <% end %>
+    </div>
   </div>
   <div>
     <p>
@@ -24,7 +32,14 @@
         <div class="card-body text-center text-muted py-5">
           <i class="bi bi-patch-exclamation display-4 mb-3 d-block"></i>
           <p class="mb-0">You have no certificates yet.</p>
-          <p class="small">Certificates may be requested through the XIVAuth API.</p>
+          <% if Flipper.enabled?(:certificate_management, current_user) %>
+            <p class="small mb-0">
+              <%= link_to "Request a certificate", new_certificate_request_path,
+                    data: { turbo_stream: "remote_modal" } %> to get started.
+            </p>
+          <% else %>
+            <p class="small mb-0">Certificates may not be requested at this time.</p>
+          <% end %>
         </div>
       </div>
     </div>

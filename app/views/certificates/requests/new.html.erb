@@ -1,0 +1,30 @@
+<% set_meta_tags title: "Request a Certificate" %>
+
+<% content_for(:page_header) do %>
+  <div>
+    <h1>Request a Certificate</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><%= link_to "My Certificates", certificates_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Request</li>
+      </ol>
+    </nav>
+  </div>
+<% end %>
+
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <%= form_with url: certificate_request_path, method: :post, multipart: true,
+          data: { controller: "utilities--toggle-category",
+                  "utilities--toggle-category-mode-value": "hide" } do %>
+      <div class="card">
+        <div class="card-body">
+          <%= render "form", cert_request: @request %>
+        </div>
+        <div class="card-footer d-flex justify-content-end">
+          <%= submit_tag "Request Certificate", class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

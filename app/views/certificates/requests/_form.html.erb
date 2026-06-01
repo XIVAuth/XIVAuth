@@ -1,0 +1,91 @@
+<%# locals: (cert_request:) %>
+<div id="certificate_request_form">
+  <% if cert_request.errors[:base].any? %>
+    <div class="alert alert-danger mb-3" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <ul class="mb-0 mt-1">
+        <% cert_request.errors[:base].each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="alert alert-primary d-flex">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    <div>
+      Please ensure you've read through the <%= link_to "Why Certificates", why_certificates_path, target: "_blank" %>
+      page to understand the principles of certificates before requesting one.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Certificate Type</label>
+
+    <div class="form-check mb-2">
+      <%= radio_button_tag "certificate_request[certificate_type]", "user_identification",
+                           cert_request.certificate_type.blank? || cert_request.certificate_type == "user_identification",
+                           class: "form-check-input", id: "type_user",
+                           data: { action: "change->utilities--toggle-category#update",
+                                   category: "user_identification" } %>
+      <label class="form-check-label" for="type_user">
+        <strong>User Identification</strong><br>
+        <span class="text-muted small">Certificate bound to your XIVAuth user</span>
+      </label>
+    </div>
+
+    <div class="form-check">
+      <%= radio_button_tag "certificate_request[certificate_type]", "character_identification",
+                           cert_request.certificate_type == "character_identification",
+                           class: "form-check-input", id: "type_character",
+                           disabled: @verified_characters.empty?,
+                           data: { action: "change->utilities--toggle-category#update",
+                                   category: "character_identification" } %>
+      <label class="form-check-label <%= "text-muted" if @verified_characters.empty? %>" for="type_character">
+        <strong>Character Identification</strong><br>
+        <span class="text-muted small">
+          <% if @verified_characters.empty? %>
+            You have no verified characters.
+            <%= link_to "Add and verify a character first.", new_character_registration_path %>
+          <% else %>
+            Certificate bound to one of your verified characters
+          <% end %>
+        </span>
+      </label>
+    </div>
+
+    <div class="mt-3 d-none" data-utilities--toggle-category-target="item"
+         data-category="character_identification">
+      <select class="form-select <%= "is-invalid" if cert_request.errors[:subject].any? %>"
+              name="certificate_request[subject_id]" id="certificate_subject_id"
+              data-controller="oauth--character-select"
+              placeholder="Select a character..." autocomplete="off">
+        <% @verified_characters.each do |registration| %>
+          <% character = registration.character %>
+          <option value="<%= registration.id %>"
+                  <%= "selected" if cert_request.subject == registration %>
+                  data-character-avatar="<%= character.avatar_url %>"
+                  data-character-name="<%= character.name %>"
+                  data-character-world="<%= character.home_world %>"
+                  data-character-datacenter="<%= character.data_center %>">
+            <%= character.name %> @ <%= character.home_with_datacenter %>
+          </option>
+        <% end %>
+      </select>
+      <% if cert_request.errors[:subject].any? %>
+        <div class="invalid-feedback d-block"><%= cert_request.errors[:subject].first %></div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mb-0">
+    <label class="form-label fw-semibold" for="csr_file">Certificate Signing Request</label>
+    <%= file_field_tag "certificate_request[csr_file]",
+                       class: "form-control #{"is-invalid" if cert_request.errors[:csr_pem].any?}",
+                       accept: ".pem,.csr,.der", id: "csr_file" %>
+    <div class="form-text">Accepts PKCS#10 CSRs in PEM or DER format.</div>
+    <% if cert_request.errors[:csr_pem].any? %>
+      <div class="invalid-feedback"><%= cert_request.errors[:csr_pem].first %></div>
+    <% end %>
+  </div>
+</div>

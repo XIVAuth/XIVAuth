@@ -72,5 +72,10 @@ class Abilities::UserAbility
       cert.subject_type == "CharacterRegistration" &&
         user.character_registrations.verified.exists?(id: cert.subject_id)
     end
+
+    can :issue, PKI::IssuancePolicy::UserIdentificationPolicy, subject: user
+    can :issue, PKI::IssuancePolicy::CharacterIdentificationPolicy do |policy|
+      user.character_registrations.verified.exists?(id: policy.subject.id)
+    end
   end
 end

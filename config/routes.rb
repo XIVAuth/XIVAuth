@@ -52,6 +52,7 @@ Rails.application.routes.draw do
       resources :ca_certs, controller: "certificates/certificate_authorities", only: %i[index show], param: :slug,
 path: "cas"
       resources :crls, controller: "certificates/crls", only: %i[show], param: :slug
+      resource :request, controller: "certificates/requests", only: %i[new create], path_names: {new: ""}, as: :certificate_request
 
       get "why", to: "certificates#why"
     end

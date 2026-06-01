@@ -1,0 +1,18 @@
+<%# locals: (cert_request:) %>
+<%= form_with url: certificate_request_path, method: :post, multipart: true,
+      data: { controller: "utilities--toggle-category",
+              "utilities--toggle-category-mode-value": "hide" } do %>
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="bi bi-award"></i> Request a Certificate</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    <%= render "form", cert_request: cert_request %>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+    <%= submit_tag "Request Certificate", class: "btn btn-primary" %>
+  </div>
+<% end %>
