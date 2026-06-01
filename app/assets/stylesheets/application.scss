@@ -88,7 +88,7 @@ body > .container:not(.toast-container) {
 }
 
 .header-img {
-  @include frosted-bg("/backgrounds/burnwall_day.webp", "/backgrounds/burnwall_night.webp", 1px, 0.8, 0.65);
+  @include frosted-bg("/backgrounds/heroes/burnwall_day.webp", "/backgrounds/heroes/burnwall_night.webp", 1px, 0.8, 0.65);
 
   &::before {
     background-position: top center;
