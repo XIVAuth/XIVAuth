@@ -1,7 +1,7 @@
 @import '../xivauth/mixins';
 
 section#hero {
-  @include frosted-bg("/backgrounds/burnwall_day.png", "/backgrounds/burnwall_night.png", 1px, 0.8, 0.65);
+  @include frosted-bg("/backgrounds/burnwall_day.webp", "/backgrounds/burnwall_night.webp", 1px, 0.8, 0.65);
 
   &::before {
     background-position: top center;
@@ -10,11 +10,11 @@ section#hero {
 }
 
 section#developers {
-  @include frosted-bg("/backgrounds/s9_workstation.png", "/backgrounds/s9_workstation.png", 2px, 0.8, 0.65);
+  @include frosted-bg("/backgrounds/s9_workstation.webp", "/backgrounds/s9_workstation.webp", 2px, 0.8, 0.65);
 }
 
 section#counters {
-  @include frosted-bg("/backgrounds/labyrin_day.png", "/backgrounds/labyrin_night.png", 2px, 0.8, 0.65);
+  @include frosted-bg("/backgrounds/labyrin_day_.webp", "/backgrounds/labyrin_night.webp", 2px, 0.8, 0.65);
 }
 
 .marketing-card {

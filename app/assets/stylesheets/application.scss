@@ -73,10 +73,10 @@ body > .container:not(.toast-container) {
   top: 0;
   z-index: -10;
 
-  background-image: url("/backgrounds/limsa_day.png");
+  background-image: url("/backgrounds/limsa_day.webp");
 
   [data-bs-theme="dark"] & {
-    background-image: url("/backgrounds/limsa_night.png");
+    background-image: url("/backgrounds/limsa_night.webp");
   }
 }
 
@@ -84,11 +84,11 @@ body > .container:not(.toast-container) {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
-    background-image: url("/backgrounds/s9_commerce.png");
+    background-image: url("/backgrounds/s9_commerce.webp");
 }
 
 .header-img {
-  @include frosted-bg("/backgrounds/burnwall_day.png", "/backgrounds/burnwall_night.png", 1px, 0.8, 0.65);
+  @include frosted-bg("/backgrounds/burnwall_day.webp", "/backgrounds/burnwall_night.webp", 1px, 0.8, 0.65);
 
   &::before {
     background-position: top center;
@@ -106,10 +106,10 @@ body > .container:not(.toast-container) {
   left: 0;
 
   [data-bs-theme="dark"] & {
-    background-image: url("/backgrounds/cmists_night.png");
+    background-image: url("/backgrounds/cmists_night.webp");
   }
 
   [data-bs-theme="light"] & {
-    background-image: url("/backgrounds/cmists_day.png");
+    background-image: url("/backgrounds/cmists_day.webp");
   }
 }
