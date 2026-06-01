@@ -20,7 +20,7 @@ class ClientApplication < ApplicationRecord
                           }
                         }
 
-  has_upload_attachment :oauth_background, content_types: %w[image/png image/jpeg],
+  has_upload_attachment :oauth_background, content_types: %w[image/png image/jpeg image/webp],
                         max_size: 5.megabytes,
                         derivatives: lambda { |pipeline|
                           {
