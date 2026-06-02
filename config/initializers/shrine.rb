@@ -29,7 +29,7 @@ elsif Rails.application.credentials.dig(:storage, :uploads, :bucket)
     store: s3_storage_from_credentials(:uploads)
   }
 
-  Shrine.plugin :url_options, store: { host: "https://cdn.xivauth.net" }
+  Shrine.plugin :url_options, store: { host: "https://cdn.xivauth.net", public: true }
 else
   require "shrine/storage/file_system"
 

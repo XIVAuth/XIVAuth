@@ -23,9 +23,11 @@ class ClientApplication < ApplicationRecord
   has_upload_attachment :oauth_background, content_types: %w[image/png image/jpeg image/webp],
                         max_size: 5.megabytes,
                         derivatives: lambda { |pipeline|
+                          base = pipeline.convert("webp").saver(strip: true, near_lossless: true, quality: 80)
+
                           {
-                            hd: pipeline.resize_to_limit!(3840, 2160),
-                            thumb: pipeline.resize_to_fill!(160, 90)
+                            hd: base.resize_to_limit!(2560, 1440),
+                            thumb: base.resize_to_fill!(160, 90)
                           }
                         }
 

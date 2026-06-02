@@ -16,7 +16,7 @@ class AttachmentUploader < Shrine
   end
 
   def generate_location(_io, record: nil, derivative: nil, metadata: { }, **)
-    ext = File.extname(metadata["filename"].to_s).downcase
+    ext = Rack::Mime::MIME_TYPES.key(metadata["mime_type"]) || File.extname(metadata["filename"].to_s).downcase
 
     if storage_key == :store && record&.record_id.present?
       owner_class = record.record_type.safe_constantize
