@@ -1,6 +1,8 @@
-# XIVAuth
-
-*The last Lodestone verification code you'll ever need.*
+<div align="center">
+<img src="./app/assets/images/logos/xivauth-logo-45-color.svg" alt="XIVAuth Logo" width="250"/><br/>
+<em>The last Lodestone code you'll ever need.</em>
+<br/><br/>
+</div>
 
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fxivauth.net%2Fpulse.json&query=%24.characters&label=verified%20characters)
 ![GitHub branch status](https://img.shields.io/github/checks-status/xivauth/xivauth/main?label=ci) 
