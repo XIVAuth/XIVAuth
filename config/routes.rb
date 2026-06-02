@@ -130,6 +130,7 @@ path: "cas"
   get "/discord", to: "marketing#discord"
   get "/flarestone", to: "marketing#flarestone"
   post "/cat", to: "marketing#headpat", as: :marketing_cat
+  get "/pulse", to: "marketing#pulse", as: :pulse
   # end static page routes
 
   if Rails.env.development? || (ENV["APP_ENV"].present? && ENV["APP_ENV"] != "production")

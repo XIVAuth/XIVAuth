@@ -3,13 +3,7 @@ class MarketingController < ApplicationController
   layout "marketing/base"
 
   def index
-    @counts = {
-      users: User.count,
-      characters: CharacterRegistration.verified.count,
-      applications: ClientApplication.count,
-      headpats: Rails.cache.read("marketing:headpats", raw: true).to_i
-    }
-
+    @counts = pulse_data
   end
 
   rate_limit to: 1, within: 1.minute, by: -> { request.remote_ip },
@@ -20,6 +14,9 @@ class MarketingController < ApplicationController
              with: -> { render_pet_cooldown },
              only: :headpat
 
+  rate_limit to: 50, within: 10.minutes, by: -> { request.remote_ip },
+             only: :pulse
+
   def headpat
     count = Rails.cache.increment("marketing:headpats")
 
@@ -27,7 +24,7 @@ class MarketingController < ApplicationController
       "marketing",
       target: "headpats_card",
       partial: "marketing/headpats_card",
-      locals: { count: count }
+      locals: {count: count}
     )
 
     render turbo_stream: turbo_stream.append(
@@ -58,6 +55,22 @@ class MarketingController < ApplicationController
 
   def discord
     redirect_to "https://discord.com/invite/nFPPTcDDgH", allow_other_host: true
+  end
+
+  def pulse
+    respond_to do |format|
+      format.json { render json: pulse_data }
+      format.html { redirect_to root_path }
+    end
+  end
+
+  private def pulse_data
+    {
+      users: User.count,
+      characters: CharacterRegistration.verified.count,
+      applications: ClientApplication.count,
+      headpats: Rails.cache.read("marketing:headpats", raw: true).to_i
+    }
   end
 
   private def render_pet_cooldown

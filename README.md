@@ -2,72 +2,95 @@
 
 *The last Lodestone verification code you'll ever need.*
 
-> ⚠️ **Here be dragons!**
->
-> This application is still undergoing active development. There will be bugs, some of which will be dangerous or 
-> problematic. You've been warned!
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fxivauth.net%2Fpulse.json&query=%24.characters&label=verified%20characters)
+![GitHub branch status](https://img.shields.io/github/checks-status/xivauth/xivauth/main?label=ci) 
+[![codecov](https://codecov.io/github/XIVAuth/XIVAuth/graph/badge.svg?token=VS3CZE2QQ2)](https://codecov.io/github/XIVAuth/XIVAuth)
 
-XIVAuth is an identity service designed to provide a unified and cohesive authentication solution for websites focusing 
-on players of the critically acclaimed MMORPG Final Fantasy XIV.
+---
 
-At a high level, XIVAuth allows *users* to create and register (and verify) their character with the service. Other 
-sites may then use an OAuth2-like flow to allow users to sign in with either their user account or one (or more) of the
-player’s characters. Users only need to register their characters once to be able to use them on any service.
+XIVAuth is an identity provider designed to provide a unified, cohesive, and secure authentication solution for the 
+community of the critically acclaimed MMORPG Final Fantasy XIV. Users can quickly and easily connect to many apps
+across the ecosystem, and developers can implement a secure authentication process just as easily.
 
-XIVAuth does ***not*** provide Lodestone scraping services, nor does it provide any sort of authorization service; web
-services that require Lodestone scraping or have more advanced needs may be better served by [XIVAPI][xivapi] or by 
-implementing their own character verification process. XIVAuth is still able to provide authentication services (and 
-authoritative validation that a character is verified) to these applications, however. It is best to think of XIVAuth 
-(and its APIs) as purely an identity and authentication service (really, a dedicated SSO provider) that may tack on 
-additional character data in an attempt to be useful.
+At a high level, XIVAuth allows users to create, register, and verify their characters with the service. Other sites or
+services may then use an OAuth2-like flow (Discord-flavored SSO) to allow users to sign in with a user identity or one
+(or more) of the player's character identities. Users only need to register their characters once to be able to use them
+on any service that uses XIVAuth.
 
-Initial documentation for this project is available [on Notion][notion-docs], and will be updated as project development 
-continues.
+### Using XIVAuth
 
-[notion-docs]: https://kazwolfe.notion.site/Documentation-128e77f0016c4901888ea1234678c37d?pvs=4
+XIVAuth is hosted at [`https://xivauth.net/`](https://xivauth.net/) and is available for use by any user or developer.
+Developers need to go through a brief onboarding process requiring both multifactor authentication and verifying 
+ownership of a single character to prevent spam.
+
+XIVAuth supports the following key features:
+
+* A broad set of login strategies for user flexibility.
+  * Discord, Steam, GitHub, and Twitch are supported for social login, with the ability to convert to a normal account.
+  * MFA protection is provided via TOTP or passkeys, including passwordless login capability.
+* OAuth2 identity services with a similar developer experience to Discord.
+  * Support for Authorization Code, Device Code, and Client Credential flows for a wide variety of use cases.
+* Character attestation services via JWT claims or X.509 certificates.
+  * Claims may be verified both offline and online.
+* Team management allows multiple developers to share application confirmations, with subteam support.
+* Private apps only permitting a specific allowlist of users.
+* A pettable catgirl.
+
+XIVAuth does not provide full-fledged Lodestone scraping services (see [Flarestone][flarestone] for that), nor is it
+intended to provide authorization or accounting services. In other words, if you are trying to build an app that only
+Lalafell players may access, your app will still need to implement its own checks on the attested character. It is best
+to consider XIVAuth as the equivalent of enterprise tools like Okta, Auth0, or Ping Identity for the FINAL FANTASY XIV
+ecosystem. 
+
+[flarestone]: https://github.com/xivauth/flarestone
 [xivapi]: https://v2.xivapi.com/
 
 ### Running XIVAuth Locally
 
-To run XIVAuth locally (say, for development purposes), you need Docker installed and properly configured and a `.env`
-file set up. A template `development.env` is provided and can just be copied over accordingly. To actually start the
-server, all that should be necessary is the following command:
+To run XIVAuth locally, you need Docker installed and properly configured and a `.env` file set up. A template 
+`development.env` is provided and can just be copied over accordingly. To actually start the server, all that should be
+necessary is the following command:
 
 ```shell
 docker compose up
 ```
 
-However, this is a Rails app and nothing is simple here. To access a terminal inside the container, the following 
-command may be used:
+If this is your first time running the application, also initialize the database:
 
 ```sh
-docker compose run app /bin/sh
+docker compose run app rake db:setup
 ```
 
-From there, execute `rake db:setup` to initialize and seed the database with some useful sample data. If you're planning
-on doing a lot of development work, consider making a `private.rb` file in `db/seeds/development/` to load any extra
-things you might want to include.
+This will create the database, load in the latest schema copy, and seed the database with some useful sample data. If
+you plan on doing a lot of development work, you may consider creating a `private.rb` file in `db/seeds/development/` to
+load any extra things you might want to include at initialization time.
 
-If you'd rather run Rails without Docker, this should also work but be aware that you will need to properly configure
-all the usual things accordingly.
+If you prefer to run Rails without Docker, you can run the standard setup commands from the Ruby environment of your
+choice. Please note that you will need to have Postgres and Redis installed and accessible to the app, with the
+appropriate connection settings configured. See `development.env` for a more cohesive sample.
 
-Regardless, it's probably a better option to just configure your IDE to run `Procfile.dev` for you and manage everything
-that way thanks to the watcher paradigm that every web app uses nowadays.
+```sh
+bundle install
+bundle exec rake db:setup
+bundle exec bin/dev
+```
 
 #### Local Credentials
 
 XIVAuth's [development database seed](./db/seeds/development/development.rb) creates an admin user with credentials 
-`dev@eorzea.id` with a password of `password`. This should be enough to get started with base development, as well as 
-seeing all the various features that XIVAuth has available to it.
+`dev@eorzea.id` with a password of `password`. This should be enough to get started with base development. You will be
+able to perform nearly any action inside the platform and should be able to register characters directly.
 
 Certain XIVAuth features (particularly social login and mailer testing) require the use of an encrypted credentials
 file. A sample file and instructions are present in `config/credentials/sample.yml`. Note that setting up credentials
-is *not* required for standard XIVAuth development as the development environment is preconfigured with (insecure)
-ActiveRecord encryption keys and Rails itself will take care of generating a `secret_key_base` for development users.
+is *not* required for standard development. If credentials are not provided, XIVAuth will fall back to default values
+or generate new ones.
 
-Certain data attributes (such as character PKs, verification codes, and similar) are dynamically generated using the
-value of `secret_key_base` at application runtime. For local development, Rails will automatically generate this secret
-for you and store it in `tmp/local_secret.txt`. If you'd like to override this secret, you may set the environment
-variable `SECRET_KEY_BASE`, change the value of `tmp/local_secret.txt`, or add a `secret_key_base` to your development
-credentials file. This may be useful if you have multiple development environments and want things to be consistent
-between them.
+Certain data values (such as character persistent keys, verification codes, and other sensitive information) are
+dynamically generated using Rails' [Secret Key Base][secret-key-base]. In local development environments, Rails will
+automatically generate a key for you and store it in `tmp/local_secret.txt`. If you would like to override this key, you
+may set the `SECRET_KEY_BASE` environment variable, change the value of `tmp/local_secret.txt`, or add a 
+`secret_key_base` to your development credentials file. This value is safe to share between developer environments, but
+new keys should always be generated for a production deployment. 
+
+[secret-key-base]: https://rubydoc.info/docs/rails/Rails%2FApplication:secret_key_base
