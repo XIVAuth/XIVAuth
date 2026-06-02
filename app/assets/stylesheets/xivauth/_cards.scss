@@ -55,13 +55,27 @@
   }
 }
 
-// Character card specific enhancements
+// Stateful cards - top-colored borders.
 .card.stateful-card-border {
-  // Enhanced top border with subtle glow effect
-  border-top-width: 4px;
   position: relative;
 
-  // Avatar enhancement
+  border-top-style: solid;
+  border-top-width: 4px;
+  border-top-color: var(--bs-secondary);
+
+  &[data-state="ok"] {
+    border-top-color: var(--bs-success);
+  }
+
+  &[data-state="warning"] {
+    border-top-color: var(--bs-warning)
+  }
+
+  &[data-state="error"] {
+    border-top-color: var(--bs-danger);
+  }
+
+  // Avatar enhancement (TODO: only to stateful cards?)
   img.rounded {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -80,12 +94,10 @@
     }
   }
 
-  // Enhanced card title
   .card-title {
     font-weight: 600;
   }
 
-  // Subtle subtitle styling
   .card-subtitle {
     color: var(--bs-secondary-color);
     font-size: 0.9rem;

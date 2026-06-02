@@ -3,7 +3,7 @@
   "private": "true",
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.13",
-    "@types/bootstrap": "^5.2.10",
+    "@types/bootstrap": "^5.2.11",
     "@types/cloudflare-turnstile": "^0.2.2",
     "@types/zxcvbn": "^4.4.5",
     "esbuild-plugin-stimulus": "^0.2.0",

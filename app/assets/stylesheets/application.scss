@@ -11,19 +11,17 @@
 @import "xivauth/navbar";
 @import "xivauth/forms";
 
-// Modern UI enhancements
+// Modern UI mixins - better cards, hovers, etc.
 @import "xivauth/animations";
 @import "xivauth/cards";
 @import "xivauth/ui_polish";
-
-// Header image styling moved to navbar.scss
 
 // UI polish variables
 :root {
   --gradient-angle: 135deg;
 }
 
-// Sticky footer layout
+// Abuse content to get a sticky footer
 .main-content {
   flex: 1 0 auto;
   display: flex;
@@ -34,7 +32,7 @@
   }
 }
 
-// For simple container layouts (non-portal pages)
+// ditto, mostly.
 body > .container:not(.toast-container) {
   flex: 1 0 auto;
 }
@@ -78,13 +76,6 @@ body > .container:not(.toast-container) {
   [data-bs-theme="dark"] & {
     background-image: url("/backgrounds/limsa_night.webp");
   }
-}
-
-.oauth-consent-backdrop {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-image: url("/backgrounds/s9_commerce.webp");
 }
 
 .header-img {

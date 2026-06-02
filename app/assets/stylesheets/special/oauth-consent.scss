@@ -1,3 +1,10 @@
+.oauth-consent-backdrop {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url("/backgrounds/s9_commerce.webp");
+}
+
 .frost-background-filter {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);

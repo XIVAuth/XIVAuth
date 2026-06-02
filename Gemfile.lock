@@ -100,7 +100,7 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.128.0)
+    aws-sdk-kms (1.129.0)
       aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-s3 (1.224.0)
@@ -514,15 +514,15 @@ GEM
       websocket (~> 1.0)
     semantic_logger (4.18.0)
       concurrent-ruby (~> 1.0)
-    sentry-rails (6.5.0)
+    sentry-rails (6.6.0)
       railties (>= 5.2.0)
-      sentry-ruby (~> 6.5.0)
-    sentry-ruby (6.5.0)
+      sentry-ruby (~> 6.6.0)
+    sentry-ruby (6.6.0)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
       logger
-    sentry-sidekiq (6.5.0)
-      sentry-ruby (~> 6.5.0)
+    sentry-sidekiq (6.6.0)
+      sentry-ruby (~> 6.6.0)
       sidekiq (>= 5.0)
     shrine (3.7.0)
       content_disposition (~> 1.0)
@@ -700,7 +700,7 @@ DEPENDENCIES
   zxcvbn (~> 1.0)
 
 RUBY VERSION
-  ruby 4.0.4
+  ruby 4.0.5
 
 BUNDLED WITH
-  4.0.11
+  4.0.12
