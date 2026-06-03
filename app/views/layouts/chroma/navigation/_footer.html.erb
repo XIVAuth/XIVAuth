@@ -1,0 +1,53 @@
+<footer class="py-3 my-4 border-top">
+  <div class="row align-items-center">
+    <div class="col-12 col-lg-4 text-center text-lg-start mb-3 mb-lg-0 text-muted small">
+      <p class="mb-0">
+        &copy; LOLOL, <a href="https://github.com/KazWolfe/" class="text-decoration-none">KazWolfe</a>.
+        Not associated with Square Enix.
+      </p>
+      <ul class="list-unstyled list-inline pipe-separated-items mb-0">
+        <% if commit_hash.present? %>
+          <li class="mb-0">Build
+            <a href="https://github.com/XIVAuth/XIVAuth/commit/<%= commit_hash %>">
+              <code><%= commit_hash[..7] %></code>
+            </a>
+          </li>
+        <% end %>
+        <% case hosting_provider %>
+        <% when :heroku %>
+          <li>Running on Heroku</li>
+        <% when :railway %>
+          <li>Running on <a href="https://railway.com?referralCode=8aVs5S">Railway</a></li>
+        <% when Symbol %>
+          <li>Running on <%= hosting_provider.to_s.titleize %></li>
+        <% end %>
+      </ul>
+    </div>
+
+    <% if !Rails.env.production? || (ENV["APP_ENV"] != "production") %>
+      <div class="col-12 col-lg-4 text-center mb-3 mb-lg-0 text-muted small">
+        <p class="mb-0">Environment: <%= (ENV["APP_ENV"] || Rails.env).titleize %></p>
+        <p class="mb-0"><code><%= controller_name %>#<%= action_name %></code></p>
+        <p class="mb-0">CSS Breakpoint: <code>
+          <span class="d-none d-sm-inline d-md-none">sm</span>
+          <span class="d-none d-md-inline d-lg-none">md</span>
+          <span class="d-none d-lg-inline d-xl-none">lg</span>
+          <span class="d-none d-xl-inline d-xxl-none">xl</span>
+          <span class="d-none d-xxl-inline">xxl</span>
+        </code></p>
+      </div>
+    <% end %>
+
+    <div class="col-12 col-lg-4 mb-0">
+      <ul class="nav justify-content-center justify-content-lg-end">
+        <li class="nav-item"><a href="https://github.com/XIVAuth/XIVAuth" class="nav-link px-2 text-muted">GitHub</a></li>
+        <li class="nav-item"><%= link_to "Discord", discord_path, class: "nav-link px-2 text-muted",
+                                         data: { "turbo-prefetch": false } %></li>
+        <li class="nav-item">
+          <%= link_to "API Docs", developer_docs_path, class: "nav-link px-2 text-muted",
+                      data: { "turbo-prefetch": false } %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>
