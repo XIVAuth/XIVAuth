@@ -2,6 +2,10 @@
   <%= cloudflare_turnstile_script_tag(async: false, explicit: true) %>
 <% end %>
 
+<% content_for :head_extensions do %>
+  <%= stylesheet_link_tag "special/login" %>
+<% end %>
+
 <% content_for :page_layout do %>
   <div class="wrapper">
     <section class="login-content">

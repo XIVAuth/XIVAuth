@@ -1,3 +1,5 @@
+@use '../bootstrap_core' as bs;
+
 .nav-link {
   transition: all 0.2s ease-in-out;
 
@@ -6,38 +8,50 @@
   }
 }
 
-.navbar .sidebar-toggle {
-  cursor: pointer;
-  background: var(--bs-primary);
-  color: white;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: none;
-  transition: all 0.15s ease-in-out;
+.navbar {
+  min-height: 56px;
 
-  &:hover {
-    transform: translateY(-1px);
+  .sidebar-toggle {
+    cursor: pointer;
     background: var(--bs-primary);
-    filter: brightness(1.1);
-    box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.3);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      transform: translateY(-1px);
+      background: var(--bs-primary);
+      filter: brightness(1.1);
+      box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.3);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    i {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
   }
 
-  &:active {
-    transform: scale(0.95);
+  @include bs.media-breakpoint-down(xl) {
+    .navbar .sidebar-toggle {
+      display: flex;
+    }
   }
 
-  i {
-    font-size: 1.5rem;
-    line-height: 1;
-  }
-}
-
-@media (max-width: 1199.98px) {
-  .navbar .sidebar-toggle {
-    display: flex;
+  @include bs.media-breakpoint-down(md) {
+    .navbar-brand {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }

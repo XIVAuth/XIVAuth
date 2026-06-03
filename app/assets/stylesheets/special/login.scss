@@ -1,0 +1,14 @@
+.login-backdrop {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  position: sticky;
+  top: 0;
+  z-index: -10;
+
+  background-image: url("/backgrounds/limsa_day.webp");
+
+  [data-bs-theme="dark"] & {
+    background-image: url("/backgrounds/limsa_night.webp");
+  }
+}

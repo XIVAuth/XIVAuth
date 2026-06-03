@@ -1,3 +1,4 @@
+// custom components to replace bootstrap's (xivauth ui kit)
 @use './xivauth/animations';
 @use './xivauth/layout';
 @use './xivauth/backgrounds';
@@ -12,10 +13,12 @@
 @use './xivauth/text';
 @use './xivauth/modals';
 @use './xivauth/cards';
-@use './xivauth/brand_colors';
-@use './xivauth/env_watermark';
-@use './xivauth/branding/pride_logo';
-@use './xivauth/devise/password';
+
+// random crap
+@use './xivauth/misc/external_brand_colors';
+@use './xivauth/misc/env_watermark';
+@use './xivauth/misc/pride_logo';
+@use './xivauth/misc/password';
 
 /** GLOBALS **/
 
