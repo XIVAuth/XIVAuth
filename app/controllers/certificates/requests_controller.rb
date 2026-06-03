@@ -1,5 +1,5 @@
 class Certificates::RequestsController < ApplicationController
-  layout "portal/base"
+  layout "chroma/page"
 
   before_action :check_issuance_enabled
   before_action :load_verified_characters

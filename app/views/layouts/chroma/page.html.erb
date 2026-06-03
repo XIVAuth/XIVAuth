@@ -1,0 +1,19 @@
+<% content_for :base_content do %>
+  <div class="page-header">
+    <div class="header-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <%= yield(:page_header) %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-img"></div>
+  </div>
+  <div class="container-fluid content-inner py-0 px-lg-4">
+    <%= content_for?(:portal_page_content) ? yield(:portal_page_content) : yield %>
+  </div>
+<% end %>
+
+<%= render template: "layouts/chroma/base" %>

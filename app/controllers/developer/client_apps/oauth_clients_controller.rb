@@ -1,6 +1,6 @@
 class Developer::ClientApps::OAuthClientsController < Developer::DeveloperPortalController
   helper Developer::ClientApps::OAuthClientHelper
-  layout "portal/base"
+  layout "chroma/page"
 
   before_action :set_oauth_client, except: %i[new create]
 

@@ -1,5 +1,5 @@
 class Certificates::CertificateAuthoritiesController < ApplicationController
-  layout :set_layout
+  layout "chroma/container"
   skip_before_action :authenticate_user!
 
   def index
@@ -30,9 +30,5 @@ class Certificates::CertificateAuthoritiesController < ApplicationController
                   type: "application/x-pem-file", disposition: "inline"
       end
     end
-  end
-
-  private def set_layout
-    user_signed_in? ? "portal/page" : "marketing/page"
   end
 end

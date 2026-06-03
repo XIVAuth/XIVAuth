@@ -1,7 +1,7 @@
 class Admin::CharactersController < Admin::AdminController
   include Pagy::Method
 
-  layout "portal/base"
+  layout "chroma/page"
 
   before_action :set_character, except: %i[index]
 

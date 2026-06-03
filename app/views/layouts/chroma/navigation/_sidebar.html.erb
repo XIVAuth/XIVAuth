@@ -14,12 +14,12 @@
           <span class="default-icon">My Account</span>
         </a>
       </li>
-      <%= render partial: 'layouts/portal/navigation/sidebar_entry', locals: {
+      <%= render partial: 'layouts/chroma/navigation/sidebar_entry', locals: {
         name: "My Characters", target: character_registrations_path, icon_classes: "bi bi-person-badge"
       } %>
 
       <% if Flipper.enabled?(:certificate_management, current_user) %>
-        <%= render partial: 'layouts/portal/navigation/sidebar_entry', locals: {
+        <%= render partial: 'layouts/chroma/navigation/sidebar_entry', locals: {
           name: "My Certificates", target: certificates_path, icon_classes: "bi bi-award"
         } %>
       <% end %>
@@ -34,10 +34,10 @@
         </a>
       </li>
       <% if current_user.developer? %>
-        <%= render partial: 'layouts/portal/navigation/sidebar_entry', locals: {
+        <%= render partial: 'layouts/chroma/navigation/sidebar_entry', locals: {
           name: "My Applications", target: developer_applications_path, icon_classes: "bi bi-code-slash"
         } %>
-        <%= render partial: 'layouts/portal/navigation/sidebar_entry', locals: {
+        <%= render partial: 'layouts/chroma/navigation/sidebar_entry', locals: {
           name: "My Teams", target: developer_teams_path, icon_classes: "bi bi-people",
           badge_html: "<span class='badge bg-warning'><span class='bi bi-flask'></i> Beta</span>"
         } %>
@@ -48,11 +48,11 @@
           <% end %>
         </li>
       <% else %>
-        <%= render partial: 'layouts/portal/navigation/sidebar_entry', locals: {
+        <%= render partial: 'layouts/chroma/navigation/sidebar_entry', locals: {
           name: "Request Dev Access", target: developer_onboarding_path, icon_classes: "bi bi-file-earmark-code"
         } %>
         <% if current_user.team_memberships.any? %>
-          <%= render partial: 'layouts/portal/navigation/sidebar_entry', locals: {
+          <%= render partial: 'layouts/chroma/navigation/sidebar_entry', locals: {
             name: "My Teams", target: developer_teams_path, icon_classes: "bi bi-people",
             badge_html: "<span class='badge bg-warning'><span class='bi bi-flask'></i> Beta</span>"
           } %>

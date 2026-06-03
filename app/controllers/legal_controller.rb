@@ -1,7 +1,7 @@
 class LegalController < ApplicationController
   skip_before_action :authenticate_user!
 
-  layout :set_layout
+  layout "chroma/container"
 
   def terms_of_service; end
   def privacy_policy; end
@@ -9,8 +9,4 @@ class LegalController < ApplicationController
   def security_policy; end
 
   def moderation_policy; end
-
-  private def set_layout
-    user_signed_in? ? "portal/page" : "marketing/page"
-  end
 end

@@ -1,5 +1,5 @@
 class Users::OAuthAuthorizationsController < ApplicationController
-  layout "portal/page"
+  layout "chroma/container"
   include Pagy::Method
 
   def index

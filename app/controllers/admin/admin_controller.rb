@@ -1,7 +1,7 @@
 class Admin::AdminController < ApplicationController
   before_action :authorize_admin!
   before_action :set_default_meta_tags
-  layout "portal/page"
+  layout "chroma/container"
 
   def authorize_admin!
     # n.b. this should already be handled by the routing layer, but we'll put this here for safety's sake as well.

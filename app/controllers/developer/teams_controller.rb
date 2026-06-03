@@ -1,5 +1,5 @@
 class Developer::TeamsController < Developer::DeveloperPortalController
-  layout "portal/base"
+  layout "chroma/page"
   include Pagy::Method
 
   before_action :load_parent_teams, only: %i[new create]

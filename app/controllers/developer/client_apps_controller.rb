@@ -1,5 +1,5 @@
 class Developer::ClientAppsController < Developer::DeveloperPortalController
-  layout "portal/base"
+  layout "chroma/page"
   include Pagy::Method
 
   helper Doorkeeper::DashboardHelper
@@ -11,7 +11,7 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
     @pagy, @applications = pagy(accessible_applications, items: 24)
 
     respond_to do |format|
-      format.html { render :index, layout: "portal/base" }
+      format.html { render :index, layout: "chroma/page" }
       format.json { head :no_content }
     end
   end

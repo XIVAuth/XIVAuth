@@ -125,9 +125,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
     if %w[new create].include?(action_name)
       "login/signin"
     elsif action_name == "edit"
-      "portal/base"
+      "chroma/page"
     else
-      "portal/page"
+      "chroma/container"
     end
   end
 end

@@ -2,7 +2,7 @@ class Admin::UsersController < Admin::AdminController
   include Pagy::Method
 
   before_action :set_user, except: %i[index]
-  layout "portal/base"
+  layout "chroma/page"
 
   def index
     users = User.includes(:profile, :social_identities, :character_registrations)

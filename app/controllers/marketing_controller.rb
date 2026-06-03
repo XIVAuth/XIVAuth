@@ -1,6 +1,6 @@
 class MarketingController < ApplicationController
   skip_before_action :authenticate_user!
-  layout "marketing/base"
+  layout "chroma/base"
 
   def index
     @counts = pulse_data

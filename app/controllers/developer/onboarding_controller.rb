@@ -1,5 +1,5 @@
 class Developer::OnboardingController < Developer::DeveloperPortalController
-  layout "portal/base"
+  layout "chroma/page"
   skip_before_action :check_developer_role
 
   def show

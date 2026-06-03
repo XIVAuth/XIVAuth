@@ -1,7 +1,7 @@
 class CharacterRegistrationsController < ApplicationController
   include Pagy::Method
 
-  layout "portal/page"
+  layout "chroma/container"
   before_action :set_character_registration, only: %i[destroy]
 
   # GET /character_registrations or /character_registrations.json
@@ -9,7 +9,7 @@ class CharacterRegistrationsController < ApplicationController
     @pagy, @character_registrations = pagy(CharacterRegistration.where(user: current_user).includes(:character),
                                            items: 12)
 
-    render :index, layout: "portal/base"
+    render :index, layout: "chroma/page"
   end
 
   # GET /character_registrations/new

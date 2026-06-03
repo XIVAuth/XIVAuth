@@ -2,120 +2,125 @@
                  description: "The Security Policy for XIVAuth outlines guidelines for penetration testing, " \
                    "reporting security vulnerabilities, and responsible interaction with the site." %>
 
-<div class="container">
-  <h1>XIVAuth Security Policy</h1>
+<% content_for(:page_header) do %>
+  <div>
+    <h1>Security Policy</h1>
+    <p>Our Rules of Engagement, in-scope systems for pentesting, and how to report security issues to us.</p>
+  </div>
+<% end %>
 
-  <p>
-    As an open source and a relatively high-trust project, XIVAuth holds security in the highest regard. To that end,
-    we have decided to publish a security policy to answer most questions about penetration testing, reporting security
-    vulnerabilities, and how to interact with the site.
-  </p>
+<p>
+  As an open source and a relatively high-trust project, XIVAuth holds security in the highest regard. To that end,
+  we have decided to publish a security policy to answer most questions about penetration testing, reporting security
+  vulnerabilities, and how to interact with the site.
+</p>
 
-  <h2>Pentesting Ground Rules</h2>
-  <p>
-    We strongly encourage that any security tests are run on a local version of XIVAuth. The software is open-source and
-    freely available and should be simple to set up even for non-Ruby developers.
-  </p>
-  <p>
-    If you are performing a pentest against the production servers, we ask you to <em>please</em> keep other users in
-    mind. If you find something that crashes XIVAuth, don't do it forty times to make a point. If you're trying to
-    access a resource that isn't owned by you, create a second account and try to access those. If you're trying to
-    break in to an account or bypass MFA, please attack your own account. XIVAuth is used by other people too; please
-    don't inconvenience them for hacker cred.
-  </p>
-  <p>In addition, please refrain from performing any of the following activities:</p>
-  <ul>
-    <li>
-      <strong>Testing the underlying infrastructure.</strong> We're hosted on a mix of PaaS, VPS platforms, and are
-      therefore sharing resources and service space with other people. They're (probably) innocent, so please don't
-      make their day bad. This includes denial-of-service attacks.
-    </li>
-    <li>
-      <strong>Directly attacking our providers.</strong> A CAPTCHA bypass is cool, but only if you actually get the
-      server to not care about the CAPTCHA. Outsourcing solves to a click farm is boring and has been done before.
-    </li>
-    <li>
-      <strong>Attacking other people on the platform.</strong> Attacking the platform is cool. Directly attacking
-      other people using the platform in a targeted manner is not cool. Even if you report it to us afterward.
-    </li>
-    <li>
-      <strong>Performing brute-force attacks.</strong> Anyone can guess a password with enough tries. Please don't waste
-      our servers' time by testing the top 50,000 passwords list.
-    </li>
-  </ul>
+<h2>Pentesting Ground Rules</h2>
+<p>
+  We strongly encourage that any security tests are run on a local version of XIVAuth. The software is open-source and
+  freely available and should be simple to set up even for non-Ruby developers.
+</p>
+<p>
+  If you are performing a pentest against the production servers, we ask you to <em>please</em> keep other users in
+  mind. If you find something that crashes XIVAuth, don't do it forty times to make a point. If you're trying to
+  access a resource that isn't owned by you, create a second account and try to access those. If you're trying to
+  break in to an account or bypass MFA, please attack your own account. XIVAuth is used by other people too; please
+  don't inconvenience them for hacker cred.
+</p>
+<p>In addition, please refrain from performing any of the following activities:</p>
+<ul>
+  <li>
+    <strong>Testing the underlying infrastructure.</strong> We're hosted on a mix of PaaS, VPS platforms, and are
+    therefore sharing resources and service space with other people. They're (probably) innocent, so please don't
+    make their day bad. This includes denial-of-service attacks.
+  </li>
+  <li>
+    <strong>Directly attacking our providers.</strong> A CAPTCHA bypass is cool, but only if you actually get the
+    server to not care about the CAPTCHA. Outsourcing solves to a click farm is boring and has been done before.
+  </li>
+  <li>
+    <strong>Attacking other people on the platform.</strong> Attacking the platform is cool. Directly attacking
+    other people using the platform in a targeted manner is not cool. Even if you report it to us afterward.
+  </li>
+  <li>
+    <strong>Performing brute-force attacks.</strong> Anyone can guess a password with enough tries. Please don't waste
+    our servers' time by testing the top 50,000 passwords list.
+  </li>
+</ul>
 
-  <h2>Reporting A Vulnerability</h2>
-  <p>
-    If you've found a vulnerability, congratulations! Please follow standard Responsible Disclosure procedures for
-    submitting issues to us. Put simply, please report the vulnerability to us <em>first</em> (before any sort of public
-    blog post or social media message) so that we can fix it before anyone has a chance to abuse it.
-  </p>
-  <p>
-    You may report the vulnerability by sending an email to
-    <a href="mailto:security@kazwolfe.io"><code>security@kazwolfe.io</code></a> or by DMing Kaz on Discord through his
-    username, <code>kazwolfe</code>. Please be sure to include the steps to reproduce the bug, as well as your specific
-    expectations and what you saw instead. If your report includes sensitive or confidential information, please encrypt
-    it using PGP. Kaz's PGP key has an ID of<a href="https://keys.openpgp.org/vks/v1/by-fingerprint/14C529AD4BACE342F2E1AA5D258813F53A16EBB4" class="font-monospace">2588 13F5 3A16 EBB4</a>,
-    and can also be found on most key servers or <a href="https://github.com/kazwolfe.gpg">GitHub</a>. It's okay to send
-    content encrypted with this key to the above email as well, even though it's not listed on the key.
-  </p>
+<h2>Reporting A Vulnerability</h2>
+<p>
+  If you've found a vulnerability, congratulations! Please follow standard Responsible Disclosure procedures for
+  submitting issues to us. Put simply, please report the vulnerability to us <em>first</em> (before any sort of public
+  blog post or social media message) so that we can fix it before anyone has a chance to abuse it.
+</p>
+<p>
+  You may report the vulnerability by sending an email to
+  <a href="mailto:security@kazwolfe.io"><code>security@kazwolfe.io</code></a> or by DMing Kaz on Discord through his
+  username, <code>kazwolfe</code>. Please be sure to include the steps to reproduce the bug, as well as your specific
+  expectations and what you saw instead. If your report includes sensitive or confidential information, please encrypt
+  it using PGP. Kaz's PGP key has an ID
+  of<a href="https://keys.openpgp.org/vks/v1/by-fingerprint/14C529AD4BACE342F2E1AA5D258813F53A16EBB4" class="font-monospace">2588
+  13F5 3A16 EBB4</a>,
+  and can also be found on most key servers or <a href="https://github.com/kazwolfe.gpg">GitHub</a>. It's okay to send
+  content encrypted with this key to the above email as well, even though it's not listed on the key.
+</p>
 
-  <h4>What <em>Not</em> To Report</h4>
-  <p>
-    While we appreciate all kinds of reports, there are a select few things that we don't need to be informed about.
-    Please don't submit security issues related to the following:
-  </p>
-  <ul>
-    <li>Any attacks that rely on social engineering, including leaked or stolen credentials.</li>
-    <li>Any attacks that rely on physical or virtual access to a victim's computer or network.</li>
-    <li>Any reports of publicly accessible XIVAuth API Keys.</li>
-    <li>Any CSRF issues that do not modify state (e.g., logout commands).</li>
-    <li>Any attacks that require the use of brute force, denial-of-service attacks, or similar.</li>
-    <li>Any security issues in a specific API client (e.g., a plugin or web service).</li>
-    <li>Any of the following without demonstrable widespread or significant impact:
-      <ul>
-        <li>Any plain text reflection, including non-persistent self-XSS.</li>
-        <li>Any missing or invalid HTTP headers or settings.</li>
-        <li>Anything related to CORS.</li>
-        <li>SPF, DMARC, or DKIM misconfigurations.</li>
-        <li>Attacks that rely on a specific browser or system configuration.</li>
-      </ul>
-    </li>
-  </ul>
+<h4>What <em>Not</em> To Report</h4>
+<p>
+  While we appreciate all kinds of reports, there are a select few things that we don't need to be informed about.
+  Please don't submit security issues related to the following:
+</p>
+<ul>
+  <li>Any attacks that rely on social engineering, including leaked or stolen credentials.</li>
+  <li>Any attacks that rely on physical or virtual access to a victim's computer or network.</li>
+  <li>Any reports of publicly accessible XIVAuth API Keys.</li>
+  <li>Any CSRF issues that do not modify state (e.g., logout commands).</li>
+  <li>Any attacks that require the use of brute force, denial-of-service attacks, or similar.</li>
+  <li>Any security issues in a specific API client (e.g., a plugin or web service).</li>
+  <li>Any of the following without demonstrable widespread or significant impact:
+    <ul>
+      <li>Any plain text reflection, including non-persistent self-XSS.</li>
+      <li>Any missing or invalid HTTP headers or settings.</li>
+      <li>Anything related to CORS.</li>
+      <li>SPF, DMARC, or DKIM misconfigurations.</li>
+      <li>Attacks that rely on a specific browser or system configuration.</li>
+    </ul>
+  </li>
+</ul>
 
-  <p>
-    If you find any code-level issues that don't qualify for a security report, you are welcome to report them via
-    <a href="https://github.com/XIVAuth/XIVAuth/issues">GitHub Issues</a> as a standard bug or code defect.
-  </p>
+<p>
+  If you find any code-level issues that don't qualify for a security report, you are welcome to report them via
+  <a href="https://github.com/XIVAuth/XIVAuth/issues">GitHub Issues</a> as a standard bug or code defect.
+</p>
 
-  <h4>Do I Get Rewarded?</h4>
-  <p>
-    Unfortunately, as an open source project, we are unable to offer any sort of financial reward for confirmed security
-    reports. XIVAuth is run by a single person, and while we would love to offer some sort of compensation, it's just
-    not something we can do. That being said, anyone who submits a valid security report is eligible for a small set
-    of goodies, as well as recognition in our Hall of Fame (whenever we finally get a confirmed report). These goodies
-    will include a custom-printed JavaCard ID card personalized with your character and some other information, as well
-    as a couple stickers. If we ever change our bounty policies, we will reach out to all prior reporters to make them
-    whole.
-  </p>
-  <p>
-    You are permitted to publish information about your findings to personal blogs or portfolios provided that
-    you have received confirmation that the bug has been fixed and that any and all sensitive information is redacted.
-    We may request that certain security issues not be published elsewhere. If this is the case, we will communicate
-    the exact reason and motivation behind our request to you.
-  </p>
+<h4>Do I Get Rewarded?</h4>
+<p>
+  Unfortunately, as an open source project, we are unable to offer any sort of financial reward for confirmed security
+  reports. XIVAuth is run by a single person, and while we would love to offer some sort of compensation, it's just
+  not something we can do. That being said, anyone who submits a valid security report is eligible for a small set
+  of goodies, as well as recognition in our Hall of Fame (whenever we finally get a confirmed report). These goodies
+  will include a custom-printed JavaCard ID card personalized with your character and some other information, as well
+  as a couple stickers. If we ever change our bounty policies, we will reach out to all prior reporters to make them
+  whole.
+</p>
+<p>
+  You are permitted to publish information about your findings to personal blogs or portfolios provided that
+  you have received confirmation that the bug has been fixed and that any and all sensitive information is redacted.
+  We may request that certain security issues not be published elsewhere. If this is the case, we will communicate
+  the exact reason and motivation behind our request to you.
+</p>
 
-  <h4>Will We Be In Touch?</h4>
-  <p>
-    We will follow up on any security reports as quickly as possible based on the report type and severity. If we need
-    additional information, we will reach out to discuss and ask questions; please make sure you are submitting reports
-    from a monitored mailbox. If you'd like for us to contact you over PGP as well, please ensure that your public key
-    is published or attached to your initial report.
-  </p>
-  <p>
-    You will also be notified about our findings. If the report is accepted, you will be notified when the fix has been
-    pushed to the codebase in case you would like to verify our fix, although you are not obligated to do so. If the
-    report is rejected, we will include detailed information about our justifications and any mitigations that we have
-    in place (if necessary).
-  </p>
-</div>
+<h4>Will We Be In Touch?</h4>
+<p>
+  We will follow up on any security reports as quickly as possible based on the report type and severity. If we need
+  additional information, we will reach out to discuss and ask questions; please make sure you are submitting reports
+  from a monitored mailbox. If you'd like for us to contact you over PGP as well, please ensure that your public key
+  is published or attached to your initial report.
+</p>
+<p>
+  You will also be notified about our findings. If the report is accepted, you will be notified when the fix has been
+  pushed to the codebase in case you would like to verify our fix, although you are not obligated to do so. If the
+  report is rejected, we will include detailed information about our justifications and any mitigations that we have
+  in place (if necessary).
+</p>

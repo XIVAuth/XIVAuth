@@ -1,5 +1,5 @@
 class CertificatesController < ApplicationController
-  layout "portal/base"
+  layout "chroma/page"
 
   before_action :set_certificate, only: %i[show revoke destroy]
   skip_before_action :authenticate_user!, only: %i[why]
@@ -54,7 +54,7 @@ class CertificatesController < ApplicationController
 
   def why
     respond_to do |format|
-      format.html { render layout: set_layout }
+      format.html { render layout: "chroma/container" }
     end
   end
 
@@ -69,9 +69,5 @@ class CertificatesController < ApplicationController
     char_cert_ids = PKI::IssuedCertificate.where(subject_type: "CharacterRegistration", subject_id: cr_ids)
 
     PKI::IssuedCertificate.where(id: user_cert_ids).or(PKI::IssuedCertificate.where(id: char_cert_ids))
-  end
-
-  private def set_layout
-    user_signed_in? ? "portal/page" : "marketing/page"
   end
 end

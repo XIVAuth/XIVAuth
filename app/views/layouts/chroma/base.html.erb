@@ -1,0 +1,27 @@
+<%#
+  Welcome to CHROMA.
+
+  CHROMA is the view layer for everything that happens within the "management" side of XIVAuth. Marketing pages and
+  anything past login will be provided by this UI layer/theme.
+%>
+
+<% content_for :page_layout do %>
+  <% if content_for? :sidebar_override %>
+    <%= yield :sidebar_override %>
+  <% elsif user_signed_in? %>
+    <%= render 'layouts/chroma/navigation/sidebar' %>
+  <% end %>
+
+  <main class="main-content">
+    <div class="position-relative">
+      <%= render 'layouts/chroma/navigation/topbar' %>
+    </div>
+    <%= content_for?(:base_content) ? yield(:base_content) : yield %>
+
+    <div class="container mt-auto">
+      <%= render 'layouts/footer' %>
+    </div>
+  </main>
+<% end %>
+
+<%= render template: "layouts/application" %>
