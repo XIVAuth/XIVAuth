@@ -1,0 +1,23 @@
+.very-small {
+  font-size: 0.75rem;
+}
+
+.extra-small {
+  font-size: 0.5rem;
+}
+
+.text-heading-color {
+  color: var(--bs-heading-color);
+}
+
+.pipe-separated-items {
+  > li {
+    display: inline-block;
+  }
+
+  > li:not(:first-child)::before {
+    content: "";
+    border-left: 1px solid;
+    padding-right: 0.2rem;
+  }
+}

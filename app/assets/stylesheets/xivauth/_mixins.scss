@@ -1,3 +1,20 @@
+@mixin variant-gradient($variant, $important: false) {
+  [data-bs-theme="light"] & {
+    background-image: linear-gradient(
+      var(--gradient-angle),
+      var(--bs-#{$variant}),
+      color-mix(in srgb, var(--bs-#{$variant}) 70%, white)
+    );
+  }
+  [data-bs-theme="dark"] & {
+    background-image: linear-gradient(
+      var(--gradient-angle),
+      var(--bs-#{$variant}),
+      var(--bs-#{$variant}-border-subtle)
+    );
+  }
+}
+
 @mixin frosted-bg($image-url-light, $image-url-dark, $blur: 2px, $light-alpha: 0.8, $dark-alpha: 0.65) {
   position: relative;
   overflow: hidden;

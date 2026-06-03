@@ -1,38 +1,11 @@
-// Page header banner
-.page-header {
-  position: relative;
+.nav-link {
+  transition: all 0.2s ease-in-out;
 
-  .header-content {
-    position: relative;
-    padding: calc(var(--bs-gutter-x, 1rem) * 2);
-    min-height: 215px;
-    display: flex;
-    align-items: center;
-  }
-
-  .header-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-    z-index: -10;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  &:hover {
+    transform: translateY(-1px);
   }
 }
 
-// Content that follows the header
-.page-header + .content-inner {
-  margin-top: -3rem;
-}
-
-// Navbar sidebar toggle button
 .navbar .sidebar-toggle {
   cursor: pointer;
   background: var(--bs-primary);
@@ -63,11 +36,8 @@
   }
 }
 
-// Responsive navbar toggle
 @media (max-width: 1199.98px) {
-  .navbar {
-    .sidebar-toggle {
-      display: flex;
-    }
+  .navbar .sidebar-toggle {
+    display: flex;
   }
 }

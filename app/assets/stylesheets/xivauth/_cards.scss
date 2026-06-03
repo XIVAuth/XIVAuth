@@ -1,17 +1,13 @@
-// Enhanced card styling with modern polish
-
 .card {
-  // Smooth transitions for all card interactions
+  /** Base card theming **/
+
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
-  // Subtle border enhancement
   border-color: var(--bs-border-color);
 
-  // Subtle blur effect on all cards
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 
-  // Light gradient overlay for depth
   [data-bs-theme="light"] & {
     background: linear-gradient(
       to bottom,
@@ -28,7 +24,6 @@
     );
   }
 
-  // Opt-in hover effect for interactive cards
   &.card-animated:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -36,9 +31,17 @@
     [data-bs-theme="dark"] & {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
+
+    img.rounded {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+      [data-bs-theme="dark"] & {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+    }
   }
 
-  // Card header and footer default to transparent with no borders
   .card-header {
     background-color: transparent;
     border-bottom: none;
@@ -47,51 +50,6 @@
   .card-footer {
     background-color: transparent;
     border-top: none;
-  }
-
-  // Make sub-tables transparent.
-  .table > :not(caption) > * > * {
-    background-color: transparent;
-  }
-}
-
-// Stateful cards - top-colored borders.
-.card.stateful-card-border {
-  position: relative;
-
-  border-top-style: solid;
-  border-top-width: 4px;
-  border-top-color: var(--bs-secondary);
-
-  &[data-state="ok"] {
-    border-top-color: var(--bs-success);
-  }
-
-  &[data-state="warning"] {
-    border-top-color: var(--bs-warning)
-  }
-
-  &[data-state="error"] {
-    border-top-color: var(--bs-danger);
-  }
-
-  // Avatar enhancement (TODO: only to stateful cards?)
-  img.rounded {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    [data-bs-theme="dark"] & {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  &.card-animated:hover img.rounded {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
-    [data-bs-theme="dark"] & {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    }
   }
 
   .card-title {
@@ -103,32 +61,43 @@
     font-size: 0.9rem;
     font-weight: 500;
   }
-}
 
-// App and team card enhancements
-.card:has(.btn-primary) {
-  // Cards with action buttons get extra polish
-  .card-body {
-    padding-bottom: 1.25rem;
-  }
+  img.rounded {
+    // makes images nicer in our enhanced cards too - at least for rounded/profile images.
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-  .btn-primary {
-    transition: all 0.2s ease-in-out;
-
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.3);
+    [data-bs-theme="dark"] & {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
   }
+
+  .table > :not(caption) > * > * {
+    // sub-tables should be transparent to preserve card background.
+    // this will happen regardless of opt-in
+    background-color: transparent;
+  }
+
+  // Status indicators for the top of cards
+  &.stateful-card-border {
+    border-top: 4px solid var(--bs-secondary);
+
+    &[data-state="ok"]      { border-top-color: var(--bs-success); }
+    &[data-state="warning"] { border-top-color: var(--bs-warning); }
+    &[data-state="error"]   { border-top-color: var(--bs-danger); }
+  }
 }
 
-// Fade-in + equal height for grid columns containing cards
+// and give cards some nice animations to make them comfy.
 .row > [class*="col-"]:has(.card) {
+  display: flex;
+  flex-direction: column;
+
   animation: slideUp 0.15s ease-out;
   animation-fill-mode: both;
 
-  // slideUp ends on transform: translateY(0), which keeps a stacking context alive via fill-mode.
-  // Elevate the column when a dropdown is open so it renders above sibling columns.
+  // FIXME: Firefox apparently doesn't like this, and the dropdowns may get partially clipped behind other
+  //        cards. There's little I can do about this, but it's pretty minor overall.
   &:has(.dropdown-menu.show) {
     z-index: 10;
   }
@@ -139,22 +108,17 @@
     }
   }
 
-  &:has(.card) {
+  .card {
+    flex: 1;
     display: flex;
     flex-direction: column;
 
-    .card {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+    .card-body {
+      flex: 1 0 auto;
+    }
 
-      .card-body {
-        flex: 1 0 auto;
-      }
-
-      .card-footer {
-        flex-shrink: 0;
-      }
+    .card-footer {
+      flex-shrink: 0;
     }
   }
 }

@@ -11,6 +11,7 @@ $brand-colors: (
     color: #ffffff;
     background-color: $color;
 
+    // Overriding colors so that we don't add gradients and mess with BRAND GUIDELINES
     &:hover {
       color: #ffffff;
       background-color: $color;

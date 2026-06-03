@@ -1,6 +1,22 @@
-// Pre-reserve space for validation icons so w-auto elements don't shift on feedback
+@use '../bootstrap_core' as bs;
+
+.form-control, .form-select {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+
+  &:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.15);
+  }
+
+  // Fade in validation background instead of sliding
+  &.is-invalid,
+  &.is-valid {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out, background-image 0.2s ease-in-out;
+  }
+}
+
 .form-select.is-validatable {
-  padding-right: $form-select-feedback-icon-padding-end;
+  padding-right: bs.$form-select-feedback-icon-padding-end;
   transition: border-color 0.3s ease, box-shadow 0.3s ease, background-image 0.3s ease;
 }
 
@@ -8,15 +24,12 @@
   position: relative;
 
   > .form-control {
-    // Add padding on the right to prevent text overlap with button
     padding-right: 2.5rem;
 
-    // When input is focused, move button with it
     &:focus + .btn {
       transform: translateY(calc(-50% - 1px));
     }
 
-    // When invalid, add more padding for both icons
     &.is-invalid {
       padding-right: 4.5rem;
     }
@@ -42,7 +55,6 @@
     }
   }
 
-  // When input is invalid, move button left to make room for validation icon
   > .form-control.is-invalid + .btn {
     right: 2rem;
   }

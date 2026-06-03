@@ -9,6 +9,6 @@ class Attachment::GenerateDerivativesJob < ApplicationJob
     attacher.create_derivatives
     attacher.atomic_persist
   rescue Shrine::AttachmentChanged, ActiveRecord::RecordNotFound
-    # File was replaced or the record was deleted before the job ran — discard.
+    logger.warn "Attempted to generate a derivative for an asset that no longer exists?"
   end
 end

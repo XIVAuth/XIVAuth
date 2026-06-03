@@ -1,0 +1,91 @@
+@use '../bootstrap_core' as bs;
+@use './mixins';
+
+.btn {
+  transition: all 0.15s ease-in-out;
+  position: relative;
+
+  &:active {
+    transform: scale(0.98);
+    transition-duration: 0.05s;
+  }
+
+  @each $variant, $value in bs.$theme-colors {
+    &.btn-#{$variant} {
+      @include mixins.variant-gradient($variant);
+
+      border: 1px solid transparent;
+      background-origin: border-box;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(var(--bs-#{$variant}-rgb), 0.3);
+      }
+
+      &:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 6px rgba(var(--bs-#{$variant}-rgb), 0.4);
+        filter: brightness(0.95);
+      }
+    }
+  }
+
+  @each $variant, $value in bs.$theme-colors {
+    &.btn-outline-#{$variant} {
+      backdrop-filter: blur(4px);
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(var(--bs-#{$variant}-rgb), 0.5);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  // special button that should only ever show up in dev.
+  // beeg danger
+  &.btn-devunsafe {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.9),
+      rgba(0, 0, 0, 0.9) 24px,
+      rgba(255, 215, 0, 0.9) 24px,
+      rgba(255, 215, 0, 0.9) 48px
+    );
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    color: #ffffff;
+    border: 2px solid rgba(255, 215, 0, 0.9);
+    text-shadow:
+      0 0 3px rgba(33, 37, 41, 0.9),
+      0 0 6px rgba(33, 37, 41, 0.7),
+      0 0 10px rgba(33, 37, 41, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(26, 26, 26, 0.9),
+        rgba(26, 26, 26, 0.9) 24px,
+        rgba(255, 237, 78, 0.9) 24px,
+        rgba(255, 237, 78, 0.9) 48px
+      );
+      border-color: rgba(255, 237, 78, 0.9);
+    }
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 6px rgba(255, 215, 0, 0.5);
+      filter: brightness(0.9);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.5);
+    }
+  }
+}

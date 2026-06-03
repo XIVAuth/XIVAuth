@@ -1,3 +1,9 @@
 .table-transparent {
   --bs-table-bg: transparent !important;
 }
+
+.table {
+  > :not(caption) > * > * {
+    transition: box-shadow 0.1s ease-in-out;
+  }
+}

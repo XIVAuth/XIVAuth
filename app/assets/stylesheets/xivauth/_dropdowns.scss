@@ -1,0 +1,34 @@
+.dropdown-menu {
+  border: 1px solid var(--bs-border-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.15s ease-in;
+
+  [data-bs-theme="dark"] & {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .dropdown-item {
+    --dropdown-item-color-rgb: var(--bs-primary-rgb);
+
+    @each $color in primary, secondary, success, danger, warning, info {
+      &.text-#{$color} { --dropdown-item-color-rgb: var(--bs-#{$color}-rgb); }
+    }
+
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      // only translate children to avoid the entire gradient shifting right
+      > * {
+        transform: translateX(4px);
+      }
+
+      [data-bs-theme="light"] & {
+        background: linear-gradient(to right, rgba(var(--dropdown-item-color-rgb), 0.1), transparent);
+      }
+
+      [data-bs-theme="dark"] & {
+        background: linear-gradient(to right, rgba(var(--dropdown-item-color-rgb), 0.2), transparent);
+      }
+    }
+  }
+}

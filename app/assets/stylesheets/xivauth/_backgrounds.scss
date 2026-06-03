@@ -1,0 +1,42 @@
+@use './mixins';
+
+.login-backdrop {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  position: sticky;
+  top: 0;
+  z-index: -10;
+
+  background-image: url("/backgrounds/limsa_day.webp");
+
+  [data-bs-theme="dark"] & {
+    background-image: url("/backgrounds/limsa_night.webp");
+  }
+}
+
+.header-img {
+  @include mixins.frosted-bg("/backgrounds/heroes/burnwall_day.webp", "/backgrounds/heroes/burnwall_night.webp", 1px, 0.8, 0.65);
+
+  &::before {
+    background-position: top center;
+    background-repeat: no-repeat;
+  }
+}
+
+.error-backdrop {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  z-index: -10;
+  top: 0;
+  left: 0;
+
+  [data-bs-theme="dark"] & {
+    background-image: url("/backgrounds/cmists_night.webp");
+  }
+
+  [data-bs-theme="light"] & {
+    background-image: url("/backgrounds/cmists_day.webp");
+  }
+}

@@ -1,4 +1,4 @@
-@import 'framework_core';
+@import 'bootstrap_core';
 
 @import "bootstrap/scss/utilities";
 
@@ -44,3 +44,4 @@
 // Libs
 @import 'tom-select/src/scss/tom-select.bootstrap5';
 @import 'components/tom-select';
+@import 'components/pagy';

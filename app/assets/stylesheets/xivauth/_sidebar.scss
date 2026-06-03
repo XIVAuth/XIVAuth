@@ -2,13 +2,11 @@
   --sidebar-width: 260px;
 }
 
-// Sidebar base styles (applied to offcanvas)
 .sidebar {
   width: var(--sidebar-width) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.8);
 
-  // Override offcanvas-body default overflow to allow our custom scrolling
   &.offcanvas,
   &.offcanvas-xl {
     display: flex;
@@ -47,7 +45,6 @@
     padding: 1rem;
   }
 
-  // Navigation menu styles
   .navbar-nav {
     flex-direction: column;
     padding: 0;
@@ -147,7 +144,6 @@
   }
 }
 
-// Desktop behavior: offcanvas-xl becomes static, we need to make it fixed
 @media (min-width: 1200px) {
   .sidebar.offcanvas-xl {
     position: fixed !important;
@@ -168,7 +164,6 @@
   }
 }
 
-// Navbar toggler styling (for offcanvas trigger)
 .navbar-toggler {
   border: none;
   padding: 0.5rem;
@@ -184,7 +179,6 @@
   }
 }
 
-// Ensure the toggler is visible on mobile (Bootstrap hides it by default)
 @media (max-width: 1199.98px) {
   .navbar-toggler.d-xl-none {
     display: flex !important;

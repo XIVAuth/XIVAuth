@@ -1,0 +1,17 @@
+@use '../bootstrap_core' as bs;
+
+.alert {
+  border-left-width: 4px;
+  border-left-style: solid;
+
+  @each $variant, $value in bs.$theme-colors {
+    &.alert-#{$variant} {
+      border-left-color: var(--bs-#{$variant});
+      background: linear-gradient(
+                      to right,
+                      rgba(var(--bs-#{$variant}-rgb), 0.1),
+                      rgba(var(--bs-#{$variant}-rgb), 0.05)
+      );
+    }
+  }
+}

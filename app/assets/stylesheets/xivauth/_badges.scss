@@ -1,0 +1,20 @@
+@use '../bootstrap_core' as bs;
+@use './mixins';
+
+.badge {
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  transition: all 0.2s ease-in-out;
+
+  @each $variant, $value in bs.$theme-colors {
+    &.bg-#{$variant} {
+      @include mixins.variant-gradient($variant);
+
+      box-shadow: 0 2px 4px rgba(var(--bs-#{$variant}-rgb), 0.2);
+    }
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}

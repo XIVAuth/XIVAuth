@@ -1,106 +1,25 @@
-@import 'framework_core';
+@use './xivauth/animations';
+@use './xivauth/layout';
+@use './xivauth/backgrounds';
+@use './xivauth/sidebar';
+@use './xivauth/navbar';
+@use './xivauth/tables';
+@use './xivauth/forms';
+@use './xivauth/buttons';
+@use './xivauth/badges';
+@use './xivauth/alerts';
+@use './xivauth/dropdowns';
+@use './xivauth/text';
+@use './xivauth/modals';
+@use './xivauth/cards';
+@use './xivauth/brand_colors';
+@use './xivauth/env_watermark';
+@use './xivauth/branding/pride_logo';
+@use './xivauth/devise/password';
 
-@import "xivauth/utility";
-@import "xivauth/devise/password";
-@import "xivauth/brand_colors";
-@import "xivauth/env_watermark";
-@import "xivauth/branding/pride_logo";
-@import "xivauth/mixins";
-@import "xivauth/sidebar";
-@import "xivauth/tables";
-@import "xivauth/navbar";
-@import "xivauth/forms";
+/** GLOBALS **/
 
-// Modern UI mixins - better cards, hovers, etc.
-@import "xivauth/animations";
-@import "xivauth/cards";
-@import "xivauth/ui_polish";
-
-// UI polish variables
 :root {
   --gradient-angle: 135deg;
-}
-
-// Abuse content to get a sticky footer
-.main-content {
-  flex: 1 0 auto;
-  display: flex;
-  flex-direction: column;
-
-  .content-inner {
-    flex: 1 0 auto;
-  }
-}
-
-// ditto, mostly.
-body > .container:not(.toast-container) {
-  flex: 1 0 auto;
-}
-
-.full-backdrop {
-  overflow-x: hidden;
-  position: fixed;
-  z-index: -10;
-  height: 100vh;
-  width: 100%;
-}
-
-.pipe-separated-items {
-  > li {
-    display: inline-block;
-  }
-
-  > li:not(:first-child):before {
-    content: "";
-    border-left: 1px solid;
-    padding-right: 0.2rem;
-  }
-}
-
-.toast {
-  backdrop-filter: blur(8px);
-}
-
-/** backgrounds **/
-
-.login-backdrop {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  position: sticky;
-  top: 0;
-  z-index: -10;
-
-  background-image: url("/backgrounds/limsa_day.webp");
-
-  [data-bs-theme="dark"] & {
-    background-image: url("/backgrounds/limsa_night.webp");
-  }
-}
-
-.header-img {
-  @include frosted-bg("/backgrounds/heroes/burnwall_day.webp", "/backgrounds/heroes/burnwall_night.webp", 1px, 0.8, 0.65);
-
-  &::before {
-    background-position: top center;
-    background-repeat: no-repeat;
-  }
-}
-
-.error-backdrop {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  z-index: -10;
-
-  top: 0;
-  left: 0;
-
-  [data-bs-theme="dark"] & {
-    background-image: url("/backgrounds/cmists_night.webp");
-  }
-
-  [data-bs-theme="light"] & {
-    background-image: url("/backgrounds/cmists_day.webp");
-  }
+  --xivauth-brand-blue: "#00A8E8";
 }

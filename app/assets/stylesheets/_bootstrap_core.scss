@@ -1,7 +1,4 @@
-// Core configuration/plugins for our framework (Bootstrap)
-
-@import "bootstrap/scss/mixins/banner";
-@include bsBanner("");
+// Bootstrap entrypoint to re-expose the framework core
 
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";

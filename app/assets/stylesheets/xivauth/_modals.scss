@@ -1,0 +1,20 @@
+.modal-content {
+  border: none;
+
+  [data-bs-theme="light"] & {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  [data-bs-theme="dark"] & {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  }
+
+  .modal-header {
+    border-bottom: 2px solid var(--bs-border-color);
+    background: linear-gradient(
+                    to bottom,
+                    rgba(var(--bs-primary-rgb), 0.05),
+                    transparent
+    );
+  }
+}
