@@ -10,45 +10,40 @@
   </div>
 <% end %>
 
-<div class="alert alert-info">
-  <details>
-    <summary><strong>Document too long? Have a TL;DR!</strong></summary>
-    <p class="pt-2">
-      Certificates are XIVAuth's notary service. You can use it to prove that something actually came from you, or to
-      make sure that only you can read some information sent to you. Since certificates can be verified offline, they
-      can unlock powerful use cases for building trust.
-    </p>
-    <p>
-      However, it's important to understand that certificates are not a silver bullet. They're primarily intended for
-      high-assurance or decentralized systems and require careful implementation and user awareness. Certificates are
-      <strong>not</strong> a prerequisite for a system to be secure or trustworthy, and there are very good reasons to
-      not use them.
-    </p>
-    <p class="mb-0">
-      If you're a developer looking to use certificates in your project, please start with
-      <a href="https://rip-van-webble.blogspot.com/2021/03/certificates-confuse-everything.html">this blog post</a>
-      before committing to your decision.
-    </p>
-  </details>
-</div>
-
 <ul class="nav nav-tabs nav-justified mb-4" role="tablist">
   <li class="nav-item" role="presentation">
     <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-tab-pane"
             type="button" role="tab" aria-controls="users-tab-pane" aria-selected="true">
-      For Users
+      <i class="bi bi-person"></i> For Users
     </button>
   </li>
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="developers-tab" data-bs-toggle="tab" data-bs-target="#developers-tab-pane"
             type="button" role="tab" aria-controls="developers-tab-pane" aria-selected="false">
-      For Developers
+      <i class="bi bi-code-slash"></i> For Developers
     </button>
   </li>
 </ul>
 
 <div class="tab-content">
   <div class="tab-pane fade show active" id="users-tab-pane" role="tabpanel" aria-labelledby="users-tab" tabindex="0">
+    <div class="alert alert-info">
+      <details>
+        <summary><strong>Document too long? Have a TL;DR!</strong></summary>
+        <p class="pt-2">
+          Certificates are XIVAuth's notary service. You can use it to prove that something actually came from you, or to
+          make sure that only you can read some information sent to you. Since certificates can be verified offline, they
+          can unlock powerful use cases for building trust.
+        </p>
+        <p class="mb-0">
+          However, it's important to understand that certificates are not a silver bullet. They're primarily intended for
+          high-assurance or decentralized systems and require careful implementation and user awareness. Certificates are
+          <strong>not</strong> a prerequisite for a system to be secure or trustworthy, and there are very good reasons to
+          not use them.
+        </p>
+      </details>
+    </div>
+
     <h2>What is a certificate?</h2>
 
     <p>
@@ -156,12 +151,12 @@
     <h2>Implementation Guidance</h2>
 
     <p>
-      For developers, I would also highly recommend reading
+      Before you decide to use certificates in your project, I would highly recommend
       <a href="https://rip-van-webble.blogspot.com/2021/03/certificates-confuse-everything.html">this wonderful blog
-        post</a> from an old-timer explaining some of the certificate nightmares from back in the day. Despite building
-      out a full certificate chain myself, I still <strong>strongly</strong> recommend that developers avoid
-      implementing certificate-based systems unless necessary. Generally, this comes down to most or all of these
-      factors being present:
+        post</a> from someone with far more intelligence and experience than me explaining a lot of the less-obvious
+      aspects to certificates. Despite building out a full certificate authority myself, I still
+      <strong>strongly</strong> recommend that developers avoid implementing certificate-based systems unless necessary.
+      Generally, this comes down to most or all of these factors being present:
     </p>
 
     <ul>

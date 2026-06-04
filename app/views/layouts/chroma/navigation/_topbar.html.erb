@@ -17,11 +17,10 @@
         <li class="nav-item dropdown">
           <a id="navbarDropdown" class="py-0 nav-link d-flex align-items-center gap-1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="<%= current_user.avatar_url %>" alt="" width="36" height="36" class="d-inline-block rounded-2">
-            <i class="bi bi-chevron-down d-md-none" style="font-size: 0.65em;"></i>
-
             <div class="caption ms-2 d-none d-md-block">
               <h6 class="mb-0">Hi, <%= current_user&.profile&.display_name || 'Guest' %>!</h6>
             </div>
+            <i class="bi bi-chevron-down" style="font-size: 0.65em;"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <li>
