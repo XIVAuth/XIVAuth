@@ -13,11 +13,16 @@
       make sure that only you can read some information sent to you. Since certificates can be verified offline, they
       can unlock powerful use cases for building trust.
     </p>
-    <p class=" mb-0">
+    <p>
       However, it's important to keep in mind that certificates are not a silver bullet. They're primarily intended for
       high-assurance or decentralized systems and require careful implementation and user awareness. Certificates are
       <strong>not</strong> a prerequisite for a system to be secure or trustworthy, and there are good reasons to not
       use them.
+    </p>
+    <p class="mb-0">
+      If you're a developer looking to use certificates in your project, please start with
+      <a href="https://rip-van-webble.blogspot.com/2021/03/certificates-confuse-everything.html">this blog post</a>
+      before committing to your decision.
     </p>
   </details>
 </div>
@@ -55,15 +60,17 @@
 
 <h2 class="pt-3">Why would I use a certificate?</h2>
 
-Certificates have a few uses in the XIVAuth ecosystem. Developers may use them in creative and unique ways, but common
-use cases include:
+<p>
+  Certificates have a few uses in the XIVAuth ecosystem. Developers may use them in creative and unique ways, but
+  common use cases include:
+</p>
 
 <ul>
   <li class="my-3">
     <strong>Proving data came from your character.</strong><br>
-    By signing some data with your certificate, other parties can trust that it came from you and not from a third
-    party. This is particularly useful for proving ownership (or authenticity) of data: a digitally signed message in
-    your name means that you are the one who wrote it.
+    By signing some data with your certificate, other parties can (reasonably) trust that it came from you and not from
+    a third party. This is particularly useful for proving ownership (or authenticity) of data: a digitally signed
+    message in your name means that you are the one who wrote it.
   </li>
   <li class="my-3">
     <strong>Encrypting data for others.</strong><br>
@@ -118,4 +125,41 @@ use cases include:
   issued certificates and mark them as invalid, revocations are not automatic and require user intervention. If a user
   is not careful about which applications they allow to request certificates, they may inadvertently compromise or
   weaken their security.
+</p>
+
+<h2 class="pt-3">Information for Developers</h2>
+
+<p>
+  For developers, I would also highly recommend reading
+  <a href="https://rip-van-webble.blogspot.com/2021/03/certificates-confuse-everything.html">this wonderful blog
+    post</a> from an old-timer explaining some of the certificate nightmare from back in the day - and one that still
+  exists today. Despite building out a full certificate chain myself, I still <strong>strongly</strong> recommend
+  that developers avoid implementing certificate-based systems unless necessary. Generally, this comes down to most or
+  all of these factors being present:
+</p>
+
+<ul>
+  <li>You need a system that provides bindings of public keys to (public) identities.</li>
+  <li>You're building a system that is unable or unwilling to vouch for identities.</li>
+  <li>Your system needs the ability to verify identities <em>offline</em> without any server interactions.</li>
+  <li>You need a system capable of providing or consuming publicly auditable artifacts.</li>
+  <li>
+    There is no better alternative for key distribution such as DNS or a GPG-like registry. (Or, a publicly queryable
+    registry is undesirable).
+  </li>
+</ul>
+
+<p>
+  Implementing and supporting PKI/X.509 is a very complex task, and many things can very easily go wrong. Even my
+  implementation (made by someone who generally knows what they're doing!) contains a couple known tradeoffs (read:
+  flaws) that I considered acceptable for a project providing SSO for a video game. These aren't security-critical by
+  any means, but they show the sheer complexity of running a certificate authority. Certificates and a full X.509
+  implementation aren't <em>quite</em> a last resort, but they're certainly pretty close. Make sure you know what you're
+  signing up for.
+</p>
+
+<p>
+  If, despite all of this, you still feel that a certificate-based system is the right choice for your needs, please
+  consider reaching out to me in the <%= link_to "XIVAuth Discord", discord_path %>. I'd be happy to chat about your
+  use case and offer any advice or guidance I can to make sure you don't shoot yourself in the foot.
 </p>
