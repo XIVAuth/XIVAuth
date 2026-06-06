@@ -67,7 +67,7 @@ gem "omniauth-oauth2", "~> 1.8"
 gem "omniauth-twitch", "~> 1.2"
 
 # Outbound OAuth2
-gem "doorkeeper", "~> 5.9.0"
+gem "doorkeeper", "~> 5.9.2"
 gem "doorkeeper-device_authorization_grant",
     github: "XIVAuth/doorkeeper-device_authorization_grant",
     ref: "f84062469900890461b1f03d9c37960236413321"
