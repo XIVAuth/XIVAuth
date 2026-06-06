@@ -397,7 +397,7 @@ include_team_descendants: true)
     end
 
     it "returns false for an application with different entitlements" do
-      app = FactoryBot.create(:client_application, entitlements: ["other_thing"])
+      app = FactoryBot.create(:client_application, entitlements: ["custom_background"])
       expect(app.entitlement_granted?("code_signing_certificates")).to be false
     end
   end

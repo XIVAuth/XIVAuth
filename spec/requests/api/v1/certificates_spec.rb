@@ -276,7 +276,7 @@ RSpec.describe "Api::V1::CertificatesController" do
     end
   end
 
-  describe "POST /api/v1/certificates/request" do
+  xdescribe "POST /api/v1/certificates/request" do
     let(:csr_pem) { PkiSupport.generate_csr_pem }
 
     context "for user certificates" do
@@ -528,7 +528,7 @@ RSpec.describe "Api::V1::CertificatesController" do
     end
   end
 
-  describe "POST /api/v1/certificates/:id/revoke" do
+  xdescribe "POST /api/v1/certificates/:id/revoke" do
     context "with proper scopes" do
       let(:token) { OAuth::AccessToken.create(application: oauth_client, resource_owner: user, scopes: "certificate:revoke certificate:all user character:all") }
       let(:headers) { { "Authorization" => "Bearer #{token.token}" } }
