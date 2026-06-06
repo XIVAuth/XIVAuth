@@ -29,7 +29,7 @@ gem "aws-sdk-s3", "~> 1.0", require: false
 gem "image_processing", "~> 2.0"
 gem "marcel", "~> 1.0"
 gem "ruby-vips", "~> 2.0"
-gem "shrine", "~> 3.6"
+gem "shrine", "~> 3.7"
 
 # JSON API
 gem "jbuilder"
