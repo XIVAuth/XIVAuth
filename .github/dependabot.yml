@@ -4,11 +4,23 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      gha:
+        patterns:
+          - "*"
   - package-ecosystem: "bundler"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      ruby:
+        patterns:
+          - "*"
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      nodejs:
+        patterns:
+          - "*"
