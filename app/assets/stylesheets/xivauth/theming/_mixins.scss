@@ -1,19 +1,22 @@
 @use './engine' as t;
 
-// Emit @content for every theme whose polarity matches $polarity.
-// The media query branch covers the "auto" case so a named light theme on :root
-// suppresses it even when the OS is in dark mode.
+// Conditional to allow us to apply if the browser is in a certain "polarity" (light or dark mode).
 @mixin theme-polarity($polarity) {
+  // If in auto, only apply if the system polarity matches what we're asking for.
+  // Note here - the only valid media query is "dark" (or none). This maps to umbral in CHROMA's _root, but we'll still
+  // pretend we manage things here.
   @media (prefers-color-scheme: #{$polarity}) {
     @at-root :root[data-chroma-theme="auto"] & {
       @content;
     }
   }
 
+  // And manual set if our polarity is set.
   @at-root [data-chroma-theme="#{$polarity}"] & {
     @content;
   }
 
+  // And general polarity (recursive)
   @each $name, $pol in t.$theme-polarities {
     @if $pol == $polarity {
       @at-root [data-chroma-theme="#{$name}"] & {
@@ -23,12 +26,8 @@
   }
 }
 
-// Inverts a surface in light polarity: re-maps --bs-body-bg/color to the opposite
-// --chroma-* tokens so all Bootstrap child components (dropdowns, form controls,
-// headings) automatically inherit correct values from the cascade.
-// No-op in dark polarity — vars are already correct without inversion.
-// On the element itself, use var(--bs-body-bg) for background and var(--bs-body-color)
-// for foreground after including this mixin.
+// Invert bg <-> fg colors for light themes if we want to force a "fake" dark mode.
+// Used for things like navbars et al.
 @mixin invert-theme {
   @include theme-polarity(light) {
     --bs-body-bg:        var(--chroma-body-color);

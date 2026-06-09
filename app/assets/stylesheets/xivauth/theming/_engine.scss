@@ -23,7 +23,7 @@ $themes: (
   thirteenth:  t-thirteenth.$config,
 );
 
-// -- Registry functions -------------------------------------------------------
+/** Theme management, recursion, etc. **/
 
 @function theme-polarity($name) {
   $config: map.get($themes, $name);
@@ -54,7 +54,12 @@ $themes: (
 }
 $theme-polarities: _build-polarity-map();
 
-// -- Core token and binding mixins --------------------------------------------
+/** Theme applicators **/
+// As a general rule, themes flow through the following path:
+// 1. Bootstrap SCSS (light mode, dark mode) into Chroma's astral/umbral.
+// 2. Chroma themes can override --bs-${whatever} for child themes.
+// 3. Render the entire tree into --chroma-${whatever}
+// 4. [data-chroma-theme] applies the --chroma pack over --bs.
 
 @mixin apply-theme($vars) {
   @each $key, $value in $vars {
@@ -66,6 +71,7 @@ $theme-polarities: _build-polarity-map();
 }
 
 @mixin bind-chroma-to-bs($vars) {
+  // Read the resolved variables for this theme from the tree and pass them off to Bootstrap.
   @each $key, $value in $vars {
     --bs-#{$key}: var(--chroma-#{$key});
     @if type-of($value) == color {
@@ -73,7 +79,8 @@ $theme-polarities: _build-polarity-map();
     }
   }
 
-  // Derived vars — opacity-based, computed from chroma tokens rather than stored as tokens.
+  // Bootstrap precalculates these vs calc() for... some reason. So, we'll just redo those calculations here.
+  // What can go wrong?
   --bs-secondary-color:          rgba(var(--chroma-body-color-rgb), 0.75);
   --bs-tertiary-color:           rgba(var(--chroma-body-color-rgb), 0.5);
   --bs-border-color-translucent: rgba(var(--chroma-body-color-rgb), 0.15);
@@ -95,7 +102,7 @@ $theme-polarities: _build-polarity-map();
   }
 }
 
-// -- Emission mixins ----------------------------------------------------------
+/** EXPORTS **/
 
 @mixin emit-theme($name) {
   $polarity: theme-polarity($name);

@@ -17,6 +17,8 @@
   }
 }
 
+// reusable helper for a frosted background. set default image-url-light/image-url-dark based on polarity with
+// some precalculated-ish alpha.
 @mixin frosted-bg($image-url-light, $image-url-dark, $blur: 2px, $light-alpha: 0.8, $dark-alpha: 0.65) {
   position: relative;
   overflow: hidden;
@@ -39,14 +41,5 @@
       background-blend-mode: darken;
       background-color: rgba(0, 0, 0, $dark-alpha);
     }
-  }
-}
-
-@mixin media-or-theme($mode: light) {
-  @media (prefers-color-scheme: $mode) {
-    @content;
-  }
-  [data-chroma-theme="#{$mode}"] {
-    @content;
   }
 }

@@ -1,5 +1,8 @@
 @use '../../../bootstrap_core' as bs;
 
+// Bootstrap default dark theme, known as "umbral" explicitly.
+// Import from bootstrap's variables_dark and just carry it on.
+// FIXME: Not everything is passed through, but that's a BS6 problem.
 $config: (
   polarity: dark,
   values: (

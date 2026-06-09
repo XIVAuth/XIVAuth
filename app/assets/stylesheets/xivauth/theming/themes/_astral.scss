@@ -1,5 +1,8 @@
 @use '../../../bootstrap_core' as bs;
 
+// Bootstrap default light theme, known as "astral" explicitly.
+// Note that this will basically always be applied, but we're declaring it anyways to make our
+// lives easier w/r/t resolution.
 $config: (
   polarity: light,
   values: (

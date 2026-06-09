@@ -1,3 +1,4 @@
+// Ishgard - light mode, white and icy. A bit industrial.
 $config: (
         base: astral,
         values: (
@@ -12,7 +13,7 @@ $config: (
         ),
 );
 
-// messing around is fun
+// demo: allow us to override specific elements even if bootstrap core doesn't expose a variable.
 [data-chroma-theme="ishgard"] {
   h1, h2, h3, h4, h5, h6 {
     font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;

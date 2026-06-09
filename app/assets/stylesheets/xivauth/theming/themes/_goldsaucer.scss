@@ -1,4 +1,4 @@
-// Gold Saucer — MGP neon, casino lights, maximum contrast and gaudiness
+// Gold Saucer - I wanted to suffer. Very bright, flashy, playing with overides.
 $config: (
   base: astral,
   values: (
@@ -11,6 +11,8 @@ $config: (
     primary:          #ff0090,
     link-color:       #0000ee,
     link-hover-color: #cc00ff,
+
+    // thanks, kizer.
     font-sans-serif:  '"Comic Sans MS", "Chalkboard SE", cursive',
     border-radius:    1.5rem,
     border-width:     3px,
