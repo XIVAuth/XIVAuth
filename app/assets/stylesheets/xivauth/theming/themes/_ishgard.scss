@@ -1,0 +1,20 @@
+$config: (
+        base: astral,
+        values: (
+                body-bg: #f4f7fb,
+                body-color: #1a1f2e,
+                secondary-bg: #e4ecf5,
+                tertiary-bg: #d4e0ee,
+                border-color: #a8bcd4,
+                primary: #3a6ea8,
+                link-color: #3a6ea8,
+                link-hover-color: #2a5080,
+        ),
+);
+
+// messing around is fun
+[data-chroma-theme="ishgard"] {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  }
+}

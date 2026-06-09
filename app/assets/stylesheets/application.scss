@@ -1,4 +1,6 @@
 // custom components to replace bootstrap's (xivauth ui kit)
+@use './xivauth/root';
+@use './xivauth/themes';
 @use './xivauth/animations';
 @use './xivauth/layout';
 @use './xivauth/backgrounds';

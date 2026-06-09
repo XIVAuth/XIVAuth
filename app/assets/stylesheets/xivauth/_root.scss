@@ -1,0 +1,11 @@
+@use './theming/engine';
+
+:root {
+  @include engine.emit-theme(astral);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-chroma-theme="auto"] {
+    @include engine.emit-theme(umbral);
+  }
+}

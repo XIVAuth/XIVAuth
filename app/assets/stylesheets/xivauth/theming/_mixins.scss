@@ -1,0 +1,45 @@
+@use './engine' as t;
+
+// Emit @content for every theme whose polarity matches $polarity.
+// The media query branch covers the "auto" case so a named light theme on :root
+// suppresses it even when the OS is in dark mode.
+@mixin theme-polarity($polarity) {
+  @media (prefers-color-scheme: #{$polarity}) {
+    @at-root :root[data-chroma-theme="auto"] & {
+      @content;
+    }
+  }
+
+  @at-root [data-chroma-theme="#{$polarity}"] & {
+    @content;
+  }
+
+  @each $name, $pol in t.$theme-polarities {
+    @if $pol == $polarity {
+      @at-root [data-chroma-theme="#{$name}"] & {
+        @content;
+      }
+    }
+  }
+}
+
+// Inverts a surface in light polarity: re-maps --bs-body-bg/color to the opposite
+// --chroma-* tokens so all Bootstrap child components (dropdowns, form controls,
+// headings) automatically inherit correct values from the cascade.
+// No-op in dark polarity — vars are already correct without inversion.
+// On the element itself, use var(--bs-body-bg) for background and var(--bs-body-color)
+// for foreground after including this mixin.
+@mixin invert-theme {
+  @include theme-polarity(light) {
+    --bs-body-bg:        var(--chroma-body-color);
+    --bs-body-bg-rgb:    var(--chroma-body-color-rgb);
+    --bs-body-color:     var(--chroma-body-bg);
+    --bs-body-color-rgb: var(--chroma-body-bg-rgb);
+    --bs-emphasis-color:  var(--chroma-body-bg);
+    --bs-secondary-color: rgba(var(--chroma-body-bg-rgb), 0.75);
+    --bs-heading-color:   var(--chroma-body-bg);
+    --bs-secondary-bg: oklch(from var(--chroma-body-color) calc(l + 0.05) c h);
+    --bs-tertiary-bg:  oklch(from var(--chroma-body-color) calc(l + 0.03) c h);
+    --bs-border-color: oklch(from var(--chroma-body-color) calc(l + 0.25) c h);
+  }
+}

@@ -1,4 +1,5 @@
 @use '../bootstrap_core' as bs;
+@use 'mixins';
 
 .nav-link {
   transition: all 0.2s ease-in-out;
@@ -9,7 +10,21 @@
 }
 
 .navbar {
+  @include mixins.invert-theme;
+
   min-height: 56px;
+  background-color: var(--bs-body-bg);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--bs-body-color);
+
+  .nav-link {
+    color: var(--bs-body-color);
+
+    &:hover, &.show {
+      color: var(--bs-emphasis-color);
+      background-color: rgba(var(--bs-body-color-rgb), 0.1);
+    }
+  }
 
   .sidebar-toggle {
     cursor: pointer;

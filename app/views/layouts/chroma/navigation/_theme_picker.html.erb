@@ -1,0 +1,26 @@
+<li class="nav-item">
+  <select class="form-select form-select-sm" id="dev-theme-picker">
+    <option value="auto">auto</option>
+    <option value="astral">astral</option>
+    <option value="umbral">umbral</option>
+    <hr>
+    <option value="eulmore">eulmore</option>
+    <option value="goldsaucer">goldsaucer</option>
+    <option value="ishgard">ishgard</option>
+    <option value="limsa">limsa</option>
+    <option value="gridania">gridania</option>
+    <option value="thanalan">thanalan</option>
+    <option value="thirteenth">thirteenth</option>
+  </select>
+</li>
+
+<script>
+  (function() {
+    var sel = document.getElementById('dev-theme-picker');
+    var current = document.documentElement.getAttribute('data-chroma-theme') || 'auto';
+    sel.value = current;
+    sel.addEventListener('change', function() {
+      document.documentElement.setAttribute('data-chroma-theme', this.value);
+    });
+  })();
+</script>

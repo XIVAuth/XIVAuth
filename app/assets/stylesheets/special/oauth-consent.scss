@@ -1,3 +1,5 @@
+@use "../xivauth/mixins";
+
 .oauth-consent-backdrop {
   background-size: cover;
   background-repeat: no-repeat;
@@ -10,12 +12,10 @@
   -webkit-backdrop-filter: blur(16px);
   transition: background 0.3s, border 0.3s;
 
-  [data-bs-theme="light"] & {
-    background-color: var(--bs-card-bg);
-    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
-  }
+  background-color: var(--bs-card-bg);
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
 
-  [data-bs-theme="dark"] & {
+  @include mixins.theme-polarity(dark) {
     background: rgba(30, 30, 30, 0.80);
     box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
   }

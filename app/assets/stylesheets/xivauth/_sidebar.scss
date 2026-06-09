@@ -5,7 +5,10 @@
 .sidebar {
   width: var(--sidebar-width) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
+  color: light-dark(var(--bs-body-bg), var(--bs-body-color));
+
+  // Override offcanvas bg for mobile drawer
+  --bs-offcanvas-bg: light-dark(var(--bs-body-color), var(--bs-body-bg));
 
   &.offcanvas,
   &.offcanvas-xl {
@@ -21,7 +24,6 @@
 
   .sidebar-header {
     padding: 1.125rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -29,7 +31,7 @@
 
     .navbar-brand {
       margin: 0;
-      color: white;
+      color: light-dark(var(--bs-body-bg), var(--bs-emphasis-color));
     }
   }
 
@@ -46,7 +48,6 @@
   }
 
   .navbar-nav {
-    flex-direction: column;
     padding: 0;
     margin: 0;
 
@@ -61,7 +62,7 @@
         .nav-link {
           padding: 0.5rem 1rem 0;
           font-weight: 500;
-          color: rgba(255, 255, 255, 0.5);
+          color: light-dark(var(--bs-secondary-bg), var(--bs-secondary-color));
           cursor: default;
           pointer-events: none;
 
@@ -75,11 +76,10 @@
         display: flex;
         align-items: center;
         padding: 0.5rem 1rem 0.5rem 1rem;
-        color: rgba(255, 255, 255, 0.8);
-        border-radius: var(--bs-border-radius);
+        color: light-dark(var(--bs-body-bg), var(--bs-body-color));
+        border-radius: 0 var(--bs-border-radius) var(--bs-border-radius) 0;
         transition: all 0.2s ease-in-out;
         white-space: nowrap;
-        text-decoration: none;
 
         i {
           flex-shrink: 0;
@@ -100,13 +100,13 @@
         }
 
         &:hover {
-          color: white;
-          background-color: rgba(255, 255, 255, 0.1);
+          color: light-dark(var(--bs-body-bg), var(--bs-emphasis-color));
+          background-color: light-dark(rgba(var(--bs-body-bg-rgb), 0.1), rgba(var(--bs-body-color-rgb), 0.1));
         }
 
         &.active {
           color: var(--bs-primary);
-          background-color: rgba(255, 255, 255, 0.15);
+          background-color: light-dark(rgba(var(--bs-body-bg-rgb), 0.15), rgba(var(--bs-body-color-rgb), 0.15));
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
           margin-left: -1rem;
@@ -132,14 +132,13 @@
         .nav-link {
           padding: 0.4rem 1rem;
           font-size: 0.9rem;
+          border-radius: var(--bs-border-radius);
         }
       }
     }
 
     hr.hr-horizontal {
       margin: 0.5rem 1rem;
-      opacity: 0.1;
-      border-color: rgba(255, 255, 255, 0.1);
     }
   }
 }
@@ -152,7 +151,7 @@
     left: 0;
     transform: none !important;
     visibility: visible !important;
-    background-color: var(--bs-dark) !important;
+    background-color: light-dark(var(--bs-body-color), var(--bs-body-bg)) !important;
   }
 
   .sidebar ~ .main-content {
@@ -167,7 +166,7 @@
 .navbar-toggler {
   border: none;
   padding: 0.5rem;
-  color: white;
+  color: var(--bs-body-color);
   background: transparent;
 
   &:focus {

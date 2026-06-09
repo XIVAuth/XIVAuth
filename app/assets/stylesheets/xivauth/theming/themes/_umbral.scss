@@ -1,0 +1,19 @@
+@use '../../../bootstrap_core' as bs;
+
+$config: (
+  polarity: dark,
+  values: (
+    body-bg:                   bs.$body-bg-dark,
+    body-color:                bs.$body-color-dark,
+    secondary-bg:              bs.$body-secondary-bg-dark,
+    tertiary-bg:               bs.$body-tertiary-bg-dark,
+    border-color:              bs.$border-color-dark,
+    emphasis-color:            bs.$body-emphasis-color-dark,
+    code-color:                bs.$code-color-dark,
+    highlight-bg:              bs.$mark-bg-dark,
+    form-valid-color:          bs.$form-valid-color-dark,
+    form-valid-border-color:   bs.$form-valid-border-color-dark,
+    form-invalid-color:        bs.$form-invalid-color-dark,
+    form-invalid-border-color: bs.$form-invalid-border-color-dark,
+  ),
+);

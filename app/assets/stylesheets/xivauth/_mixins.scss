@@ -1,16 +1,18 @@
+@forward './theming/mixins';
+@use './theming/mixins' as theming;
+
 @mixin variant-gradient($variant, $important: false) {
-  [data-bs-theme="light"] & {
+  background-image: linear-gradient(
+          var(--gradient-angle),
+          var(--bs-#{$variant}),
+          color-mix(in srgb, var(--bs-#{$variant}) 70%, white)
+  );
+
+  @include theming.theme-polarity(dark) {
     background-image: linear-gradient(
-      var(--gradient-angle),
-      var(--bs-#{$variant}),
-      color-mix(in srgb, var(--bs-#{$variant}) 70%, white)
-    );
-  }
-  [data-bs-theme="dark"] & {
-    background-image: linear-gradient(
-      var(--gradient-angle),
-      var(--bs-#{$variant}),
-      var(--bs-#{$variant}-border-subtle)
+            var(--gradient-angle),
+            var(--bs-#{$variant}),
+            var(--bs-#{$variant}-border-subtle)
     );
   }
 }
@@ -28,15 +30,23 @@
     background-position: center;
     filter: blur($blur);
 
-    [data-bs-theme="light"] & {
-      background-image: url(#{$image-url-light});
-      background-blend-mode: lighten;
-      background-color: rgba(255, 255, 255, $light-alpha);
-    }
-    [data-bs-theme="dark"] & {
+    background-image: url(#{$image-url-light});
+    background-blend-mode: lighten;
+    background-color: rgba(255, 255, 255, $light-alpha);
+
+    @include theming.theme-polarity(dark) {
       background-image: url(#{$image-url-dark});
       background-blend-mode: darken;
       background-color: rgba(0, 0, 0, $dark-alpha);
     }
+  }
+}
+
+@mixin media-or-theme($mode: light) {
+  @media (prefers-color-scheme: $mode) {
+    @content;
+  }
+  [data-chroma-theme="#{$mode}"] {
+    @content;
   }
 }

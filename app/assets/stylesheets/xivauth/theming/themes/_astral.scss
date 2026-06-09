@@ -1,0 +1,19 @@
+@use '../../../bootstrap_core' as bs;
+
+$config: (
+  polarity: light,
+  values: (
+    body-bg:                   bs.$body-bg,
+    body-color:                bs.$body-color,
+    secondary-bg:              bs.$body-secondary-bg,
+    tertiary-bg:               bs.$body-tertiary-bg,
+    border-color:              bs.$border-color,
+    emphasis-color:            bs.$body-emphasis-color,
+    code-color:                bs.$code-color,
+    highlight-bg:              bs.$mark-bg,
+    form-valid-color:          bs.$form-valid-color,
+    form-valid-border-color:   bs.$form-valid-border-color,
+    form-invalid-color:        bs.$form-invalid-color,
+    form-invalid-border-color: bs.$form-invalid-border-color,
+  ),
+);

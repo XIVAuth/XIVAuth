@@ -1,3 +1,5 @@
+@use "../xivauth/mixins";
+
 .login-backdrop {
   background-size: cover;
   background-repeat: no-repeat;
@@ -8,7 +10,15 @@
 
   background-image: url("/backgrounds/limsa_day.webp");
 
-  [data-bs-theme="dark"] & {
+  @include mixins.theme-polarity(dark) {
     background-image: url("/backgrounds/limsa_night.webp");
+  }
+
+  [data-bs-theme="ember"] & {
+    background-image: url("https://placekittens.com/g/1920/1080");
+  }
+
+  [data-bs-theme="chalk"] & {
+    background-image: url("https://picsum.photos/1920/1080");
   }
 }

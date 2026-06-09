@@ -1,0 +1,118 @@
+@use 'sass:map';
+@use '../../bootstrap_core' as bs;
+
+@use './themes/astral'      as t-astral;
+@use './themes/umbral'      as t-umbral;
+@use './themes/eulmore'     as t-eulmore;
+@use './themes/goldsaucer'  as t-goldsaucer;
+@use './themes/gridania'    as t-gridania;
+@use './themes/ishgard'     as t-ishgard;
+@use './themes/limsa'       as t-limsa;
+@use './themes/thanalan'    as t-thanalan;
+@use './themes/thirteenth'  as t-thirteenth;
+
+$themes: (
+  astral:      t-astral.$config,
+  umbral:      t-umbral.$config,
+  eulmore:     t-eulmore.$config,
+  goldsaucer:  t-goldsaucer.$config,
+  gridania:    t-gridania.$config,
+  ishgard:     t-ishgard.$config,
+  limsa:       t-limsa.$config,
+  thanalan:    t-thanalan.$config,
+  thirteenth:  t-thirteenth.$config,
+);
+
+// -- Registry functions -------------------------------------------------------
+
+@function theme-polarity($name) {
+  $config: map.get($themes, $name);
+  $base: map.get($config, base);
+  @if $base {
+    @return theme-polarity($base);
+  }
+  @return map.get($config, polarity);
+}
+
+@function resolve-theme($name) {
+  $config: map.get($themes, $name);
+  $raw-values: map.get($config, values);
+  $values: if($raw-values, $raw-values, ());
+  $base: map.get($config, base);
+  @if $base {
+    @return map.merge(resolve-theme($base), $values);
+  }
+  @return $values;
+}
+
+@function _build-polarity-map() {
+  $result: ();
+  @each $name, $_ in $themes {
+    $result: map.set($result, $name, theme-polarity($name));
+  }
+  @return $result;
+}
+$theme-polarities: _build-polarity-map();
+
+// -- Core token and binding mixins --------------------------------------------
+
+@mixin apply-theme($vars) {
+  @each $key, $value in $vars {
+    --chroma-#{$key}: #{$value};
+    @if type-of($value) == color {
+      --chroma-#{$key}-rgb: #{red($value)}, #{green($value)}, #{blue($value)};
+    }
+  }
+}
+
+@mixin bind-chroma-to-bs($vars) {
+  @each $key, $value in $vars {
+    --bs-#{$key}: var(--chroma-#{$key});
+    @if type-of($value) == color {
+      --bs-#{$key}-rgb: var(--chroma-#{$key}-rgb);
+    }
+  }
+
+  // Derived vars — opacity-based, computed from chroma tokens rather than stored as tokens.
+  --bs-secondary-color:          rgba(var(--chroma-body-color-rgb), 0.75);
+  --bs-tertiary-color:           rgba(var(--chroma-body-color-rgb), 0.5);
+  --bs-border-color-translucent: rgba(var(--chroma-body-color-rgb), 0.15);
+  --bs-heading-color:            inherit;
+  --bs-highlight-color:          var(--chroma-body-color);
+}
+
+@mixin bootstrap-dark-theme {
+  color-scheme: dark;
+
+  @each $color, $value in bs.$theme-colors-text-dark {
+    --bs-#{$color}-text-emphasis: #{$value};
+  }
+  @each $color, $value in bs.$theme-colors-bg-subtle-dark {
+    --bs-#{$color}-bg-subtle: #{$value};
+  }
+  @each $color, $value in bs.$theme-colors-border-subtle-dark {
+    --bs-#{$color}-border-subtle: #{$value};
+  }
+}
+
+// -- Emission mixins ----------------------------------------------------------
+
+@mixin emit-theme($name) {
+  $polarity: theme-polarity($name);
+  @if $polarity == dark {
+    @include bootstrap-dark-theme;
+  } @else {
+    color-scheme: light;
+  }
+  $resolved: resolve-theme($name);
+  @include apply-theme($resolved);
+  @include bind-chroma-to-bs($resolved);
+}
+
+@mixin emit-all-themes {
+  @each $name, $_ in $themes {
+    [data-chroma-theme="#{$name}"] {
+      @include emit-theme($name);
+    }
+  }
+}
