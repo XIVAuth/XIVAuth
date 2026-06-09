@@ -5,18 +5,15 @@
   // If in auto, only apply if the system polarity matches what we're asking for.
   // Note here - the only valid media query is "dark" (or none). This maps to umbral in CHROMA's _root, but we'll still
   // pretend we manage things here.
-  @media (prefers-color-scheme: #{$polarity}) {
-    @at-root :root[data-chroma-theme="auto"] & {
-      @content;
+  @if $polarity == 'light' or $polarity == 'dark' {
+    @media (prefers-color-scheme: #{$polarity}) {
+      @at-root :root[data-chroma-theme="auto"] & {
+        @content;
+      }
     }
   }
 
-  // And manual set if our polarity is set.
-  @at-root [data-chroma-theme="#{$polarity}"] & {
-    @content;
-  }
-
-  // And general polarity (recursive)
+  // And load in for themes
   @each $name, $pol in t.$theme-polarities {
     @if $pol == $polarity {
       @at-root [data-chroma-theme="#{$name}"] & {

@@ -14,11 +14,16 @@
     background-image: url("/backgrounds/limsa_night.webp");
   }
 
-  [data-bs-theme="ember"] & {
-    background-image: url("https://placekittens.com/g/1920/1080");
+  [data-chroma-theme="eulmore"] & {
+    background-image: url("/backgrounds/eulmore_aetheryte.webp");
   }
 
-  [data-bs-theme="chalk"] & {
-    background-image: url("https://picsum.photos/1920/1080");
+  [data-chroma-theme="ishgard"] & {
+    background-image: url("/backgrounds/ishgard_church.webp");
+  }
+
+  [data-chroma-theme="gridania"] & {
+    background-image: url("/backgrounds/gridania_city.webp");
+    background-position: center right;
   }
 }

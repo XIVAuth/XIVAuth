@@ -1,14 +1,14 @@
-// Limsa - light mode blue theme.
+// Limsa - dark mode blue theme.
 $config: (
-  base: astral,
+  base: umbral,
   values: (
-    body-bg:          #f0f5fb,
-    body-color:       #1c2e40,
-    secondary-bg:     #d8eaf8,
-    tertiary-bg:      #c4dcf0,
-    border-color:     #8fb8d8,
-    primary:          #1a6fa0,
-    link-color:       #1a6fa0,
-    link-hover-color: #0f5078,
+    body-bg:          #0a1628,
+    body-color:       #b8d8f0,
+    secondary-bg:     #102236,
+    tertiary-bg:      #163044,
+    border-color:     #2a5070,
+    primary:          #2a90cc,
+    link-color:       #2a90cc,
+    link-hover-color: #50b0e8,
   ),
 );

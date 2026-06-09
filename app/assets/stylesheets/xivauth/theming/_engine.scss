@@ -34,15 +34,26 @@ $themes: (
   @return map.get($config, polarity);
 }
 
-@function resolve-theme($name) {
+@function resolve-theme-values($name) {
   $config: map.get($themes, $name);
   $raw-values: map.get($config, values);
   $values: if($raw-values, $raw-values, ());
   $base: map.get($config, base);
   @if $base {
-    @return map.merge(resolve-theme($base), $values);
+    @return map.merge(resolve-theme-values($base), $values);
   }
   @return $values;
+}
+
+@function resolve-chroma-options($name) {
+  $config: map.get($themes, $name);
+  $raw-options: map.get($config, chroma-options);
+  $options: if($raw-options, $raw-options, ());
+  $base: map.get($config, base);
+  @if $base {
+    @return map.merge(resolve-chroma-options($base), $options);
+  }
+  @return $options;
 }
 
 @function _build-polarity-map() {
@@ -111,9 +122,10 @@ $theme-polarities: _build-polarity-map();
   } @else {
     color-scheme: light;
   }
-  $resolved: resolve-theme($name);
+  $resolved: resolve-theme-values($name);
   @include apply-theme($resolved);
   @include bind-chroma-to-bs($resolved);
+  @include apply-theme(resolve-chroma-options($name));
 }
 
 @mixin emit-all-themes {

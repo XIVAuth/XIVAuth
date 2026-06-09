@@ -13,12 +13,4 @@
   @include mixins.theme-polarity(dark) {
     background-image: url("/backgrounds/cmists_night.webp");
   }
-
-  [data-bs-theme="ember"] & {
-    background-image: url("https://placekittens.com/g/1920/1080");
-  }
-
-  [data-bs-theme="chalk"] & {
-    background-image: url("https://picsum.photos/1920/1080");
-  }
 }
