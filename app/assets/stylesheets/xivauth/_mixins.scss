@@ -19,7 +19,7 @@
 
 // reusable helper for a frosted background. set default image-url-light/image-url-dark based on polarity with
 // some precalculated-ish alpha.
-@mixin frosted-bg($image-url-light, $image-url-dark, $blur: 2px, $light-alpha: 0.8, $dark-alpha: 0.65) {
+@mixin frosted-bg($blur: 2px) {
   position: relative;
   overflow: hidden;
 
@@ -28,18 +28,8 @@
     position: absolute;
     inset: 0;
     z-index: -10;
-    background-size: cover;
+    background-size: cover  ;
     background-position: center;
     filter: blur($blur);
-
-    background-image: url(#{$image-url-light});
-    background-blend-mode: lighten;
-    background-color: rgba(255, 255, 255, $light-alpha);
-
-    @include theming.theme-polarity(dark) {
-      background-image: url(#{$image-url-dark});
-      background-blend-mode: darken;
-      background-color: rgba(0, 0, 0, $dark-alpha);
-    }
   }
 }

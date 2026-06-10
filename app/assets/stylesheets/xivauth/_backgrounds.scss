@@ -1,11 +1,37 @@
 @use './mixins';
 
 .header-img {
-  @include mixins.frosted-bg("/backgrounds/heroes/burnwall_day.webp", "/backgrounds/heroes/burnwall_night.webp", 1px, 0.8, 0.65);
+  @include mixins.frosted-bg(1px);
 
   &::before {
-    background-position: top center;
+    // defaults
     background-repeat: no-repeat;
+
+    // light theme
+    background-image: url("/backgrounds/heroes/burnwall_day.webp");
+    background-blend-mode: lighten;
+    background-color: rgba(255, 255, 255, 0.8);
+    background-position: top center;
+
+    // applies to all dark themes!
+    @include mixins.theme-polarity(dark) {
+      background-image: url("/backgrounds/heroes/burnwall_night.webp");
+      background-blend-mode: darken;
+      background-color: rgba(0, 0, 0, 0.65);
+      background-position: top center;
+    }
+
+    [data-chroma-theme="eulmore"] & {
+      background-position: center center;
+      background-color: rgba(255, 255, 255, 0.8);
+      background-image: url("/backgrounds/heroes/eulmore_bar.webp");
+    }
+
+    [data-chroma-theme="ishgard"] & {
+      background-position: center center;
+      background-color: rgba(255, 255, 255, 0.8);
+      background-image: url("/backgrounds/heroes/cch_landscape.webp");
+    }
 
     [data-chroma-theme="limsa"] & {
       background-position: center center;
@@ -15,14 +41,20 @@
 
     [data-chroma-theme="gridania"] & {
       background-position: center center;
-      background-color: rgba(0, 0, 0, 0.4);
+      background-color: rgba(0, 0, 0, 0.3);
       background-image: url("/backgrounds/heroes/gridania_buscarrons.webp");
     }
 
-    [data-chroma-theme="eulmore"] & {
+    [data-chroma-theme="thanalan"] & {
       background-position: center center;
-      background-color: rgba(255, 255, 255, 0.8);
-      background-image: url("/backgrounds/heroes/eulmore_bar.webp");
+      background-color: rgba(0, 0, 0, 0.3);
+      background-image: url("/backgrounds/heroes/thanalan_landscape.webp");
+    }
+
+    [data-chroma-theme="thirteenth"] & {
+      background-position: center center;
+      background-color: rgba(0, 0, 0, 0.6);
+      background-image: url("/backgrounds/heroes/troia_balcony.webp");
     }
   }
 }

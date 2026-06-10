@@ -4,7 +4,31 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url("/backgrounds/s9_commerce.webp");
+  background-image: url("/backgrounds/oauth/s9_commerce.webp");
+
+  [data-chroma-theme="eulmore"] & {
+    background-image: url("/backgrounds/oauth/eulmore_aetheryte.webp");
+  }
+
+  [data-chroma-theme="ishgard"] & {
+    background-image: url("/backgrounds/oauth/ishgard_church.webp");
+  }
+
+  [data-chroma-theme="limsa"] & {
+    // TODO
+  }
+
+  [data-chroma-theme="gridania"] & {
+    background-image: url("/backgrounds/oauth/gridania_city.webp");
+  }
+
+  [data-chroma-theme="thanalan"] & {
+    // TODO
+  }
+
+  [data-chroma-theme="thirteenth"] & {
+    // TODO
+  }
 }
 
 .frost-background-filter {

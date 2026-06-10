@@ -4,7 +4,6 @@
 @use './themes/astral'      as t-astral;
 @use './themes/umbral'      as t-umbral;
 @use './themes/eulmore'     as t-eulmore;
-@use './themes/goldsaucer'  as t-goldsaucer;
 @use './themes/gridania'    as t-gridania;
 @use './themes/ishgard'     as t-ishgard;
 @use './themes/limsa'       as t-limsa;
@@ -15,7 +14,6 @@ $themes: (
   astral:      t-astral.$config,
   umbral:      t-umbral.$config,
   eulmore:     t-eulmore.$config,
-  goldsaucer:  t-goldsaucer.$config,
   gridania:    t-gridania.$config,
   ishgard:     t-ishgard.$config,
   limsa:       t-limsa.$config,
