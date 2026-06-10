@@ -4,11 +4,6 @@
 
 
 <% content_for :page_layout do %>
-  <% if Rails.env.development? %>
-    <div class="position-fixed bottom-0 end-0 p-2" style="z-index: 9999;">
-      <ul class="navbar-nav"><%= render 'layouts/chroma/navigation/theme_picker' %></ul>
-    </div>
-  <% end %>
   <div class="wrapper">
     <% if (bg = @client_application&.can_use_custom_background? && @client_application.oauth_background) %>
       <div class="oauth-consent-backdrop full-backdrop" style="background-image: url('<%= bg.url(derivative: :hd) %>')"></div>

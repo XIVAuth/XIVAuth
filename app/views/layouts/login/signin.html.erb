@@ -7,11 +7,6 @@
 <% end %>
 
 <% content_for :page_layout do %>
-  <% if Rails.env.development? %>
-    <div class="position-fixed bottom-0 end-0 p-2" style="z-index: 9999;">
-      <ul class="navbar-nav"><%= render 'layouts/chroma/navigation/theme_picker' %></ul>
-    </div>
-  <% end %>
   <div class="wrapper">
     <section class="login-content">
       <div class="row m-0 min-vh-100 align-items-stretch">

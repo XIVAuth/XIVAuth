@@ -24,21 +24,8 @@
       </ul>
     </div>
 
-    <% if !Rails.env.production? || (ENV["APP_ENV"] != "production") %>
-      <div class="col-12 col-lg-4 text-center mb-3 mb-lg-0 text-muted small">
-        <p class="mb-0">Environment: <%= (ENV["APP_ENV"] || Rails.env).titleize %></p>
-        <p class="mb-0"><code><%= controller_name %>#<%= action_name %></code></p>
-        <p class="mb-0">CSS Breakpoint: <code>
-          <span class="d-none d-sm-inline d-md-none">sm</span>
-          <span class="d-none d-md-inline d-lg-none">md</span>
-          <span class="d-none d-lg-inline d-xl-none">lg</span>
-          <span class="d-none d-xl-inline d-xxl-none">xl</span>
-          <span class="d-none d-xxl-inline">xxl</span>
-        </code></p>
-      </div>
-    <% end %>
 
-    <div class="col-12 col-lg-4 mb-0">
+<div class="col-12 col-lg-4 mb-0">
       <ul class="nav justify-content-center justify-content-lg-end">
         <li class="nav-item"><a href="https://github.com/XIVAuth/XIVAuth" class="nav-link px-2 text-muted">GitHub</a></li>
         <li class="nav-item"><%= link_to "Discord", discord_path, class: "nav-link px-2 text-muted",

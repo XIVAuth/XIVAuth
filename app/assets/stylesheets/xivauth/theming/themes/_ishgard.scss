@@ -10,6 +10,14 @@ $config: (
                 primary: #3a6ea8,
                 link-color: #3a6ea8,
                 link-hover-color: #2a5080,
+
+                // no border radii
+                border-radius: 0,
+                border-radius-sm: 0,
+                border-radius-lg: 0,
+                border-radius-xl: 0,
+                border-radius-xxl: 0,
+                border-radius-pill: 0,
         ),
 );
 

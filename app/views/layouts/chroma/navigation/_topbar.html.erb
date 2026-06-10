@@ -13,9 +13,6 @@
     </div>
 
     <ul class="navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
-      <% if Rails.env.development? %>
-        <%= render 'layouts/chroma/navigation/theme_picker' %>
-      <% end %>
       <% if user_signed_in? %>
         <li class="nav-item dropdown">
           <a id="navbarDropdown" class="py-0 nav-link d-flex align-items-center gap-1" role="button" data-bs-toggle="dropdown" aria-expanded="false">

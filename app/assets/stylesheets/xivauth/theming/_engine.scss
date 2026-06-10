@@ -109,6 +109,9 @@ $theme-polarities: _build-polarity-map();
   @each $color, $value in bs.$theme-colors-border-subtle-dark {
     --bs-#{$color}-border-subtle: #{$value};
   }
+
+  // fix for Bootstrap's weird close button handling
+  --bs-btn-close-filter: #{bs.$btn-close-filter-dark};
 }
 
 /** EXPORTS **/

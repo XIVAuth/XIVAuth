@@ -28,6 +28,9 @@
 
 <body class="d-flex flex-column min-vh-100" id="body">
 <%= render 'layouts/components/env_watermark' %>
+<% if Rails.env.development? || Flipper.enabled?(:show_dev_panel, current_user) %>
+  <%= render 'layouts/components/dev_panel' %>
+<% end %>
 
 <% if content_for(:page_layout) %>
   <%= yield(:page_layout) %>
