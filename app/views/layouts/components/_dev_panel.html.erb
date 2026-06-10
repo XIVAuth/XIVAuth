@@ -1,0 +1,66 @@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="devPanel" aria-labelledby="devPanelLabel" data-bs-scroll="true" data-bs-backdrop="false">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="devPanelLabel">Sekret Kewl Developer Panel</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <h6 class="text-muted text-uppercase small mb-2">Theme Override</h6>
+    <select class="form-select form-select-sm" id="dev-theme-picker">
+      <option value="auto">auto</option>
+      <option value="astral">astral</option>
+      <option value="umbral">umbral</option>
+      <hr>
+      <option value="eulmore">eulmore</option>
+      <option value="ishgard">ishgard</option>
+      <option value="limsa">limsa</option>
+      <option value="gridania">gridania</option>
+      <option value="thanalan">thanalan</option>
+      <option value="thirteenth">thirteenth</option>
+    </select>
+
+    <hr>
+
+    <h6 class="text-muted text-uppercase small mb-2">Diagnostics</h6>
+    <table class="table table-sm table-borderless small mb-0">
+      <tr>
+        <th class="text-muted fw-normal ps-0">Environment</th>
+        <td><%= (ENV["APP_ENV"] || Rails.env).titleize %></td>
+      </tr>
+      <tr>
+        <th class="text-muted fw-normal ps-0">Controller</th>
+        <td><code><%= controller_name %>#<%= action_name %></code></td>
+      </tr>
+      <tr>
+        <th class="text-muted fw-normal ps-0">CSS Breakpoint</th>
+        <td><code>
+          <span class="d-sm-none">xs</span>
+          <span class="d-none d-sm-inline d-md-none">sm</span>
+          <span class="d-none d-md-inline d-lg-none">md</span>
+          <span class="d-none d-lg-inline d-xl-none">lg</span>
+          <span class="d-none d-xl-inline d-xxl-none">xl</span>
+          <span class="d-none d-xxl-inline">xxl</span>
+        </code></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<button type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#devPanel"
+        aria-controls="devPanel"
+        style="z-index: 100; position: fixed; right: 15px; top: 50%; transform: translateY(-50%) translateX(100%) rotate(-90deg); transform-origin: left center; border-bottom-left-radius: 0; border-bottom-right-radius: 0;"
+        class="btn btn-secondary btn-sm font-monospace">
+  <i class="bi bi-tools me-1"></i> Dev Tools
+</button>
+
+<script>
+  (function() {
+    var sel = document.getElementById('dev-theme-picker');
+    var current = document.documentElement.getAttribute('data-chroma-theme') || 'auto';
+    sel.value = current;
+    sel.addEventListener('change', function() {
+      document.documentElement.setAttribute('data-chroma-theme', this.value);
+    });
+  })();
+</script>
