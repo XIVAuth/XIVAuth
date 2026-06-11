@@ -90,49 +90,47 @@
   <p class="text-center pt-4 mb-0">No issuing certificate authorities are configured.</p>
   <p class="text-center small text-danger pb-4">XIVAuth will not be able to issue certificates!</p>
 <% else %>
-  <div class="table-responsive">
-    <table class="table table-hover mb-0">
-      <thead>
-      <tr>
-        <th>Name</th>
-        <th>Certificate Types</th>
-        <th>Expires</th>
-        <th>Certificate Fingerprint</th>
-        <th></th>
+  <table class="table table-hover mb-0">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Certificate Types</th>
+      <th>Expires</th>
+      <th>Certificate Fingerprint</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @certificate_authorities.each do |ca| %>
+      <tr class="align-middle">
+        <td>
+          <code class="me-1"><%= ca.slug %></code>
+          <% if ca.revoked? %>
+            <span class="badge bg-danger">Revoked</span>
+          <% elsif !ca.active? %>
+            <span class="badge bg-secondary">Retired</span>
+          <% else %>
+            <span class="badge bg-success">Active</span>
+          <% end %>
+        </td>
+        <td><%= ca.allowed_certificate_types.map(&:titleize).join(", ") %></td>
+        <td>
+          <% if ca.expires_at %><span data-controller="utilities--hover-dt"
+                                      data-utilities--hover-dt-ts-value="<%= ca.expires_at.to_i %>"
+                                      data-utilities--hover-dt-format-value="datetime"><%= ca.expires_at.strftime("%Y-%m-%d %H:%M") %></span>
+          <% else %>-
+          <% end %></td>
+        <td>
+          <% hex = ca.certificate_fingerprint.sub(/^\w+:/, "") %>
+          <code class="small" title="<%= hex.scan(/../).join(":") %>">
+            <%= raw hex.scan(/.{4}/).each_slice(8).map { |g| g.join(" ") }.join("<br>") %>
+          </code>
+        </td>
+        <td class="text-end"><%= render 'ca_download_links', ca: ca %></td>
       </tr>
-      </thead>
-      <tbody>
-      <% @certificate_authorities.each do |ca| %>
-        <tr class="align-middle">
-          <td>
-            <code class="me-1"><%= ca.slug %></code>
-            <% if ca.revoked? %>
-              <span class="badge bg-danger">Revoked</span>
-            <% elsif !ca.active? %>
-              <span class="badge bg-secondary">Retired</span>
-            <% else %>
-              <span class="badge bg-success">Active</span>
-            <% end %>
-          </td>
-          <td><%= ca.allowed_certificate_types.map(&:titleize).join(", ") %></td>
-          <td>
-            <% if ca.expires_at %><span data-controller="utilities--hover-dt"
-                                        data-utilities--hover-dt-ts-value="<%= ca.expires_at.to_i %>"
-                                        data-utilities--hover-dt-format-value="datetime"><%= ca.expires_at.strftime("%Y-%m-%d %H:%M") %></span>
-            <% else %>-
-            <% end %></td>
-          <td>
-            <% hex = ca.certificate_fingerprint.sub(/^\w+:/, "") %>
-            <code class="small" title="<%= hex.scan(/../).join(":") %>">
-              <%= raw hex.scan(/.{4}/).each_slice(8).map { |g| g.join(" ") }.join("<br>") %>
-            </code>
-          </td>
-          <td class="text-end"><%= render 'ca_download_links', ca: ca %></td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-  </div>
+    <% end %>
+    </tbody>
+  </table>
 <% end %>
 
 <p class="text-muted small mt-4">

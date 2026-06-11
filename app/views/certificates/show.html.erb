@@ -41,71 +41,76 @@
         <% end %>
       </div>
       <div class="card-body">
-        <dl class="row mb-0">
-          <dt class="col-sm-4">Serial (UUID)</dt>
-          <dd class="col-sm-8"><code class="small"><%= @certificate.id %></code></dd>
-
-          <dt class="col-sm-4">Subject</dt>
-          <dd class="col-sm-8">
-            <% if @certificate.subject_type == "User" %>
-              <i class="bi bi-person-fill"></i> <%= @certificate.subject.display_name %>
-            <% elsif @certificate.subject_type == "CharacterRegistration" %>
-              <i class="bi bi-person-badge"></i> <%= @certificate.subject.character.name %>
-              <span class="text-muted small">(<%= @certificate.subject.character.home_with_datacenter %>)</span>
-            <% end %>
-          </dd>
-
-          <dt class="col-sm-4">Issued At</dt>
-          <dd class="col-sm-8"><span data-controller="utilities--hover-dt"
-                                     data-utilities--hover-dt-ts-value="<%= @certificate.issued_at.to_i %>"
-                                     data-utilities--hover-dt-format-value="datetime"><%= @certificate.issued_at.to_fs(:long) %></span>
-          </dd>
-
-          <dt class="col-sm-4">Expires At</dt>
-          <dd class="col-sm-8"><span data-controller="utilities--hover-dt"
-                                     data-utilities--hover-dt-ts-value="<%= @certificate.expires_at.to_i %>"
-                                     data-utilities--hover-dt-format-value="datetime"><%= @certificate.expires_at.to_fs(:long) %></span>
-          </dd>
-
+        <table class="table table-sm table-borderless">
+          <tr>
+            <th class="text-muted fw-normal">Serial (UUID)</th>
+            <td><code><%= @certificate.id %></code></td>
+          </tr>
+          <tr>
+            <th class="text-muted fw-normal">Subject</th>
+            <td>
+              <% if @certificate.subject_type == "User" %>
+                <i class="bi bi-person-fill"></i> <%= @certificate.subject.display_name %>
+              <% elsif @certificate.subject_type == "CharacterRegistration" %>
+                <i class="bi bi-person-badge"></i> <%= @certificate.subject.character.name %>
+                <span class="text-muted small">(<%= @certificate.subject.character.home_with_datacenter %>)</span>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <th class="text-muted fw-normal">Issued At</th>
+            <td><span data-controller="utilities--hover-dt"
+                                   data-utilities--hover-dt-ts-value="<%= @certificate.issued_at.to_i %>"
+                                   data-utilities--hover-dt-format-value="datetime"><%= @certificate.issued_at.to_fs(:long) %></span></td>
+          </tr>
+          <tr>
+            <th class="text-muted fw-normal">Expires At</th>
+            <td><span data-controller="utilities--hover-dt"
+                                   data-utilities--hover-dt-ts-value="<%= @certificate.expires_at.to_i %>"
+                                   data-utilities--hover-dt-format-value="datetime"><%= @certificate.expires_at.to_fs(:long) %></span></td>
+          </tr>
           <% if @certificate.revoked? %>
-            <dt class="col-sm-4">Revoked At</dt>
-            <dd class="col-sm-8">
-              <%= @certificate.revoked_at.to_fs(:long) %>
-              <span class="text-muted small">(<%= @certificate.revocation_reason.humanize %>)</span>
-            </dd>
+            <tr>
+              <th class="text-muted fw-normal">Revoked At</th>
+              <td>
+                <%= @certificate.revoked_at.to_fs(:long) %>
+                <span class="text-muted small">(<%= @certificate.revocation_reason.humanize %>)</span>
+              </td>
+            </tr>
           <% end %>
-
-          <dt class="col-sm-4">Key Type</dt>
-          <dd class="col-sm-8">
-            <%= @certificate.key_type %>
-            <% if @certificate.key_curve.present? %>
-              (<%= @certificate.key_curve %>)
-            <% else %>
-              <%= @certificate.key_bits %>-bit
-            <% end %>
-          </dd>
-
-          <dt class="col-sm-4">Certificate Fingerprint</dt>
-          <dd class="col-sm-8">
-            <pre><code><%= format_fingerprint(@certificate.certificate_fingerprint) %></code></pre>
-          </dd>
-
-          <dt class="col-sm-4">Public Key Fingerprint</dt>
-          <dd class="col-sm-8">
-            <pre><code><%= format_fingerprint(@certificate.public_key_fingerprint) %></code></pre>
-          </dd>
-
-          <dt class="col-sm-4">Issuing CA</dt>
-          <dd class="col-sm-8">
-            <code class="me-2"><%= @certificate.certificate_authority.slug %></code>
-            <%= render "certificates/certificate_authorities/ca_download_links", ca: @certificate.certificate_authority %>
-          </dd>
-
+          <tr>
+            <th class="text-muted fw-normal">Key Type</th>
+            <td>
+              <%= @certificate.key_type %>
+              <% if @certificate.key_curve.present? %>
+                (<%= @certificate.key_curve %>)
+              <% else %>
+                <%= @certificate.key_bits %>-bit
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <th class="text-muted fw-normal">Certificate Fingerprint</th>
+            <td><pre class="mb-0"><code><%= format_fingerprint(@certificate.certificate_fingerprint) %></code></pre></td>
+          </tr>
+          <tr>
+            <th class="text-muted fw-normal">Public Key Fingerprint</th>
+            <td><pre class="mb-0"><code><%= format_fingerprint(@certificate.public_key_fingerprint) %></code></pre></td>
+          </tr>
+          <tr>
+            <th class="text-muted fw-normal">Issuing CA</th>
+            <td>
+              <code class="me-2"><%= @certificate.certificate_authority.slug %></code>
+              <%= render "certificates/certificate_authorities/ca_download_links", ca: @certificate.certificate_authority %>
+            </td>
+          </tr>
           <% if @certificate.requesting_application.present? %>
-            <dt class="col-sm-4">Requested by</dt>
-            <dd class="col-sm-8"><%= @certificate.requesting_application.name %></dd>
+            <tr>
+              <th class="text-muted fw-normal">Requested by</th>
+              <td><%= @certificate.requesting_application.name %></td>
+            </tr>
           <% end %>
-        </dl>
+        </table>
       </div>
     </div>
   </div>

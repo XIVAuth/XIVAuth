@@ -38,8 +38,7 @@
           name: "My Applications", target: developer_applications_path, icon_classes: "bi bi-code-slash"
         } %>
         <%= render partial: 'layouts/chroma/navigation/sidebar_entry', locals: {
-          name: "My Teams", target: developer_teams_path, icon_classes: "bi bi-people",
-          badge_html: "<span class='badge bg-warning'><span class='bi bi-flask'></i> Beta</span>"
+          name: "My Teams", target: developer_teams_path, icon_classes: "bi bi-people"
         } %>
         <li class="nav-item">
           <%= link_to developer_docs_path, class: 'nav-link', data: { "turbo-prefetch": false } do %>

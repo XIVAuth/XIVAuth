@@ -1,11 +1,24 @@
 <%# Renders PEM/DER download buttons for a PKI::CertificateAuthority.
     Usage: render 'ca_download_links', ca: ca %>
-<div class="btn-toolbar gap-2 float-end" >
-  <%= link_to ca_cert_path(ca.slug, format: :pem), class: "btn btn-sm btn-outline-primary" do %>
-    <i class="bi bi-download"></i> PEM
-  <% end %>
-  <%= link_to ca_cert_path(ca.slug, format: :der), class: "btn btn-sm btn-outline-primary" do %>
-    <i class="bi bi-download"></i> DER
-  <% end %>
+<div class="btn-group">
+  <button type="button" class="btn btn-outline-secondary dropdown-toggle"
+          data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-download"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li>
+      <%= link_to ca_cert_path(ca.slug, format: :pem), class: "dropdown-item" do %>
+                  <span class="d-block">
+                    <i class="bi bi-file-earmark-text"></i> PEM Format
+                  </span>
+      <% end %>
+    </li>
+    <li>
+      <%= link_to ca_cert_path(ca.slug, format: :der), class: "dropdown-item" do %>
+                  <span class="d-block">
+                    <i class="bi bi-file-earmark-binary"></i> DER Format
+                  </span>
+      <% end %>
+    </li>
+  </ul>
 </div>
-
