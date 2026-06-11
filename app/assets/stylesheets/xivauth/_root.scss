@@ -5,7 +5,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root[data-chroma-theme="auto"] {
+  body[data-chroma-theme="auto"] {
     @include engine.emit-theme(umbral);
   }
 }

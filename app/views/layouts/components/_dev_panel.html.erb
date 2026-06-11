@@ -56,11 +56,10 @@
 
 <script>
   (function() {
-    var sel = document.getElementById('dev-theme-picker');
-    var current = document.documentElement.getAttribute('data-chroma-theme') || 'auto';
-    sel.value = current;
+    let sel = document.getElementById('dev-theme-picker');
+    sel.value = document.body.getAttribute('data-chroma-theme') || 'auto';
     sel.addEventListener('change', function() {
-      document.documentElement.setAttribute('data-chroma-theme', this.value);
+      document.body.setAttribute('data-chroma-theme', this.value);
     });
   })();
 </script>

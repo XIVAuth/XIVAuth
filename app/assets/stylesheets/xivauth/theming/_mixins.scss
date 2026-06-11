@@ -7,7 +7,7 @@
   // pretend we manage things here.
   @if $polarity == 'light' or $polarity == 'dark' {
     @media (prefers-color-scheme: #{$polarity}) {
-      @at-root :root[data-chroma-theme="auto"] & {
+      @at-root body[data-chroma-theme="auto"] & {
         @content;
       }
     }
