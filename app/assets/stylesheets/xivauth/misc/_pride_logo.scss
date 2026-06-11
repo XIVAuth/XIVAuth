@@ -136,6 +136,10 @@ $default-pride-gradient: pride-flag-gradient(map-get($pride-gradients, "rainbow"
   }
 }
 
+.pride-brand--none {
+  --pride-gradient: linear-gradient(var(--xivauth-brand-blue));
+}
+
 
 @keyframes pride-gradient {
   0% {

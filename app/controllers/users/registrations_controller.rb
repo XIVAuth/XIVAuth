@@ -86,7 +86,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   protected def configure_account_update_params
-    devise_parameter_sanitizer.permit(:account_update, keys: [:avatar, { profile_attributes: [:display_name] }])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:avatar, { profile_attributes: [:display_name], preferences: [:theme, :pride_flag] }])
   end
 
   def after_sign_up_path_for(_resource)

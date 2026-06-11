@@ -158,6 +158,8 @@
   <%= render partial: "devise/registrations/sections/sessions",
              locals: { sessions: current_user.active_sessions, current_sid: current_sid } %>
 
+  <%= render partial: "devise/registrations/sections/user_preferences", locals: { resource: resource } %>
+
   <div class="col-md-6">
     <div class="card border border-danger h-100">
       <div class="card-header bg-opacity-10">

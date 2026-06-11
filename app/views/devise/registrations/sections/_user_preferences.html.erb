@@ -1,0 +1,34 @@
+<div class="col-md-6">
+  <div class="card h-100">
+    <div class="card-header">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-sliders me-2 text-primary fs-5" aria-hidden="true"></i>
+        <h2 class="h5 mb-0">Preferences</h2>
+      </div>
+    </div>
+    <%= form_for(resource, as: resource_name, url: user_path, html: { method: :put }) do |f| %>
+      <%= f.fields_for :preferences do |pf| %>
+        <div class="card-body">
+          <div class="mb-3">
+            <%= pf.label :theme, class: "form-label fw-semibold" %>
+            <%= pf.select :theme,
+                  User::Preferences.themes.keys.map { |t| [t.to_s.humanize, t] },
+                  { selected: resource.preferences.theme },
+                  class: "form-select" %>
+          </div>
+
+          <div class="mb-0">
+            <%= pf.label :pride_flag, "Pride Flag", class: "form-label fw-semibold" %>
+            <%= pf.select :pride_flag,
+                  (%i[random] + PrideHelper::PRIDE_FLAGS + %i[none]).map { |flag| [flag.to_s.humanize, flag] },
+                  { selected: resource.preferences.pride_flag },
+                  class: "form-select" %>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent d-flex justify-content-end">
+          <%= f.submit "Save Preferences", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

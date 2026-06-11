@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-chroma-theme="auto">
+<html lang="en">
 <head>
   <%= display_meta_tags site: 'XIVAuth', separator: '—', noindex: true %>
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -13,7 +13,7 @@
 
   <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true, integrity: true %>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100" data-chroma-theme="auto">
   <main class="d-flex flex-column flex-grow-1 align-items-center justify-content-center p-3">
     <div class="error-backdrop full-backdrop"></div>
     <div class="mw-sm w-100">

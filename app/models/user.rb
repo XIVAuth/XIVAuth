@@ -18,6 +18,8 @@ class User < ApplicationRecord
                           }
                         }
 
+  attribute :preferences, User::Preferences.to_type
+
   # ZXCVBN config
   include PasswordStrengthValidatable
 

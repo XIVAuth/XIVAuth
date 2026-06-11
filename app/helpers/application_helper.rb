@@ -48,4 +48,12 @@ module ApplicationHelper
   def lower_environment?
     !Rails.env.production? || (ENV["APP_ENV"] != "production")
   end
+
+  def active_theme
+    if user_signed_in?
+      current_user.preferences.theme.to_s
+    else
+      "auto"
+    end
+  end
 end

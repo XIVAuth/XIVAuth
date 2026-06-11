@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-chroma-theme="auto">
+<html lang="en">
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <%= render partial: "layouts/seo_metadata" %>
@@ -26,7 +26,7 @@
   <% end %>
 </head>
 
-<body class="d-flex flex-column min-vh-100" id="body">
+<body class="d-flex flex-column min-vh-100" id="body" data-chroma-theme="<%= active_theme %>">
 <%= render 'layouts/components/env_watermark' %>
 <% if Rails.env.development? || Flipper.enabled?(:show_dev_panel, current_user) %>
   <%= render 'layouts/components/dev_panel' %>
