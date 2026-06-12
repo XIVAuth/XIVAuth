@@ -1,5 +1,6 @@
+/// <reference types="cloudflare-turnstile" />
 import {Controller} from "@hotwired/stimulus";
-import RenderParameters = Turnstile.RenderParameters;
+type RenderParameters = Turnstile.RenderParameters;
 
 export default class LoginFormController extends Controller {
     static targets = ["webauthnChallenge", "webauthnResponse", "actionButton", "webauthnFeedback"];
