@@ -1,5 +1,5 @@
 <% content_for :head_extensions_before do %>
-  <%= cloudflare_turnstile_script_tag(async: false, explicit: true) %>
+  <%= cloudflare_turnstile_script_tag(async: false, explicit: true, defer: false) %>
 <% end %>
 
 <% content_for :head_extensions do %>

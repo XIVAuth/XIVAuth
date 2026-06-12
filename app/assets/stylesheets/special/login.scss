@@ -13,17 +13,4 @@
   @include mixins.theme-polarity(dark) {
     background-image: url("/backgrounds/limsa_night.webp");
   }
-
-  [data-chroma-theme="eulmore"] & {
-    background-image: url("/backgrounds/eulmore_aetheryte.webp");
-  }
-
-  [data-chroma-theme="ishgard"] & {
-    background-image: url("/backgrounds/ishgard_church.webp");
-  }
-
-  [data-chroma-theme="gridania"] & {
-    background-image: url("/backgrounds/gridania_city.webp");
-    background-position: center right;
-  }
 }
