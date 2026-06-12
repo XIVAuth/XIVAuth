@@ -36,4 +36,23 @@ RSpec.describe User do
       expect(subject.class.implicit_order_column).to eq("created_at")
     end
   end
+
+  describe "#preferences" do
+    let(:user) { FactoryBot.create(:user) }
+
+    it "is empty on a new user" do
+      expect(user.preferences_before_type_cast).to eq("{}")
+    end
+
+    it "sets default theme to auto" do
+      expect(user.preferences.theme).to eq("auto")
+    end
+
+    it "correctly persists a theme change" do
+      user.preferences.theme = "astral"
+      user.save
+
+      expect(user.reload.preferences.theme).to eq("astral")
+    end
+  end
 end
