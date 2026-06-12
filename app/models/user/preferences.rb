@@ -5,10 +5,10 @@ class User::Preferences
   enum :pride_flag, PrideHelper::PRIDE_FLAGS + %i[random none]
   
   def theme
-    super || :auto
+    self[:theme].nil? ? :auto : super
   end
   
   def pride_flag
-    super || :random
+    self[:pride_flag].nil? ? :random : super
   end
 end
