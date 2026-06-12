@@ -50,7 +50,7 @@ module ApplicationHelper
   end
 
   def active_theme
-    if user_signed_in?
+    if user_signed_in? && current_user.preferences.theme.present?
       current_user.preferences.theme.to_s
     else
       "auto"
