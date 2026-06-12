@@ -1,6 +1,4 @@
 import {WebauthnControllerBase} from "../webauthn_base";
-import * as WebAuthnJSON from "@github/webauthn-json";
-import {PublicKeyCredentialWithAttestationJSON} from "@github/webauthn-json";
 
 
 export default class WebauthnRegistrationController extends WebauthnControllerBase {
@@ -17,15 +15,15 @@ export default class WebauthnRegistrationController extends WebauthnControllerBa
 
         event.preventDefault();
 
-        let credential: PublicKeyCredentialWithAttestationJSON;
+        let credential: PublicKeyCredential | null = null;
 
         let challenge = this.buildRegistrationRequest(this.requestResidentKeyTarget.checked ? "required" : "discouraged");
 
         try {
-            // FIXME: Bug in certain password managers where they don't support toJSON on the response.
-            credential = await WebAuthnJSON.create({
-                "publicKey": challenge
-            });
+            let creationOptions = PublicKeyCredential.parseCreationOptionsFromJSON(challenge);
+            credential = await navigator.credentials.create({
+                publicKey: creationOptions,
+            }) as PublicKeyCredential | null;
         } catch (err: unknown) {
             if (err instanceof DOMException && err.name === "NotAllowedError") {
                 this.feedbackTarget.innerText = "Your browser blocked an attempt to register a security key. Please " +
@@ -44,8 +42,14 @@ export default class WebauthnRegistrationController extends WebauthnControllerBa
             throw err;
         }
 
-        this.responseTarget.value = JSON.stringify(credential);
-        (event.target as HTMLFormElement).requestSubmit();
+        if (credential && !(credential instanceof PublicKeyCredential)) {
+            Object.setPrototypeOf(credential, PublicKeyCredential.prototype);
+        }
+
+        if (credential) {
+            this.responseTarget.value = JSON.stringify(credential.toJSON());
+            (event.target as HTMLFormElement).requestSubmit();
+        }
     }
 
     async toggleResidentKey(event: InputEvent) {

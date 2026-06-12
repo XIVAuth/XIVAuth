@@ -1,7 +1,5 @@
 import {Controller} from "@hotwired/stimulus";
-import * as WebAuthnJSON from "@github/webauthn-json";
 import RenderParameters = Turnstile.RenderParameters;
-import {PublicKeyCredentialWithAssertionJSON} from "@github/webauthn-json";
 
 export default class LoginFormController extends Controller {
     static targets = ["webauthnChallenge", "webauthnResponse", "actionButton", "webauthnFeedback"];
@@ -32,22 +30,25 @@ export default class LoginFormController extends Controller {
             return;
         }
 
-        let discoveredCredential: PublicKeyCredentialWithAssertionJSON;
+        let credential: PublicKeyCredential | null = null;
         try {
-            // FIXME: Bug in certain password managers where they don't support toJSON on the response.
-            discoveredCredential = await WebAuthnJSON.get({
-                "signal": this.discoveryAbortController.signal,
-                "publicKey": JSON.parse(this.webauthnChallengeTarget.value),
-                "mediation": "conditional",
-            });
+            let discovery = PublicKeyCredential.parseRequestOptionsFromJSON(JSON.parse(this.webauthnChallengeTarget.value));
+            credential = await navigator.credentials.get({
+                signal: this.discoveryAbortController.signal,
+                publicKey: discovery,
+                mediation: "conditional",
+            }) as PublicKeyCredential | null;
         } catch (e: unknown) {
             // Ignore errors in discovery, as this is supposed to be a silent process.
             return;
         }
 
-        if (discoveredCredential) {
-            this.webauthnResponseTarget.value = JSON.stringify(discoveredCredential);
+        if (credential && !(credential instanceof PublicKeyCredential)) {
+            Object.setPrototypeOf(credential, PublicKeyCredential.prototype);
+        }
 
+        if (credential) {
+            this.webauthnResponseTarget.value = JSON.stringify(credential.toJSON());
             this.webauthnResponseTarget.form!.submit();
         }
     }
@@ -60,12 +61,12 @@ export default class LoginFormController extends Controller {
         // stop conditional first, we don't need it anymore.
         this.discoveryAbortController.abort("manualWebauthn");
 
-        let discoveredCredential: PublicKeyCredentialWithAssertionJSON;
+        let credential: PublicKeyCredential | null = null;
         try {
-            // FIXME: Bug in certain password managers where they don't support toJSON on the response.
-            discoveredCredential = await WebAuthnJSON.get({
-                "publicKey": JSON.parse(this.webauthnChallengeTarget.value),
-            });
+            let discovery = PublicKeyCredential.parseRequestOptionsFromJSON(JSON.parse(this.webauthnChallengeTarget.value));
+            credential = await navigator.credentials.get({
+                publicKey: discovery,
+            }) as PublicKeyCredential | null;
         } catch (err: unknown) {
             console.error("WebAuthn manual discovery failed:", err);
             if (err instanceof DOMException && err.name === "NotAllowedError") {
@@ -84,8 +85,12 @@ export default class LoginFormController extends Controller {
             return;
         }
 
-        if (discoveredCredential) {
-            this.webauthnResponseTarget.value = JSON.stringify(discoveredCredential);
+        if (credential && !(credential instanceof PublicKeyCredential)) {
+            Object.setPrototypeOf(credential, PublicKeyCredential.prototype);
+        }
+
+        if (credential) {
+            this.webauthnResponseTarget.value = JSON.stringify(credential.toJSON());
             this.webauthnResponseTarget.form!.submit();
         }
     }
