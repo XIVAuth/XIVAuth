@@ -70,14 +70,14 @@ jobs:
         continue-on-error: true
 
       - name: Upload test results to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./tmp/testresults/rspec.xml
           report_type: test_results
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./tmp/testresults/coverage/coverage.xml
