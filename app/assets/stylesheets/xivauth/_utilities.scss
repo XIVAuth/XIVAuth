@@ -1,0 +1,17 @@
+@use './mixins' as m;
+
+.light-only {
+  display: none !important;
+
+  @include m.theme-polarity(light) {
+    display: revert !important;
+  }
+}
+
+.dark-only {
+  display: none !important;
+
+  @include m.theme-polarity(dark) {
+    display: revert !important;
+  }
+}

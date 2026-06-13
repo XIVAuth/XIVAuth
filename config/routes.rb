@@ -126,6 +126,15 @@ path: "cas"
 
   resource :health, only: [:show], controller: :health
 
+  scope path: "/dynamic_assets", module: "dynamic_assets" do
+    resources :webauthn_authenticators, only: [] do
+      member do
+        get :icon_dark
+        get :icon_light
+      end
+    end
+  end
+
   # static page routes
   get "/discord", to: "marketing#discord"
   get "/flarestone", to: "marketing#flarestone"

@@ -6,4 +6,9 @@
   > :not(caption) > * > * {
     transition: box-shadow 0.1s ease-in-out;
   }
+
+  > td.col-shrink, th.col-shrink {
+    width: 1%;
+    white-space: nowrap;
+  }
 }

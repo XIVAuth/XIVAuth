@@ -47,7 +47,7 @@
           <table class="table table-sm align-middle">
             <thead>
             <tr>
-              <th scope="col" style="width: 0;"></th>
+              <th scope="col" class="col-shrink"></th>
               <th scope="col">Nickname</th>
               <th scope="col" class="text-end"></th>
             </tr>
@@ -55,9 +55,14 @@
             <tbody>
             <% resource.webauthn_credentials.each do |cred| %>
               <tr>
-                <td>
+                <td class="col-shrink">
                   <% if cred.device_class.present? %>
-                    <%= image_tag cred.device_class.icon_dark, style: "width: 2.5rem; height: 2.5rem;", class: "mx-2" %>
+                    <%= image_tag icon_dark_webauthn_authenticator_path(cred.device_class), height: 48, loading: "lazy",
+                                  class: "mx-2 dark-only", aria: { hidden: true },
+                                  title: "Authenticator logo for #{cred.device_class.name}" %>
+                    <%= image_tag icon_light_webauthn_authenticator_path(cred.device_class), height: 48, loading: "lazy",
+                                  class: "mx-2 light-only", aria: { hidden: true },
+                                  title: "Authenticator logo for #{cred.device_class.name}" %>
                   <% elsif cred.resident_key? %>
                     <i class="bi bi-fingerprint mx-2 fs-1"></i>
                   <% else %>
@@ -83,7 +88,8 @@
                       Last used:
                       <span data-controller="utilities--hover-dt"
                             data-utilities--hover-dt-ts-value="<%= cred.last_used_at.to_i %>"
-                            data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words_to_now(cred.last_used_at) %> ago</span>
+                            data-utilities--hover-dt-format-value="dotiw"><%= distance_of_time_in_words_to_now(cred.last_used_at) %>
+                        ago</span>
                     <% else %>
                       <span>Last used: never</span>
                     <% end %>
