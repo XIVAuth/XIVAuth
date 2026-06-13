@@ -28,5 +28,8 @@
   "scripts": {
     "build": "node config/esbuild.mjs",
     "build:css": "sass ./app/assets/stylesheets/:./app/assets/builds/ --embed-sources --load-path=node_modules"
+  },
+  "engines": {
+    "node": "^24.0.0"
   }
 }
