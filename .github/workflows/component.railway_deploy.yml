@@ -6,6 +6,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
+    environment: production
     env:
       WEB_SVC_ID: ${{ secrets.RAILWAY_WEB_SERVICE_ID }}
       WORKER_SVC_ID: ${{ secrets.RAILWAY_WORKER_SERVICE_ID }}
