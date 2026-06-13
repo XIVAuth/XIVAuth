@@ -4,7 +4,7 @@
 <% remembered = session.dig(:data, :remembered) %>
 <% session_suffix = session[:sid].last(24) %>
 <tr id="<%= "session_row_#{session_suffix}" %>">
-  <td style="width: 0;">
+  <td class="col-shrink">
     <% icon = case browser&.dig(:type)
                when "mobile"   then "bi bi-phone"
                when "tablet"   then "bi bi-tablet"
@@ -46,7 +46,7 @@
       <% end %>
     </div>
   </td>
-  <td style="width: 0;" class="text-end">
+  <td class="text-end col-shrink">
     <% if is_current %>
       <span class="badge bg-success">This device</span>
     <% else %>

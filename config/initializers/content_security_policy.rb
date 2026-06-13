@@ -8,12 +8,18 @@ require "environment_info"
 
 Rails.application.configure do
   config.content_security_policy do |policy|
-    policy.default_src :self, :https
-    policy.font_src    :self, :https, :data
-    policy.img_src     :self, :https, :data, :blob
-    policy.object_src  :none
-    policy.script_src  :self, "https://challenges.cloudflare.com/", "https://*.cloudflareinsights.com/"
-    policy.style_src   :self, :https, :unsafe_inline
+    policy.default_src     :self, "https://cdn.xivauth.net/"
+    policy.font_src        :self, :https, :data
+    policy.img_src         :self, :https, :data, :blob, "https://cdn.xivauth.net/"
+    policy.object_src      :none
+    policy.script_src      :self, "https://challenges.cloudflare.com/", "https://*.cloudflareinsights.com/"
+    policy.frame_src       :self, "https://challenges.cloudflare.com/"
+    policy.style_src       :self, :unsafe_inline
+    policy.form_action     :self
+    policy.base_uri        :none
+    policy.frame_ancestors :none
+    policy.connect_src     :self, "https://*.sentry-cdn.com/", "https://*.sentry.io/",
+                           "https://*.cloudflareinsights.com/"
 
     if (csp_base_uri = Rails.application.credentials.dig(:sentry, :csp_report_uri))
       policy.report_uri csp_base_uri +
