@@ -22,5 +22,5 @@ jobs:
       - name: Deploy web nodes
         run: railway up -c --service=${{ env.WEB_SVC_ID }}
 
-      - name: Run DB migrations
-        run: railway ssh --service=${{ env.WORKER_SVC_ID }} -- rails db:migrate
+      # - name: Run DB migrations
+      #   run: railway ssh --service=${{ env.WORKER_SVC_ID }} -- rails db:migrate
