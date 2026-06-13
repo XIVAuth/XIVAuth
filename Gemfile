@@ -65,6 +65,7 @@ gem "webauthn", "~> 3.4.1"
 gem "omniauth-github", "~> 2.0"
 gem "omniauth-oauth2", "~> 1.8"
 gem "omniauth-twitch", "~> 1.2"
+gem "omniauth_openid_connect", "~> 0.8"
 
 # Outbound OAuth2
 gem "doorkeeper", "~> 5.9.0"
