@@ -14,7 +14,7 @@ RSpec.configure do |config|
     #     # => "be bigger than 2"
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
-
+  
   # rspec-mocks config goes here. You can use an alternate test double
   # library (such as bogus or mocha) by changing the `mock_with` option here.
   config.mock_with :rspec do |mocks|
@@ -79,6 +79,12 @@ RSpec.configure do |config|
 
   if Gem.loaded_specs.key?("rspec_junit_formatter")
     config.add_formatter("RspecJunitFormatter", "tmp/testresults/rspec.xml")
+
+    if ENV["CI"]
+      # We're going to let our reporter fail, rather than make rspec do it.
+      # Only run in CI environments.
+      config.failure_exit_code = 0
+    end
   end
 
   config.add_formatter("progress")
