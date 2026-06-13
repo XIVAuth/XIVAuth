@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   brakeman:
-    uses: ./.github/workflows/components/brakeman.yml
+    uses: ./.github/workflows/component.brakeman.yml
 
   codeql:
-    uses: ./.github/workflows/components/codeql.yml
+    uses: ./.github/workflows/component.codeql.yml

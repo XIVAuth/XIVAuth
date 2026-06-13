@@ -6,7 +6,7 @@ on:
 
 jobs:
   rails:
-    uses: ./.github/workflows/components/rails.yml
+    uses: ./.github/workflows/component.rails.yml
     secrets: inherit
     permissions:
       contents: read
@@ -14,13 +14,13 @@ jobs:
       pull-requests: write
 
   brakeman:
-    uses: ./.github/workflows/components/brakeman.yml
+    uses: ./.github/workflows/component.brakeman.yml
     permissions:
       contents: read
       security-events: write
 
   codeql:
-    uses: ./.github/workflows/components/codeql.yml
+    uses: ./.github/workflows/component.codeql.yml
     permissions:
       contents: read
       security-events: write
