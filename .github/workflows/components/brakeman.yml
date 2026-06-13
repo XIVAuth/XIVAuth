@@ -1,22 +1,13 @@
 name: Brakeman Scan
 
 on:
-  push:
-    branches: [ "main", "ci-testing" ]
-  pull_request:
-    branches: [ "main" ]
-  schedule:
-    - cron: '26 20 * * 4'
-
-permissions:
-  contents: read
+  workflow_call:
 
 jobs:
   brakeman-scan:
     permissions:
       contents: read
       security-events: write
-      actions: read
 
     name: Brakeman Scan
     runs-on: ubuntu-latest

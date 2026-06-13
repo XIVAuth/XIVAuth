@@ -1,0 +1,28 @@
+name: "PR Review"
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  rails:
+    uses: ./.github/workflows/components/rails.yml
+    secrets: inherit
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+  brakeman:
+    uses: ./.github/workflows/components/brakeman.yml
+    permissions:
+      contents: read
+      security-events: write
+
+  codeql:
+    uses: ./.github/workflows/components/codeql.yml
+    permissions:
+      contents: read
+      security-events: write
+      packages: read
+      actions: read

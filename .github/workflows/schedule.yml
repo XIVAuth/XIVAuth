@@ -1,0 +1,18 @@
+name: "Scheduled Security Scans"
+
+on:
+  schedule:
+    - cron: '26 20 * * 4'
+
+permissions:
+  contents: read
+  security-events: write
+  packages: read
+  actions: read
+
+jobs:
+  brakeman:
+    uses: ./.github/workflows/components/brakeman.yml
+
+  codeql:
+    uses: ./.github/workflows/components/codeql.yml

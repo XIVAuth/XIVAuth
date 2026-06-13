@@ -1,0 +1,21 @@
+name: Railway Deploy
+on:
+  workflow_call:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      WEB_SVC_ID: ${{ secrets.RAILWAY_WEB_SERVICE_ID }}
+      WORKER_SVC_ID: ${{ secrets.RAILWAY_WORKER_SERVICE_ID }}
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+
+      # Run worker deploy first so we can smoke test.
+      # Knowledge: if a deploy fails, these will return a nonzero.
+      - run: railway up -c --service=${{ env.WORKER_SVC_ID }}
+      - run: railway up -c --service=${{ env.WEB_SVC_ID }}
+
+      - run: railway ssh --service=${{ env.WORKER_SVC_ID }} -- rails db:migrate

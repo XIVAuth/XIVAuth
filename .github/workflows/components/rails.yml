@@ -1,17 +1,14 @@
 name: "Ruby on Rails CI"
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-permissions:
-  contents: read
-  checks: write
+  workflow_call:
 
 jobs:
   test:
+    permissions:
+      contents: read
+      checks: write
+
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -94,6 +91,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
