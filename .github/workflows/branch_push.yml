@@ -34,3 +34,4 @@ jobs:
     permissions:
       contents: read
       deployments: write
+    secrets: inherit
