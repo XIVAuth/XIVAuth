@@ -55,15 +55,9 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   private def authorized_social_identities
-    result = []
     policy = @doorkeeper_token.permissible_policy
+    identities = @user.social_identities
 
-    @user.social_identities.each do |identity|
-      next if policy.present? && !policy.can_access_resource?(identity)
-
-      result << identity
-    end
-
-    result
+    policy.present? ? policy.filter_accessible(identities) : identities
   end
 end

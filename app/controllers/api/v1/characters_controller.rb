@@ -159,17 +159,13 @@ class Api::V1::CharactersController < Api::V1::ApiController
   end
 
   private def load_authorized_characters
-    @authorized_registrations = authorized_character_registrations
+    @authorized_registrations ||= authorized_character_registrations
   end
 
   private def set_character
-    character = @authorized_registrations.filter do |r|
-      r.character.lodestone_id == params[:lodestone_id]
-    end
-
-    raise ActiveRecord::RecordNotFound if character[0].nil?
-
-    @registration = character[0]
+    @registration = @authorized_registrations
+      .joins(:character)
+      .find_by!(ffxiv_characters: { lodestone_id: params[:lodestone_id] })
   end
 
   private def search_params

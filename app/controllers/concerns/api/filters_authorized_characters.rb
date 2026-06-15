@@ -13,8 +13,10 @@ module Api::FiltersAuthorizedCharacters
 
     # If the token has character:manage scope, grant full access to all user's characters
     # Note: check only_verified here to avoid double-filtering after the chain.
-    return registrations if character_manage_scope_granted? && !only_verified
-    return registrations.verified if character_manage_scope_granted? && only_verified
+    if character_manage_scope_granted?
+      return registrations.verified if only_verified
+      return registrations
+    end
 
     # Otherwise, filter to verified characters only
     registrations = registrations.verified
@@ -22,9 +24,7 @@ module Api::FiltersAuthorizedCharacters
     # Apply permissible policy restrictions if present
     policy = doorkeeper_token.permissible_policy
     if policy.present?
-      # Filter in-memory, then convert back to a relation to maintain chainability
-      authorized_ids = registrations.select { |r| policy.can_access_resource?(r) }.map(&:id)
-      registrations = CharacterRegistration.where(id: authorized_ids)
+      registrations = policy.filter_accessible(registrations)
     elsif !bulk_character_scope_granted?
       # Default-deny `character` scope if there's no policy (somehow)
       # Note: character:all without a policy does request *all* characters, so this is just pure character.
