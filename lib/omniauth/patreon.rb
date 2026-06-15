@@ -48,6 +48,7 @@ class OmniAuth::Strategies::Patreon < OmniAuth::Strategies::OAuth2
   info do
     {
       email: raw_info["attributes"]["is_email_verified"] ? raw_info["attributes"]["email"] : nil,
+      email_verified: raw_info["attributes"]["is_email_verified"],
       name: raw_info["attributes"]["full_name"]
     }
   end

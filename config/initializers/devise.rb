@@ -264,10 +264,9 @@ Devise.setup do |config|
                   client_secret: Rails.application.credentials.dig(:oauth, :github, :client_secret),
                   scope: "user:email"
   config.omniauth :discord,
-                  client_options: {
-                    identifier: Rails.application.credentials.dig(:oauth, :discord, :client_id).to_s,
-                    secret: Rails.application.credentials.dig(:oauth, :discord, :client_secret),
-                  }
+                  client_id: Rails.application.credentials.dig(:oauth, :discord, :client_id),
+                  client_secret: Rails.application.credentials.dig(:oauth, :discord, :client_secret),
+                  scope: "openid identify email"
   config.omniauth :steam, Rails.application.credentials.dig(:oauth, :steam, :token)
   config.omniauth :twitch,
                   client_id: Rails.application.credentials.dig(:oauth, :twitch, :client_id),
