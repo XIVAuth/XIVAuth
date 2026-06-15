@@ -69,8 +69,8 @@ path: "cas"
       end
 
       resources :characters, param: :lodestone_id do
-        post "verify", to: "characters#verify"
-        delete "verify", to: "characters#unverify"
+        post "verify", to: "characters#verify", on: :member
+        delete "verify", to: "characters#unverify", on: :member
         get "jwt", to: "characters#jwt", on: :member
         get "lodestone", to: "characters#lodestone", on: :member
         post "refresh", to: "characters#refresh", on: :member
