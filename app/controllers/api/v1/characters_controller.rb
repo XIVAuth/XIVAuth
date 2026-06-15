@@ -76,7 +76,7 @@ class Api::V1::CharactersController < Api::V1::ApiController
     authorize! :update, @registration
 
     if @registration.verified?
-      return json: { errors: ["Character is already verified"] }, status: :conflict
+      render json: { errors: ["Character is already verified"] }, status: :conflict
     end
 
     if FFXIV::VerifyCharacterRegistrationJob.perform_later @registration
