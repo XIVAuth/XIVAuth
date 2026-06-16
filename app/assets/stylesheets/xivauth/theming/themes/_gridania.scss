@@ -1,11 +1,13 @@
 // Gridania - dark mode forest theme.
+$body-bg: #0f1a10;
+
 $config: (
   base: umbral,
   values: (
-    body-bg:          #0f1a10,
+    body-bg:          $body-bg,
     body-color:       #b8d4a0,
-    secondary-bg:     #162014,
-    tertiary-bg:      #1e2c1a,
+    secondary-bg:     oklch(from #{$body-bg} calc(l + 0.15) c h),
+    tertiary-bg:      oklch(from #{$body-bg} calc(l + 0.07) c h),
     border-color:     #3a5430,
     primary:          #5ab864,
     link-color:       #5ab864,

@@ -1,11 +1,13 @@
 // Thanalan - dark mode desert/gold theme.
+$body-bg: #1a1208;
+
 $config: (
   base: umbral,
   values: (
-    body-bg:          #1a1208,
+    body-bg:          $body-bg,
     body-color:       #e8d0a0,
-    secondary-bg:     #241a0c,
-    tertiary-bg:      #2e2110,
+    secondary-bg:     oklch(from #{$body-bg} calc(l + 0.15) c h),
+    tertiary-bg:      oklch(from #{$body-bg} calc(l + 0.07) c h),
     border-color:     #5c3e18,
     primary:          #d4920a,
     link-color:       #d4920a,

@@ -1,14 +1,16 @@
 // Ishgard - light mode, white and icy. A bit industrial.
+$body-bg: #f4f7fb;
+
 $config: (
         base: astral,
         values: (
-                body-bg: #f4f7fb,
-                body-color: #1a1f2e,
-                secondary-bg: #e4ecf5,
-                tertiary-bg: #d4e0ee,
-                border-color: #a8bcd4,
-                primary: #3a6ea8,
-                link-color: #3a6ea8,
+                body-bg:          $body-bg,
+                body-color:       #1a1f2e,
+                secondary-bg:     oklch(from #{$body-bg} calc(l - 0.075) calc(c + 0.025) h),
+                tertiary-bg:      oklch(from #{$body-bg} calc(l - 0.04) calc(c + 0.015) h),
+                border-color:     #a8bcd4,
+                primary:          #3a6ea8,
+                link-color:       #3a6ea8,
                 link-hover-color: #2a5080,
 
                 // no border radii

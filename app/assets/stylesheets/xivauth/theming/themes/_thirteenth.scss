@@ -1,11 +1,13 @@
 // The Thirteenth ("The Void") - electric purple theme inspired by the appropriate shard.
+$body-bg: #0a0810;
+
 $config: (
   base: umbral,
   values: (
-    body-bg:          #0a0810,
+    body-bg:          $body-bg,
     body-color:       #c0a8e8,
-    secondary-bg:     #100c1c,
-    tertiary-bg:      #181428,
+    secondary-bg:     oklch(from #{$body-bg} calc(l + 0.15) c h),
+    tertiary-bg:      oklch(from #{$body-bg} calc(l + 0.07) c h),
     border-color:     #2e2048,
     primary:          #9460d0,
     link-color:       #9460d0,

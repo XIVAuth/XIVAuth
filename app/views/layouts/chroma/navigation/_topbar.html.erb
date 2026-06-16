@@ -18,7 +18,7 @@
           <a id="navbarDropdown" class="py-0 nav-link d-flex align-items-center gap-1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="<%= current_user.avatar_url %>" alt="" width="36" height="36" class="d-inline-block rounded-2">
             <div class="caption ms-2 d-none d-md-block">
-              <h6 class="mb-0">Hi, <%= current_user&.profile&.display_name || 'Guest' %>!</h6>
+              <span class="fs-6 mb-0">Hi, <%= current_user&.profile&.display_name || 'Guest' %>!</span>
             </div>
             <i class="bi bi-chevron-down" style="font-size: 0.65em;"></i>
           </a>

@@ -1,11 +1,13 @@
 // Limsa - dark mode blue theme.
+$body-bg: #0a1628;
+
 $config: (
   base: umbral,
   values: (
-    body-bg:          #0a1628,
+    body-bg:          $body-bg,
     body-color:       #b8d8f0,
-    secondary-bg:     #102236,
-    tertiary-bg:      #163044,
+    secondary-bg:     oklch(from #{$body-bg} calc(l + 0.15) c h),
+    tertiary-bg:      oklch(from #{$body-bg} calc(l + 0.07) c h),
     border-color:     #2a5070,
     primary:          #2a90cc,
     link-color:       #2a90cc,

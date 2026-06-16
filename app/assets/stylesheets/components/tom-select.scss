@@ -11,7 +11,12 @@
   min-width: 3rem;
 }
 
-// control color/backgrounds for multi-select
+.ts-dropdown .active {
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
+
+// control color/backgrounds for multi-select items (selected)
 .ts-wrapper.multi .ts-control {
   & > div.item {
     background-color: var(--bs-secondary-bg);
