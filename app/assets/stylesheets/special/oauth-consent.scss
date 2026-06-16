@@ -36,11 +36,11 @@
   -webkit-backdrop-filter: blur(16px);
   transition: background 0.3s, border 0.3s;
 
-  background-color: var(--bs-card-bg);
+  background: color-mix(in srgb, var(--bs-body-bg) 90%, transparent);
   box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
 
   @include mixins.theme-polarity(dark) {
-    background: rgba(30, 30, 30, 0.80);
+    background: color-mix(in srgb, var(--bs-body-bg) 80%, transparent);
     box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.18);
   }
 }
