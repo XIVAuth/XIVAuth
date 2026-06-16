@@ -11,27 +11,15 @@
   min-width: 3rem;
 }
 
-.ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
-  border-inline-start-color: var(--bs-border-color);
-
-  &:hover {
-    background-color: var(--bs-secondary-bg);
-  }
-}
-
+// control color/backgrounds for multi-select
 .ts-wrapper.multi .ts-control {
-  & > div {
+  & > div.item {
     background-color: var(--bs-secondary-bg);
     color: var(--bs-body-color);
-  }
-}
 
-.ts-dropdown {
-  background-color: var(--bs-body-bg);
-  color: var(--bs-body-color);
-
-  .active {
-    background-color: var(--bs-secondary-active-bg);
-    color: var(--bs-white);
+    &.active {
+      background-color: var(--bs-primary-bg-subtle);
+      color: var(--bs-primary-text-emphasis);
+    }
   }
 }
