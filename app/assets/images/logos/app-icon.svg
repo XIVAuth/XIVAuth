@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1024" height="1024" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+   <defs>
+     <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+       <feMorphology in="SourceAlpha" operator="dilate" radius="0.71" result="grown"/>
+       <feGaussianBlur in="grown" stdDeviation="1.23" result="blurred"/>
+       <feComponentTransfer in="blurred" result="shaped">
+        <feFuncA type="gamma" amplitude="1" exponent="3" offset="0"/>
+       </feComponentTransfer>
+       <feFlood flood-color="black" flood-opacity="0.75" result="color"/>
+       <feComposite in="color" in2="shaped" operator="in" result="shadow"/>
+       <feOffset in="shadow" dx="0" dy="0" result="offset"/>
+       <feMerge>
+      <feMergeNode in="offset"/>
+         <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+
+    </filter>
+     <filter id="darken">
+      <feColorMatrix type="matrix" values="0.7647 0        0      0 0
+                                           0      0.7647   0      0 0
+                                           0      0        0.7647 0 0
+                                           0      0        0      1 0"/>
+     </filter>
+     <g id="xivauth-key">
+       <path d="m 7.94,12.43 v -2.35 c 0,0 0.55,-0.59 0.55,-0.59 L 5.76,8.06 C 5.76,8.01 5.77,7.95 5.79,7.9 5.94,7.51 6.13,7.24 6.61,7.19 L 7.95,6.99 C 8.13,6.96 8.27,6.8 8.27,6.61 v -1.6 c 0,0 -0.22,-0.19 -0.36,-0.29 -0.13,-0.1 -0.14,-0.2 0,-0.3 C 8.06,4.31 8.26,4.13 8.26,4.13 8.09,0.77 5.86,0 4.57,0 3.28,0 1.05,0.77 0.88,4.13 c 0,0 0.19,0.18 0.35,0.29 0.14,0.1 0.13,0.2 0,0.3 -0.14,0.1 -0.36,0.29 -0.36,0.29 v 1.6 C 0.87,6.8 1,6.96 1.19,6.99 l 1.34,0.2 C 3,7.23 3.14,7.54 3.35,7.9 3.37,7.94 3.37,7.98 3.38,8.03 L 0.8,9.49 1.63,10.39 V 9.88 c 0,0 1.9,-1.08 1.9,-1.08 0,0 0.04,0.45 1.12,0.45 1.08,0 1.11,-0.45 1.11,-0.45 l 1.9,1.08 v 2.74 c 0,0 0.88,0.5 0.88,0.5 l -1.3,0.74 v 0.39 c 0,0 1.9,-1.13 1.9,-1.13 L 7.93,12.43 Z M 4.57,3.11 C 3.83,3.11 3.23,2.5 3.23,1.77 c 0,-0.73 0.61,-1.34 1.34,-1.34 0.73,0 1.34,0.6 1.34,1.34 0,0.74 -0.6,1.34 -1.34,1.34 z"
+             id="key-bow"/>
+       <path d="m 7.49,12.75 v -2.71 c 0,0 -1.61,-0.91 -1.61,-0.91 0,0 -0.24,0.46 -1.24,0.46 -1,0 -1.24,-0.46 -1.24,-0.46 l -1.59,0.88 v 1.24 c 0,0 0.72,0.41 0.72,0.41 v 0.8 c 0,0 -1,0.85 -1,0.85 V 14 c 0,0 1.4,0.8 1.4,0.8 v 1.16 c 0,0 0.62,0.62 0.62,0.62 l 0.62,-0.62 v -1.37 c 0,0 0.46,-0.26 0.46,-0.26 L 3.51,13.69 v -2.85 c 0,0 1.12,-0.98 1.12,-0.98 l 1.85,1.06 -0.72,0.41 v 1.16 c 0,0 0.49,0.28 0.49,0.28 v 1.84 c 0,0 -0.89,0.51 -0.89,0.51 l 0.46,0.26 v 3.47 c 0,0 0.62,0.62 0.62,0.62 l 0.62,-0.62 v -5.11 c 0,0 1.06,-0.61 1.06,-0.61 L 7.47,12.76 Z"
+             id="key-blade"/>
+     </g>
+   </defs>
+  <g id="TrianglePolyBase" style="filter:url(#darken)">
+    <path d="M522.3,498.1L460.3,420.4L366.6,484.7Z" fill="rgb(255,239,166)" shape-rendering="crispEdges"/>
+    <path d="M366.6,484.7L375.1,611.4L522.3,498.1Z" fill="rgb(253,240,176)" shape-rendering="crispEdges"/>
+    <path d="M375.1,611.4L499.1,676.8L522.3,498.1Z" fill="rgb(245,243,204)" shape-rendering="crispEdges" />
+    <path d="M460.3,420.4L324.6,349.8L366.6,484.7Z" fill="rgb(254,219,140)" shape-rendering="crispEdges" />
+    <path d="M366.6,484.7L255,549.5L375.1,611.4Z" fill="rgb(253,218,160)" shape-rendering="crispEdges" />
+    <path d="M255.1,361.5L255,549.5L366.6,484.7Z" fill="rgb(255,203,130)" shape-rendering="crispEdges" />
+    <path d="M375.1,611.4L491.4,765L499.1,676.8Z" fill="rgb(226,231,202)" shape-rendering="crispEdges" />
+    <path d="M642.2,655.4L645.8,455.4L522.3,498.1Z" fill="rgb(239,248,224)" shape-rendering="crispEdges" />
+    <path d="M522.3,498.1L640.8,422.5L460.3,420.4Z" fill="rgb(252,243,184)" shape-rendering="crispEdges" />
+    <path d="M460.3,420.4L369.4,259.8L324.6,349.8Z" fill="rgb(255,202,123)" shape-rendering="crispEdges" />
+    <path d="M645.8,455.4L640.8,422.5L522.3,498.1Z" fill="rgb(244,241,204)" shape-rendering="crispEdges" />
+    <path d="M324.6,349.8L255.1,361.5L366.6,484.7Z" fill="rgb(254,198,120)" shape-rendering="crispEdges" />
+    <path d="M485.8,204.6L369.4,259.8L460.3,420.4Z" fill="rgb(255,200,125)" shape-rendering="crispEdges" />
+    <path d="M324.6,349.8L369.4,259.8L255.1,361.5Z" fill="rgb(254,180,103)" shape-rendering="crispEdges" />
+    <path d="M499.1,676.8L642.2,655.4L522.3,498.1Z" fill="rgb(235,247,230)" shape-rendering="crispEdges" />
+    <path d="M319.5,846L491.4,765L375.1,611.4Z" fill="rgb(214,212,183)" shape-rendering="crispEdges" />
+    <path d="M499.1,676.8L491.4,765L642.2,655.4Z" fill="rgb(215,236,223)" shape-rendering="crispEdges" />
+    <path d="M638.7,269.2L485.8,204.6L460.3,420.4Z" fill="rgb(255,211,147)" shape-rendering="crispEdges" />
+    <path d="M124.2,536.8L170.2,609L255,549.5Z" fill="rgb(249,176,138)" shape-rendering="crispEdges" />
+    <path d="M255,549.5L170.2,609L375.1,611.4Z" fill="rgb(249,198,159)" shape-rendering="crispEdges" />
+    <path d="M750.2,333.2L638.7,269.2L640.8,422.5Z" fill="rgb(231,209,176)" shape-rendering="crispEdges" />
+    <path d="M640.8,422.5L638.7,269.2L460.3,420.4Z" fill="rgb(249,226,177)" shape-rendering="crispEdges" />
+    <path d="M255.1,361.5L124.2,536.8L255,549.5Z" fill="rgb(255,182,121)" shape-rendering="crispEdges" />
+    <path d="M642.2,655.4L787.8,534.8L645.8,455.4Z" fill="rgb(216,237,224)" shape-rendering="crispEdges" />
+    <path d="M645.8,455.4L750.2,333.2L640.8,422.5Z" fill="rgb(228,224,191)" shape-rendering="crispEdges" />
+    <path d="M787.8,534.8L750.2,333.2L645.8,455.4Z" fill="rgb(216,223,195)" shape-rendering="crispEdges" />
+    <path d="M124.2,536.8L92,594.8L170.2,609Z" fill="rgb(242,162,133)" shape-rendering="crispEdges" />
+    <path d="M166.7,790.4L319.5,846L375.1,611.4Z" fill="rgb(216,183,159)" shape-rendering="crispEdges" />
+    <path d="M166.7,790.4L375.1,611.4L170.2,609Z" fill="rgb(234,181,157)" shape-rendering="crispEdges" />
+    <path d="M369.4,259.8L249.3,170.9L255.1,361.5Z" fill="rgb(251,156,88)" shape-rendering="crispEdges" />
+    <path d="M255.1,361.5L62.4,334.5L124.2,536.8Z" fill="rgb(246,155,96)" shape-rendering="crispEdges" />
+    <path d="M124.2,536.8L-16.4,555.6L92,594.8Z" fill="rgb(231,151,124)" shape-rendering="crispEdges" />
+    <path d="M369.6,97.5L249.3,170.9L369.4,259.8Z" fill="rgb(247,141,82)" shape-rendering="crispEdges" />
+    <path d="M834.6,790.9L804.1,633.9L642.2,655.4Z" fill="rgb(166,210,230)" shape-rendering="crispEdges" />
+    <path d="M642.2,655.4L804.1,633.9L787.8,534.8Z" fill="rgb(192,224,236)" shape-rendering="crispEdges" />
+    <path d="M640.4,831.2L642.2,655.4L491.4,765Z" fill="rgb(194,224,230)" shape-rendering="crispEdges" />
+    <path d="M495,887.8L640.4,831.2L491.4,765Z" fill="rgb(184,209,208)" shape-rendering="crispEdges" />
+    <path d="M319.5,846L495,887.8L491.4,765Z" fill="rgb(191,198,182)" shape-rendering="crispEdges" />
+    <path d="M92,594.8L166.7,790.4L170.2,609Z" fill="rgb(229,158,142)" shape-rendering="crispEdges" />
+    <path d="M564.9,106.6L369.6,97.5L485.8,204.6Z" fill="rgb(247,162,108)" shape-rendering="crispEdges" />
+    <path d="M485.8,204.6L369.6,97.5L369.4,259.8Z" fill="rgb(250,164,101)" shape-rendering="crispEdges" />
+    <path d="M564.9,106.6L485.8,204.6L638.7,269.2Z" fill="rgb(250,178,139)" shape-rendering="crispEdges" />
+    <path d="M762.9,189.9L564.9,106.6L638.7,269.2Z" fill="rgb(236,169,150)" shape-rendering="crispEdges" />
+    <path d="M81.5,192.2L62.4,334.5L255.1,361.5Z" fill="rgb(240,122,70)" shape-rendering="crispEdges" />
+    <path d="M166.7,790.4L270.7,891.1L319.5,846Z" fill="rgb(195,151,143)" shape-rendering="crispEdges" />
+    <path d="M319.5,846L421.2,940.4L495,887.8Z" fill="rgb(180,177,170)" shape-rendering="crispEdges" />
+    <path d="M888.9,281L762.9,189.9L750.2,333.2Z" fill="rgb(204,167,150)" shape-rendering="crispEdges" />
+    <path d="M750.2,333.2L762.9,189.9L638.7,269.2Z" fill="rgb(224,183,158)" shape-rendering="crispEdges" />
+    <path d="M934.4,393.4L750.2,333.2L787.8,534.8Z" fill="rgb(193,198,180)" shape-rendering="crispEdges" />
+    <path d="M270.7,891.1L421.2,940.4L319.5,846Z" fill="rgb(184,160,152)" shape-rendering="crispEdges" />
+    <path d="M495,887.8L630.8,1002.3L640.4,831.2Z" fill="rgb(159,183,209)" shape-rendering="crispEdges" />
+    <path d="M166.7,790.4L121.2,892.5L270.7,891.1Z" fill="rgb(190,129,130)" shape-rendering="crispEdges" />
+    <path d="M92,594.8L118.1,807.1L166.7,790.4Z" fill="rgb(213,145,134)" shape-rendering="crispEdges" />
+    <path d="M-68.1,279.9L-2.4,388.5L62.4,334.5Z" fill="rgb(212,109,72)" shape-rendering="crispEdges" />
+    <path d="M62.4,334.5L-2.4,388.5L124.2,536.8Z" fill="rgb(230,139,91)" shape-rendering="crispEdges" />
+    <path d="M92,594.8L-54.4,801.9L118.1,807.1Z" fill="rgb(196,131,129)" shape-rendering="crispEdges" />
+    <path d="M-2.4,388.5L-16.4,555.6L124.2,536.8Z" fill="rgb(226,147,106)" shape-rendering="crispEdges" />
+    <path d="M762.9,189.9L609.2,59.7L564.9,106.6Z" fill="rgb(230,154,139)" shape-rendering="crispEdges" />
+    <path d="M564.9,106.6L538.8,-0.8L369.6,97.5Z" fill="rgb(235,151,106)" shape-rendering="crispEdges" />
+    <path d="M126.9,129.4L81.5,192.2L249.3,170.9Z" fill="rgb(231,84,54)" shape-rendering="crispEdges" />
+    <path d="M249.3,170.9L81.5,192.2L255.1,361.5Z" fill="rgb(245,119,71)" shape-rendering="crispEdges" />
+    <path d="M917.7,660.3L918.1,539.1L804.1,633.9Z" fill="rgb(160,190,219)" shape-rendering="crispEdges" />
+    <path d="M804.1,633.9L918.1,539.1L787.8,534.8Z" fill="rgb(178,205,214)" shape-rendering="crispEdges" />
+    <path d="M164.5,26.4L126.9,129.4L249.3,170.9Z" fill="rgb(227,76,50)" shape-rendering="crispEdges" />
+    <path d="M164.5,26.4L249.3,170.9L369.6,97.5Z" fill="rgb(232,101,60)" shape-rendering="crispEdges" />
+    <path d="M853.4,992.8L834.6,790.9L640.4,831.2Z" fill="rgb(117,167,207)" shape-rendering="crispEdges" />
+    <path d="M640.4,831.2L834.6,790.9L642.2,655.4Z" fill="rgb(163,209,229)" shape-rendering="crispEdges" />
+    <path d="M934.4,393.4L888.9,281L750.2,333.2Z" fill="rgb(191,169,156)" shape-rendering="crispEdges" />
+    <path d="M762.9,189.9L810.9,61.8L609.2,59.7Z" fill="rgb(211,140,131)" shape-rendering="crispEdges" />
+    <path d="M834.6,790.9L917.7,660.3L804.1,633.9Z" fill="rgb(143,188,218)" shape-rendering="crispEdges" />
+    <path d="M1073.7,518L934.4,393.4L918.1,539.1Z" fill="rgb(167,161,174)" shape-rendering="crispEdges" />
+    <path d="M918.1,539.1L934.4,393.4L787.8,534.8Z" fill="rgb(180,192,188)" shape-rendering="crispEdges" />
+    <path d="M603.7,-92.6L538.8,-0.8L609.2,59.7Z" fill="rgb(212,140,128)" shape-rendering="crispEdges" />
+    <path d="M609.2,59.7L538.8,-0.8L564.9,106.6Z" fill="rgb(227,149,126)" shape-rendering="crispEdges" />
+    <path d="M-54.4,801.9L121.2,892.5L118.1,807.1Z" fill="rgb(176,111,119)" shape-rendering="crispEdges" />
+    <path d="M118.1,807.1L121.2,892.5L166.7,790.4Z" fill="rgb(191,125,125)" shape-rendering="crispEdges" />
+    <path d="M245.7,1092.7L417.1,1122.7L421.2,940.4Z" fill="rgb(166,122,140)" shape-rendering="crispEdges" />
+    <path d="M538.8,-0.8L387.1,-14.1L369.6,97.5Z" fill="rgb(222,136,93)" shape-rendering="crispEdges" />
+    <path d="M547.9,1124L630.8,1002.3L421.2,940.4Z" fill="rgb(159,148,179)" shape-rendering="crispEdges" />
+    <path d="M421.2,940.4L630.8,1002.3L495,887.8Z" fill="rgb(169,175,185)" shape-rendering="crispEdges" />
+    <path d="M256.1,-49.8L164.5,26.4L369.6,97.5Z" fill="rgb(214,91,60)" shape-rendering="crispEdges" />
+    <path d="M-186.6,207.4L-68.1,279.9L-79.8,39.6Z" fill="rgb(200,57,48)" shape-rendering="crispEdges" />
+    <path d="M81.5,192.2L-68.1,279.9L62.4,334.5Z" fill="rgb(215,93,61)" shape-rendering="crispEdges" />
+    <path d="M-235.1,482.1L-116,631.1L-16.4,555.6Z" fill="rgb(214,141,121)" shape-rendering="crispEdges" />
+    <path d="M-79.8,39.6L81.5,192.2L126.9,129.4Z" fill="rgb(203,44,41)" shape-rendering="crispEdges" />
+    <path d="M933.1,107.8L762.9,189.9L888.9,281Z" fill="rgb(190,130,131)" shape-rendering="crispEdges" />
+    <path d="M933.1,107.8L810.9,61.8L762.9,189.9Z" fill="rgb(188,120,122)" shape-rendering="crispEdges" />
+    <path d="M-193.2,650.2L-116,631.1L-235.1,482.1Z" fill="rgb(211,139,129)" shape-rendering="crispEdges" />
+    <path d="M-16.4,555.6L-116,631.1L92,594.8Z" fill="rgb(211,139,130)" shape-rendering="crispEdges" />
+    <path d="M240.9,-230.9L256.1,-49.8L374.8,-257.5Z" fill="rgb(210,97,64)" shape-rendering="crispEdges" />
+    <path d="M387.1,-14.1L256.1,-49.8L369.6,97.5Z" fill="rgb(215,112,72)" shape-rendering="crispEdges" />
+    <path d="M-116,631.1L-54.4,801.9L92,594.8Z" fill="rgb(195,131,131)" shape-rendering="crispEdges" />
+    <path d="M834.6,790.9L937.6,814.5L917.7,660.3Z" fill="rgb(117,165,206)" shape-rendering="crispEdges" />
+    <path d="M917.7,660.3L1073.7,518L918.1,539.1Z" fill="rgb(156,163,196)" shape-rendering="crispEdges" />
+    <path d="M853.4,992.8L937.6,814.5L834.6,790.9Z" fill="rgb(94,144,194)" shape-rendering="crispEdges" />
+    <path d="M747.4,-79.8L603.7,-92.6L609.2,59.7Z" fill="rgb(200,134,133)" shape-rendering="crispEdges" />
+    <path d="M538.8,-0.8L549.1,-205.6L387.1,-14.1Z" fill="rgb(217,141,105)" shape-rendering="crispEdges" />
+    <path d="M256.1,-49.8L77.9,-1.9L164.5,26.4Z" fill="rgb(199,53,47)" shape-rendering="crispEdges" />
+    <path d="M164.5,26.4L77.9,-1.9L126.9,129.4Z" fill="rgb(205,47,42)" shape-rendering="crispEdges" />
+    <path d="M1035.3,165.6L933.1,107.8L888.9,281Z" fill="rgb(172,100,118)" shape-rendering="crispEdges" />
+    <path d="M810.9,61.8L747.4,-79.8L609.2,59.7Z" fill="rgb(189,128,129)" shape-rendering="crispEdges" />
+    <path d="M1035.3,165.6L888.9,281L934.4,393.4Z" fill="rgb(175,126,133)" shape-rendering="crispEdges" />
+    <path d="M245.7,1092.7L270.7,891.1L121.2,892.5Z" fill="rgb(174,104,122)" shape-rendering="crispEdges" />
+    <path d="M245.7,1092.7L421.2,940.4L270.7,891.1Z" fill="rgb(172,127,136)" shape-rendering="crispEdges" />
+    <path d="M28.9,1122.3L245.7,1092.7L121.2,892.5Z" fill="rgb(156,60,101)" shape-rendering="crispEdges" />
+    <path d="M1137.1,637.2L1073.7,518L917.7,660.3Z" fill="rgb(144,144,196)" shape-rendering="crispEdges" />
+    <path d="M417.1,1122.7L547.9,1124L421.2,940.4Z" fill="rgb(163,141,162)" shape-rendering="crispEdges" />
+    <path d="M630.8,1002.3L853.4,992.8L640.4,831.2Z" fill="rgb(124,160,204)" shape-rendering="crispEdges" />
+    <path d="M778.8,1098.9L853.4,992.8L630.8,1002.3Z" fill="rgb(106,125,187)" shape-rendering="crispEdges" />
+    <path d="M938.4,-32.7L747.4,-79.8L810.9,61.8Z" fill="rgb(161,102,117)" shape-rendering="crispEdges" />
+    <path d="M-235.1,482.1L-16.4,555.6L-2.4,388.5Z" fill="rgb(217,138,101)" shape-rendering="crispEdges" />
+    <path d="M-116,631.1L-193.2,650.2L-54.4,801.9Z" fill="rgb(192,129,130)" shape-rendering="crispEdges" />
+    <path d="M-154.4,849.5L-13.7,974.9L-54.4,801.9Z" fill="rgb(152,90,112)" shape-rendering="crispEdges" />
+    <path d="M-54.4,801.9L-13.7,974.9L121.2,892.5Z" fill="rgb(153,89,110)" shape-rendering="crispEdges" />
+    <path d="M547.9,1124L707.3,1109.1L630.8,1002.3Z" fill="rgb(139,142,198)" shape-rendering="crispEdges" />
+    <path d="M417.1,1122.7L516.7,1168L547.9,1124Z" fill="rgb(162,146,169)" shape-rendering="crispEdges" />
+    <path d="M688.8,1240.8L762.3,1205.1L707.3,1109.1Z" fill="rgb(115,131,191)" shape-rendering="crispEdges" />
+    <path d="M342,1221.2L516.7,1168L417.1,1122.7Z" fill="rgb(164,136,154)" shape-rendering="crispEdges" />
+    <path d="M1139.4,416.4L1035.3,165.6L934.4,393.4Z" fill="rgb(166,114,132)" shape-rendering="crispEdges" />
+    <path d="M933.1,107.8L938.4,-32.7L810.9,61.8Z" fill="rgb(159,91,111)" shape-rendering="crispEdges" />
+    <path d="M-215.7,321.1L-2.4,388.5L-68.1,279.9Z" fill="rgb(211,108,71)" shape-rendering="crispEdges" />
+    <path d="M-215.7,321.1L-235.1,482.1L-2.4,388.5Z" fill="rgb(214,125,85)" shape-rendering="crispEdges" />
+    <path d="M-186.6,207.4L-215.7,321.1L-68.1,279.9Z" fill="rgb(208,90,61)" shape-rendering="crispEdges" />
+    <path d="M853.4,992.8L988.7,917.9L937.6,814.5Z" fill="rgb(72,119,181)" shape-rendering="crispEdges" />
+    <path d="M1089.8,796.8L1137.1,637.2L917.7,660.3Z" fill="rgb(121,134,193)" shape-rendering="crispEdges" />
+    <path d="M953.3,1103.4L988.7,917.9L853.4,992.8Z" fill="rgb(62,88,166)" shape-rendering="crispEdges" />
+    <path d="M762.3,1205.1L778.8,1098.9L707.3,1109.1Z" fill="rgb(107,125,187)" shape-rendering="crispEdges" />
+    <path d="M707.3,1109.1L778.8,1098.9L630.8,1002.3Z" fill="rgb(119,133,192)" shape-rendering="crispEdges" />
+    <path d="M-79.8,39.6L-68.1,279.9L81.5,192.2Z" fill="rgb(199,55,48)" shape-rendering="crispEdges" />
+    <path d="M-193.2,650.2L-154.4,849.5L-54.4,801.9Z" fill="rgb(175,116,124)" shape-rendering="crispEdges" />
+    <path d="M-234.3,912.8L-154.4,849.5L-193.2,650.2Z" fill="rgb(167,109,120)" shape-rendering="crispEdges" />
+    <path d="M-103,-20.3L-79.8,39.6L77.9,-1.9Z" fill="rgb(166,2,38)" shape-rendering="crispEdges" />
+    <path d="M77.9,-1.9L-79.8,39.6L126.9,129.4Z" fill="rgb(189,27,39)" shape-rendering="crispEdges" />
+    <path d="M1253,452L1139.4,416.4L1073.7,518Z" fill="rgb(163,141,162)" shape-rendering="crispEdges" />
+    <path d="M1073.7,518L1139.4,416.4L934.4,393.4Z" fill="rgb(164,138,158)" shape-rendering="crispEdges" />
+    <path d="M1089.8,796.8L917.7,660.3L937.6,814.5Z" fill="rgb(108,138,193)" shape-rendering="crispEdges" />
+    <path d="M710.5,-265.7L549.1,-205.6L603.7,-92.6Z" fill="rgb(207,137,135)" shape-rendering="crispEdges" />
+    <path d="M603.7,-92.6L549.1,-205.6L538.8,-0.8Z" fill="rgb(213,141,123)" shape-rendering="crispEdges" />
+    <path d="M32.5,-172.3L-103,-20.3L77.9,-1.9Z" fill="rgb(166,1,38)" shape-rendering="crispEdges" />
+    <path d="M988.7,917.9L1089.8,796.8L937.6,814.5Z" fill="rgb(83,112,179)" shape-rendering="crispEdges" />
+    <path d="M1063.3,49.9L938.4,-32.7L933.1,107.8Z" fill="rgb(145,62,100)" shape-rendering="crispEdges" />
+    <path d="M747.4,-79.8L710.5,-265.7L603.7,-92.6Z" fill="rgb(193,130,131)" shape-rendering="crispEdges" />
+    <path d="M247.8,1225.1L342,1221.2L245.7,1092.7Z" fill="rgb(166,101,124)" shape-rendering="crispEdges" />
+    <path d="M245.7,1092.7L342,1221.2L417.1,1122.7Z" fill="rgb(166,116,135)" shape-rendering="crispEdges" />
+    <path d="M688.8,1240.8L707.3,1109.1L547.9,1124Z" fill="rgb(134,140,196)" shape-rendering="crispEdges" />
+    <path d="M938.4,-32.7L802.6,-146.9L747.4,-79.8Z" fill="rgb(161,103,117)" shape-rendering="crispEdges" />
+    <path d="M-66.7,1064.3L28.9,1122.3L-13.7,974.9Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M-13.7,974.9L28.9,1122.3L121.2,892.5Z" fill="rgb(143,56,98)" shape-rendering="crispEdges" />
+    <path d="M32.5,-172.3L77.9,-1.9L256.1,-49.8Z" fill="rgb(193,37,41)" shape-rendering="crispEdges" />
+    <path d="M-79.8,39.6L-187.1,32.5L-186.6,207.4Z" fill="rgb(187,27,39)" shape-rendering="crispEdges" />
+    <path d="M131.4,1202.4L247.8,1225.1L245.7,1092.7Z" fill="rgb(165,79,113)" shape-rendering="crispEdges" />
+    <path d="M374.8,-257.5L256.1,-49.8L387.1,-14.1Z" fill="rgb(212,111,73)" shape-rendering="crispEdges" />
+    <path d="M549.1,-205.6L374.8,-257.5L387.1,-14.1Z" fill="rgb(215,133,93)" shape-rendering="crispEdges" />
+    <path d="M710.5,-265.7L374.8,-257.5L549.1,-205.6Z" fill="rgb(215,142,118)" shape-rendering="crispEdges" />
+    <path d="M-145.8,1061.4L-66.7,1064.3L-13.7,974.9Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M1035.3,165.6L1063.3,49.9L933.1,107.8Z" fill="rgb(156,59,99)" shape-rendering="crispEdges" />
+    <path d="M925.1,-188.1L710.5,-265.7L802.6,-146.9Z" fill="rgb(165,107,119)" shape-rendering="crispEdges" />
+    <path d="M1270.4,171.7L1063.3,49.9L1035.3,165.6Z" fill="rgb(156,59,100)" shape-rendering="crispEdges" />
+    <path d="M-10.2,1185L131.4,1202.4L28.9,1122.3Z" fill="rgb(140,45,94)" shape-rendering="crispEdges" />
+    <path d="M28.9,1122.3L131.4,1202.4L245.7,1092.7Z" fill="rgb(157,61,101)" shape-rendering="crispEdges" />
+    <path d="M1253,452L1197.9,332.6L1139.4,416.4Z" fill="rgb(164,131,149)" shape-rendering="crispEdges" />
+    <path d="M1139.4,416.4L1197.9,332.6L1035.3,165.6Z" fill="rgb(166,109,128)" shape-rendering="crispEdges" />
+    <path d="M688.8,1240.8L516.7,1168L342,1221.2Z" fill="rgb(161,148,174)" shape-rendering="crispEdges" />
+    <path d="M688.8,1240.8L547.9,1124L516.7,1168Z" fill="rgb(149,145,191)" shape-rendering="crispEdges" />
+    <path d="M778.8,1098.9L953.3,1103.4L853.4,992.8Z" fill="rgb(77,101,173)" shape-rendering="crispEdges" />
+    <path d="M988.7,917.9L1134.7,951.3L1089.8,796.8Z" fill="rgb(70,94,169)" shape-rendering="crispEdges" />
+    <path d="M247.8,1225.1L688.8,1240.8L342,1221.2Z" fill="rgb(164,136,155)" shape-rendering="crispEdges" />
+    <path d="M-103,-20.3L-187.1,32.5L-79.8,39.6Z" fill="rgb(169,5,38)" shape-rendering="crispEdges" />
+    <path d="M-186.6,207.4L-187.1,32.5L-215.7,321.1Z" fill="rgb(202,60,50)" shape-rendering="crispEdges" />
+    <path d="M-215.7,321.1L-217.3,-105.1L-235.1,482.1Z" fill="rgb(206,76,56)" shape-rendering="crispEdges" />
+    <path d="M240.9,-230.9L32.5,-172.3L256.1,-49.8Z" fill="rgb(200,57,48)" shape-rendering="crispEdges" />
+    <path d="M-103,-20.3L-217.3,-105.1L-187.1,32.5Z" fill="rgb(165,0,38)" shape-rendering="crispEdges" />
+    <path d="M762.3,1205.1L953.3,1103.4L778.8,1098.9Z" fill="rgb(84,109,177)" shape-rendering="crispEdges" />
+    <path d="M-154.4,849.5L-145.8,1061.4L-13.7,974.9Z" fill="rgb(137,63,101)" shape-rendering="crispEdges" />
+    <path d="M-235.1,482.1L-234.3,912.8L-193.2,650.2Z" fill="rgb(194,130,131)" shape-rendering="crispEdges" />
+    <path d="M925.1,-188.1L802.6,-146.9L938.4,-32.7Z" fill="rgb(149,86,110)" shape-rendering="crispEdges" />
+    <path d="M802.6,-146.9L710.5,-265.7L747.4,-79.8Z" fill="rgb(178,119,125)" shape-rendering="crispEdges" />
+    <path d="M1249.2,655.6L1253,452L1137.1,637.2Z" fill="rgb(149,145,190)" shape-rendering="crispEdges" />
+    <path d="M1137.1,637.2L1253,452L1073.7,518Z" fill="rgb(158,147,179)" shape-rendering="crispEdges" />
+    <path d="M1249.2,655.6L1137.1,637.2L1089.8,796.8Z" fill="rgb(121,134,193)" shape-rendering="crispEdges" />
+    <path d="M-234.3,912.8L-145.8,1061.4L-154.4,849.5Z" fill="rgb(140,70,103)" shape-rendering="crispEdges" />
+    <path d="M-66.7,1064.3L-10.2,1185L28.9,1122.3Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M1223.6,852.8L1249.2,655.6L1089.8,796.8Z" fill="rgb(102,122,185)" shape-rendering="crispEdges" />
+    <path d="M-145.8,1061.4L-10.2,1185L-66.7,1064.3Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M131.4,1202.4L-244.7,1195.5L247.8,1225.1Z" fill="rgb(139,44,94)" shape-rendering="crispEdges" />
+    <path d="M1042.5,1124.9L1134.7,951.3L988.7,917.9Z" fill="rgb(53,62,153)" shape-rendering="crispEdges" />
+    <path d="M1052.2,-240.3L925.1,-188.1L938.4,-32.7Z" fill="rgb(135,59,99)" shape-rendering="crispEdges" />
+    <path d="M240.9,-230.9L-18.7,-207.6L32.5,-172.3Z" fill="rgb(185,25,39)" shape-rendering="crispEdges" />
+    <path d="M32.5,-172.3L-18.7,-207.6L-103,-20.3Z" fill="rgb(165,0,38)" shape-rendering="crispEdges" />
+    <path d="M374.8,-257.5L-18.7,-207.6L240.9,-230.9Z" fill="rgb(203,64,51)" shape-rendering="crispEdges" />
+    <path d="M1134.7,951.3L1223.6,852.8L1089.8,796.8Z" fill="rgb(76,99,172)" shape-rendering="crispEdges" />
+    <path d="M1086.7,1204.2L976,1175.3L762.3,1205.1Z" fill="rgb(59,79,161)" shape-rendering="crispEdges" />
+    <path d="M762.3,1205.1L976,1175.3L953.3,1103.4Z" fill="rgb(68,92,168)" shape-rendering="crispEdges" />
+    <path d="M953.3,1103.4L1042.5,1124.9L988.7,917.9Z" fill="rgb(53,63,153)" shape-rendering="crispEdges" />
+    <path d="M1134.7,951.3L1253,932.9L1223.6,852.8Z" fill="rgb(64,88,166)" shape-rendering="crispEdges" />
+    <path d="M976,1175.3L1042.5,1124.9L953.3,1103.4Z" fill="rgb(54,64,154)" shape-rendering="crispEdges" />
+    <path d="M1197.9,332.6L1270.4,171.7L1035.3,165.6Z" fill="rgb(165,84,115)" shape-rendering="crispEdges" />
+    <path d="M1063.3,49.9L1142.3,-58.5L938.4,-32.7Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M1253,452L1270.4,171.7L1197.9,332.6Z" fill="rgb(166,112,131)" shape-rendering="crispEdges" />
+    <path d="M1249.2,655.6L1270.4,171.7L1253,452Z" fill="rgb(164,136,155)" shape-rendering="crispEdges" />
+    <path d="M1176.7,-64.4L1142.3,-58.5L1267,58.1Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M-157.7,-177.5L-217.3,-105.1L-103,-20.3Z" fill="rgb(165,0,38)" shape-rendering="crispEdges" />
+    <path d="M-187.1,32.5L-217.3,-105.1L-215.7,321.1Z" fill="rgb(185,24,39)" shape-rendering="crispEdges" />
+    <path d="M-18.7,-207.6L-157.7,-177.5L-103,-20.3Z" fill="rgb(165,0,38)" shape-rendering="crispEdges" />
+    <path d="M1169.5,1179.4L1170.6,1058.7L1042.5,1124.9Z" fill="rgb(49,54,149)" shape-rendering="crispEdges" />
+    <path d="M1042.5,1124.9L1170.6,1058.7L1134.7,951.3Z" fill="rgb(49,54,149)" shape-rendering="crispEdges" />
+    <path d="M1170.6,1058.7L1253,932.9L1134.7,951.3Z" fill="rgb(55,67,156)" shape-rendering="crispEdges" />
+    <path d="M1223.6,852.8L1253,932.9L1249.2,655.6Z" fill="rgb(89,113,180)" shape-rendering="crispEdges" />
+    <path d="M1249.2,655.6L1253,932.9L1270.4,171.7Z" fill="rgb(148,145,192)" shape-rendering="crispEdges" />
+    <path d="M1267,58.1L1142.3,-58.5L1063.3,49.9Z" fill="rgb(132,40,93)" shape-rendering="crispEdges" />
+    <path d="M1142.3,-58.5L1052.2,-240.3L938.4,-32.7Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M1270.4,171.7L1267,58.1L1063.3,49.9Z" fill="rgb(151,51,96)" shape-rendering="crispEdges" />
+    <path d="M976,1175.3L1086.7,1204.2L1042.5,1124.9Z" fill="rgb(49,54,149)" shape-rendering="crispEdges" />
+    <path d="M1170.6,1058.7L1169.5,1179.4L1253,932.9Z" fill="rgb(49,54,149)" shape-rendering="crispEdges" />
+    <path d="M688.8,1240.8L1086.7,1204.2L762.3,1205.1Z" fill="rgb(81,105,175)" shape-rendering="crispEdges" />
+    <path d="M1176.7,-64.4L1052.2,-240.3L1142.3,-58.5Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M925.1,-188.1L1052.2,-240.3L710.5,-265.7Z" fill="rgb(148,84,109)" shape-rendering="crispEdges" />
+    <path d="M1273.9,-210.4L1052.2,-240.3L1176.7,-64.4Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M-234.3,912.8L-244.7,1195.5L-145.8,1061.4Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M-145.8,1061.4L-244.7,1195.5L-10.2,1185Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M-10.2,1185L-244.7,1195.5L131.4,1202.4Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" />
+    <path d="M-235.1,482.1L-244.7,1195.5L-234.3,912.8Z" fill="rgb(154,94,113)" shape-rendering="crispEdges" />
+    <path d="M1086.7,1204.2L1169.5,1179.4L1042.5,1124.9Z" fill="rgb(49,54,149)" shape-rendering="crispEdges" />
+    <path d="M1270.4,171.7L1273.9,-210.4L1267,58.1Z" fill="rgb(129,39,93)" shape-rendering="crispEdges" />
+    <path d="M1267,58.1L1273.9,-210.4L1176.7,-64.4Z" fill="rgb(128,38,93)" shape-rendering="crispEdges" /></g>
+  <g id="key" transform="matrix(42.272443,0,0,42.272443,318.21035,87.477758)">
+    <use id="key-shadow" href="#xivauth-key" style="filter:url(#shadow)"/>
+    <use id="key-logo" href="#xivauth-key" style="fill: #ffffff"/>
+  </g>
+</svg>
