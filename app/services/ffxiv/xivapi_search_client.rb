@@ -4,6 +4,7 @@ require "faraday"
 # Lightweight client for XIVAPI v2 search queries
 class FFXIV::XIVAPISearchClient
   BASE_URL = "https://v2.xivapi.com/api/search".freeze
+  USER_AGENT = "XIVAuth/0.9 (XIVAPI Search Agent; +https://xivauth.net)".freeze
 
   # Executes an XIVAPI search query
   #
@@ -23,6 +24,7 @@ class FFXIV::XIVAPISearchClient
     params.compact!
 
     conn = Faraday.new do |f|
+      f.headers = { "User-Agent" => USER_AGENT }
       f.options.timeout = 5 # Total request timeout in seconds
       f.options.open_timeout = 2 # Connection timeout in seconds
     end
