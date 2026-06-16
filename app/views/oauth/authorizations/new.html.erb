@@ -62,21 +62,21 @@
 
     <div class="text-muted text-center small mt-3">
       <ul class="list-unstyled list-inline pipe-separated-items">
-        <% if client_application.profile.homepage_url %>
+        <% if client_application.profile.homepage_url.present? %>
           <li>
             <a href="<%= client_application.profile.homepage_url %>" target="_blank" rel="noopener noreferrer">
               App Homepage
             </a>
           </li>
         <% end %>
-        <% if client_application.profile.terms_of_service_url %>
+        <% if client_application.profile.terms_of_service_url.present? %>
           <li>
             <a href="<%= client_application.profile.terms_of_service_url %>" target="_blank" rel="noopener noreferrer">
               App Terms of Service
             </a>
           </li>
         <% end %>
-        <% if client_application.profile.privacy_policy_url %>
+        <% if client_application.profile.privacy_policy_url.present? %>
           <li>
             <a href="<%= client_application.profile.privacy_policy_url %>" target="_blank" rel="noopener noreferrer">
               App Privacy Policy
