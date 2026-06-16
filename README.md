@@ -1,5 +1,5 @@
-<div align="center">
-<a href="https://xivauth.net"><img src="./app/assets/images/logos/xivauth-logo-45-color.svg" alt="XIVAuth Logo" width="250"/></a>
+<div align="center" style="text-align: center;">
+<a href="https://xivauth.net"><img src="./app/assets/images/logos/xivauth-logo-45.svg" alt="XIVAuth Logo" width="250"/></a>
 <br/>
 <em>The last Lodestone code you'll ever need.</em>
 <br/><br/>
