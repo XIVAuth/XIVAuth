@@ -5,7 +5,7 @@
       <feMorphology in="SourceAlpha" operator="dilate" radius="0.30" result="grown"/>
       <feGaussianBlur in="grown" stdDeviation="0.75" result="blurred"/>
       <feComponentTransfer in="blurred" result="shaped">
-        <feFuncA type="gamma" amplitude="1" exponent="4" offset="0"/>
+        <feFuncA type="gamma" amplitude="0.8" exponent="1" offset="0"/>
       </feComponentTransfer>
       <feFlood flood-color="black" flood-opacity="0.75" result="color"/>
       <feComposite in="color" in2="shaped" operator="in" result="shadow"/>
