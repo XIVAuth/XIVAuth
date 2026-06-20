@@ -13,7 +13,7 @@ jobs:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Run worker deploy first so we can smoke test.
       # Knowledge: if a deploy fails, these will return a nonzero.
