@@ -3,8 +3,6 @@ class ApplicationController < ActionController::Base
   before_action :set_observability_context, prepend: true
   before_action :update_session_metadata, prepend: true
 
-  before_action :redirect_to_new_domain
-
   helper PrideHelper
 
   def current_ability
@@ -26,6 +24,7 @@ class ApplicationController < ActionController::Base
     sentry_frontend_data = {
       environment: ENV["APP_ENV"] || Rails.env,
       dsn: Rails.application.credentials.dig(:sentry, :dsn, :frontend),
+      release: EnvironmentInfo.commit_hash,
       user: { }
     }
 
@@ -37,18 +36,10 @@ class ApplicationController < ActionController::Base
       LogContext.add(user: user_meta)
     end
 
-    gon.push({ app_env: ENV["APP_ENV"] || Rails.env })
-    gon.push({ sentry: sentry_frontend_data })
-  end
-
-  private def redirect_to_new_domain
-    if ["edge.xivauth.net", "www.xivauth.net"].include?(request.host)
-      redirect_to "#{request.protocol}xivauth.net#{request.fullpath}", status: :moved_permanently,
-allow_other_host: true
-    end
-
-    return unless request.host == "eorzea.id"
-
-    redirect_to "#{request.protocol}xivauth.net", status: :found, allow_other_host: true
+    gon.push({
+      app_env: ENV["APP_ENV"] || Rails.env,
+      app_commit_hash: EnvironmentInfo.commit_hash,
+      sentry: sentry_frontend_data
+    }.compact)
   end
 end

@@ -15,11 +15,14 @@ Rails.application.configure do
     policy.script_src      :self, "https://challenges.cloudflare.com/", "https://*.cloudflareinsights.com/"
     policy.frame_src       :self, "https://challenges.cloudflare.com/"
     policy.style_src       :self, :unsafe_inline
-    policy.form_action     :self
     policy.base_uri        :none
     policy.frame_ancestors :none
     policy.connect_src     :self, "https://*.sentry-cdn.com/", "https://*.sentry.io/",
                            "https://*.cloudflareinsights.com/"
+
+    # We can't use a form_action policy because Chrome is annoying: https://github.com/w3c/webappsec-csp/issues/8
+    # Since Chrome will follow redirects, this causes breaks on inbound (and outbound) OAuth, so it's better to just
+    # not. SSL and script_src should protect things much better.
 
     if (csp_base_uri = Rails.application.credentials.dig(:sentry, :csp_report_uri))
       policy.report_uri csp_base_uri +
