@@ -25,7 +25,7 @@ gem "turbo-rails"
 gem "gon", "~> 7.0"
 
 # Asset management
-gem "aws-sdk-s3", "~> 1.0", require: false
+gem "aws-sdk-s3", "~> 1.226", require: false
 gem "image_processing", "~> 2.0"
 gem "marcel", "~> 1.0"
 gem "ruby-vips", "~> 2.0"
@@ -68,7 +68,7 @@ gem "omniauth-twitch", "~> 1.2"
 gem "omniauth_openid_connect", "~> 0.8"
 
 # Outbound OAuth2
-gem "doorkeeper", "~> 5.9.0"
+gem "doorkeeper", "~> 5.9.3"
 gem "doorkeeper-device_authorization_grant",
     github: "XIVAuth/doorkeeper-device_authorization_grant",
     ref: "f84062469900890461b1f03d9c37960236413321"
@@ -88,7 +88,7 @@ gem "rails_cloudflare_turnstile", "~> 0.4"
 gem "certificate_authority", "~> 1.1"
 
 # HTTP Requests
-gem "faraday", "~> 2.9"
+gem "faraday", "~> 2.14"
 
 # Better logging
 gem "rails_semantic_logger", "~> 4.17"
