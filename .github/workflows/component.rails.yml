@@ -28,9 +28,9 @@ jobs:
       DATABASE_URL: "postgres://rails:password@localhost:5432/rails_test"
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
-      - uses: awalsh128/cache-apt-pkgs-action@v1.6.0
+      - uses: awalsh128/cache-apt-pkgs-action@v1.6.1
         with:
           packages: libvips
 
@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@v1
