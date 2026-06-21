@@ -3,7 +3,12 @@
                    "who wish to use XIVAuth for their applications, including content moderation policies and " \
                    "usage guidelines." %>
 
-<h1>XIVAuth Developer Agreement</h1>
+<% content_for(:page_header) do %>
+  <div>
+    <h1>Developer Agreement</h1>
+    <p>The ground rules for using XIVAuth in your project.</p>
+  </div>
+<% end %>
 
 <p>
   This document serves as the agreement between XIVAuth and developers who wish to use XIVAuth for their applications.
@@ -24,7 +29,7 @@
     <p>
       XIVAuth takes user privacy seriously and expects applications using it to do the same. Information received by
       and for a specific app is intended <em>for</em> that app, and that app only. Developers may not use information
-      provided by XIVAuth to create lists, advertising profiles, or other systems designed specfically to track or
+      provided by XIVAuth to create lists, advertising profiles, or other systems designed specifically to track or
       invade the privacy of users.
     </p>
   </li>
@@ -65,7 +70,7 @@
 
 <p>
   As a service provider, we reserve the right to disable Applications (or in extreme cases, developer accounts) that
-  blatantly violate these standards. If you wish to submit a report, please email
-  <a href="mailto:reports@xivauth.net">reports@xivauth.net</a> with as much information as possible. While we
-  do read every report, we may not be able to respond to every report or take action on every submitted report.
+  blatantly violate these standards. If you wish to submit a report, please refer to our
+  <%= link_to "Moderation Policy", legal_moderation_path %> for the reporting process and required information. When
+  reporting an application, please ensure you specify exactly which guidelines you believe are being violated.
 </p>
