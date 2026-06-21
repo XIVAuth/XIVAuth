@@ -1,4 +1,4 @@
-Contact: mailto:security@kazwolfe.io
+Contact: mailto:security@xivauth.net
 Contact: https://github.com/XIVAuth/XIVAuth/issues
 Expires: 2025-12-31T23:59:59.999Z
 Encryption: https://github.com/kazwolfe.gpg

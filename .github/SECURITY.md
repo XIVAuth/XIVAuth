@@ -7,7 +7,7 @@
 
 ## Reporting Security Issues
 
-Please report security issues by sending an email to [`security@kazwolfe.io`](mailto:security@kazwolfe.io) or by
+Please report security issues by sending an email to [`security@xivauth.net`](mailto:security@xivauth.net) or by
 sending a Discord direct message to `kazwolfe`. Please ensure that all security reports include detailed steps for
 reproduction as well as both expected and observed behavior.
 
