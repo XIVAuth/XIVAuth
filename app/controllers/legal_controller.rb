@@ -10,5 +10,5 @@ class LegalController < ApplicationController
   def developer_agreement; end
   def security_policy; end
   def moderation_policy; end
-  def ca_issuance_policy; end
+  def cert_issuance_policy; end
 end

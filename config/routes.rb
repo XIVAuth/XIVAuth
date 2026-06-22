@@ -123,7 +123,7 @@ path: "cas"
     get "devagreement", to: "legal#developer_agreement"
     get "security", to: "legal#security_policy"
     get "moderation", to: "legal#moderation_policy"
-    get "ca_issuance", to: "legal#ca_issuance_policy"
+    get "cert_issuance", to: "legal#cert_issuance_policy"
   end
 
   resource :health, only: [:show], controller: :health

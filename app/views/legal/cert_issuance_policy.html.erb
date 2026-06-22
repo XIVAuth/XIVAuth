@@ -1,0 +1,236 @@
+<% set_meta_tags title: "Certificate Issuance Policy",
+                 description: "XIVAuth's Certificate Issuance Policy documents how, when, and why XIVAuth will " \
+                   "issue certificates to clients upon request. It also covers other critical CA policy details." %>
+
+<% content_for(:page_header) do %>
+  <div>
+    <nav aria-label="breadcrumb" class="mt-n4">
+      <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><%= link_to "Policies", legal_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Certificate Issuance Policy</li>
+      </ol>
+    </nav>
+    <h1>Certificate Issuance Policy</h1>
+    <p>How, when, and why we issue certificates.</p>
+  </div>
+<% end %>
+
+<p>
+  XIVAuth operates a Certificate Authority (CA) that issues X.509 certificates to users, characters, and developers.
+  These certificates are intended for use by third-party applications to cryptographically verify the identity of
+  XIVAuth users and characters, or to authenticate code published by developers. This document describes the types of
+  certificates issued, the conditions under which they are issued, and how the CA infrastructure operates.
+</p>
+
+<h2>Certificate Types</h2>
+
+<p>XIVAuth issues three types of certificates. Each certificate type has a distinct purpose and a different set of
+  constraints on who may request one.</p>
+
+<h3>User Identification Certificates</h3>
+
+<p>
+  User identification certificates bind a public key to an XIVAuth user account. Applications may use these certificates
+  to verify that a given signature or key belongs to a specific XIVAuth user.
+</p>
+<ul>
+  <li><strong>Subject:</strong> A XIVAuth user account</li>
+  <li><strong>Validity period:</strong> Not more than 1 year from issuance</li>
+  <li><strong>Key usage:</strong> <code>digitalSignature</code></li>
+  <li><strong>Extended key usages:</strong>
+    <ul>
+      <li>XIVAuth User Identification (<code>1.3.6.1.4.1.65394.10.3.2</code>)</li>
+    </ul>
+  </li>
+  <li><strong>Subject Alternative Names:</strong>
+    <ul>
+      <li><code>urn:xivauth:user:&lt;user-uuid&gt;</code>: a URI representing a specific user account.</li>
+    </ul>
+  <li><strong>Access:</strong> Available to all users with a verified email.</li>
+</ul>
+
+<h3>Character Identification Certificates</h3>
+
+<p>
+  Character identification certificates bind a public key to a verified character registration on XIVAuth. To request a
+  character identification certificate, a user must have positively proven they own the character they wish to verify.
+</p>
+<ul>
+  <li><strong>Subject:</strong> A verified character registration on XIVAuth</li>
+  <li><strong>Validity period:</strong> Not more than 1 year from issuance</li>
+  <li>
+    <strong>Key usage:</strong>
+    <code>digitalSignature</code>, <code>keyAgreement</code> (EC keys) or <code>keyEncipherment</code> (RSA keys)
+  </li>
+  <li><strong>Extended key usages:</strong>
+    <ul>
+      <li>XIVAuth Character Identification (<code>1.3.6.1.4.1.65394.10.3.1</code>)</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Subject Alternative Names:</strong>
+    <ul>
+      <li><code>urn:xivauth:character:lodestone:&lt;lodestone-id&gt;</code>: the character's Lodestone ID</li>
+      <li>
+        <code>urn:xivauth:character:persistent_key:&lt;persistent-key&gt;</code>: an internal identifier that uniquely
+        identifies this user/character pair.
+      </li>
+    </ul>
+  </li>
+  <li>
+    <strong>Common Name:</strong> A human-readable snapshot of the character name and home world at the time of
+    issuance. Consumers <strong>must not</strong> use the Common Name for identity verification; it may become stale
+    if the character is renamed or transferred to a different game world. The Subject Alternative Name URIs are the
+    authoritative identity.
+  </li>
+  <li><strong>Prerequisite:</strong> The character registration must be verified before a certificate can be issued.
+  </li>
+  <li><strong>Access:</strong> Available to all users with a verified email.</li>
+</ul>
+
+<h3>Code Signing Certificates</h3>
+
+<p>
+  Code signing certificates allow developers and teams to cryptographically sign applications intended for use within
+  the greater FINAL FANTASY XIV ecosystem. These certificates are intended for use with code signing workflows and are
+  not suitable as identity tokens. Furthermore, as the XIVAuth Root CA is not included in any system trust stores,
+  verification of signatures are the responsibility of a relying party.
+</p>
+<ul>
+  <li><strong>Subject:</strong> A XIVAuth user account or a developer team</li>
+  <li><strong>Validity period:</strong> Not more than 1 year from issuance</li>
+  <li><strong>Key usage:</strong> <code>digitalSignature</code></li>
+  <li><strong>Extended key usage:</strong> <code>codeSigning</code></li>
+  <li><strong>Access:</strong> Restricted, only available upon manual approval.
+  </li>
+</ul>
+
+<h3>Application Subordinate CAs</h3>
+
+<p>
+  Certain applications may require the ability to issue certificates for their own purposes. In this case, XIVAuth may
+  issue a subordinate CA certificate to the application. <strong>Subordinate CA certificates are operated by XIVAuth,
+  and their key material is not available to the requesting application.</strong> All other policies in this document
+  apply to certificates issued by a subordinate CA, including the appropriate prerequisite and access controls.
+</p>
+
+<p>
+  In general, these subordinate CAs are meant for cases where an application wants to ensure that the certificate was
+  issued <em>within their context</em>, that is, for that application only. Applications must take care to verify that
+  the certificate was not issued by an untrusted subordinate CA.
+</p>
+
+<ul>
+  <li><strong>Subject:</strong> The name of the application requesting a CA</li>
+  <li><strong>Validity period:</strong> Not more than 3 years from issuance</li>
+  <li><strong>Key usage:</strong> <code>keyCertSign</code></li>
+  <li><strong>Extended key usages:</strong>
+    <ul>
+      <li>XIVAuth User Identification (<code>1.3.6.1.4.1.65394.10.3.2</code>)</li>
+      <li>XIVAuth Character Identification (<code>1.3.6.1.4.1.65394.10.3.1</code>)</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Subject Alternative Names:</strong>
+    <ul>
+      <li><code>urn:xivauth:app:&lt;app-id&gt;</code>: the app that requested this certificate</li>
+    </ul>
+  </li>
+  <li><strong>Access:</strong> Not yet issued.
+  </li>
+</ul>
+
+<h2>Key Requirements</h2>
+
+<p>
+  All certificate requests must include a public key that meets the following minimum strength requirements. Requests
+  using weaker or unsupported key types are rejected.
+</p>
+
+<ul>
+  <li><strong>RSA:</strong> Minimum 2048-bit key size</li>
+  <li>
+    <strong>EC (Elliptic Curve):</strong> Minimum 256-bit key size; permitted curves are
+    <code>prime256v1</code>, <code>secp384r1</code>, and <code>secp521r1</code>
+  </li>
+  <li><strong>Other key types:</strong> Not accepted</li>
+</ul>
+
+<p>
+  A given public key is bound to a single subject and certificate type at issuance. If a key has already been used for
+  one subject or type, it may not be reused for a different subject or type. Generate a new key pair for each distinct
+  identity or purpose.
+</p>
+
+<p>
+  A public key that has previously appeared in a revoked certificate may not be used to request a new certificate,
+  regardless of the certificate type or subject, or prior certificate status.
+</p>
+
+<h2>Certificate Limits and Renewal</h2>
+
+<p>
+  Certificates may only be renewed (defined as reusing the same keypair and identity) is subject to a renewal window.
+  Renewals of certificates are only permitted once at least <strong>75% of the certificate's validity period</strong>
+  has elapsed, or after one year, whichever comes first. Renewal requests made before the window opens
+  will be rejected.
+</p>
+
+<h2>Revocation</h2>
+
+<p>
+  Both users and the XIVAuth system can revoke issued certificates. Revocation is permanent and cannot be undone.
+</p>
+
+<h3>User-Initiated Revocation</h3>
+
+<p>Users may revoke their own certificates for any of the following reasons:</p>
+<ul>
+  <li><code>unspecified</code>: no specific reason given</li>
+  <li><code>key_compromise</code>: the private key has been lost, stolen, or exposed</li>
+  <li><code>superseded</code>: the certificate has been replaced by a newer one</li>
+  <li><code>cessation_of_operation</code>: the certificate is no longer needed</li>
+</ul>
+
+<h3>System-Initiated Revocation</h3>
+
+<p>
+  XIVAuth may revoke certificates for operational or policy reasons, including CA key compromise, affiliation changes,
+  or policy violations. If a CA certificate is revoked, all certificates issued under it may be considered untrusted
+  by relying parties, depending on how the issuing CA's revocation is handled.
+</p>
+
+<h2>CA Infrastructure</h2>
+
+<p>
+  XIVAuth's CA infrastructure is designed to allow relying parties to validate certificate status at any time.
+  All issued certificates contain the following extensions to support this:
+</p>
+
+<ul>
+  <li>
+    <strong>Authority Information Access (AIA):</strong>
+    <ul>
+      <li>OCSP responder URL: for real-time certificate status checks</li>
+      <li>CA Issuers URL: for downloading the issuing CA certificate in DER format</li>
+    </ul>
+  </li>
+  <li>
+    <strong>CRL Distribution Points:</strong> A URL where the Certificate Revocation List (CRL) for the issuing CA
+    can be downloaded.
+  </li>
+  <li><strong>Basic Constraints:</strong> <code>CA:FALSE</code>, critical. All issued certificates are end-entity
+    certificates and may not themselves sign other certificates
+  </li>
+</ul>
+
+<p>
+  XIVAuth operates a single OCSP responder. Queries for unknown serial numbers return an error response rather than
+  a "good" or "unknown" status.
+</p>
+
+<p>
+  CA certificates are rotated over time. When a CA is retired, it is deactivated and no longer used for new issuance,
+  but the CA certificate and OCSP/CRL data for certificates it issued remain accessible. The CA slug embedded in AIA
+  URLs is permanent and will not change after any certificate has been issued under that CA.
+</p>
