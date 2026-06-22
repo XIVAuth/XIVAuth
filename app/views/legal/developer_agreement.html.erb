@@ -1,10 +1,16 @@
 <% set_meta_tags title: "Developer Agreement",
-                 description: "The Developer Agreement for XIVAuth outlines the terms and conditions for developers " \
-                   "who wish to use XIVAuth for their applications, including content moderation policies and " \
-                   "usage guidelines." %>
+                 description: "XIVAuth's Developer Agreement outlines the rules and requirements to use XIVAuth in " \
+                   "your own project. It includes guidelines for how to interact with our data, and what we expect " \
+                   "from developers in turn." %>
 
 <% content_for(:page_header) do %>
   <div>
+    <nav aria-label="breadcrumb" class="mt-n4">
+      <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><%= link_to "Policies", legal_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Developer Agreement</li>
+      </ol>
+    </nav>
     <h1>Developer Agreement</h1>
     <p>The ground rules for using XIVAuth in your project.</p>
   </div>

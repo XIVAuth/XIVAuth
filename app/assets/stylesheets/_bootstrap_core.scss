@@ -1,5 +1,8 @@
 // Bootstrap entrypoint to re-expose the framework core
 
+// === XIVAUTH VARIABLES ===
+$enable-negative-margins: true;
+
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/variables-dark";

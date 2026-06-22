@@ -1,9 +1,16 @@
 <% set_meta_tags title: "Security Policy",
-                 description: "The Security Policy for XIVAuth outlines guidelines for penetration testing, " \
-                   "reporting security vulnerabilities, and responsible interaction with the site." %>
+                 description: "XIVAuth's Security Policy outlines our commitment to security and includes guidelines " \
+                   "for prospective penetration testers. It outlines how to report security issues to us and what to " \
+                   "expect after a report is made." %>
 
 <% content_for(:page_header) do %>
   <div>
+    <nav aria-label="breadcrumb" class="mt-n4">
+      <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><%= link_to "Policies", legal_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Security Policy</li>
+      </ol>
+    </nav>
     <h1>Security Policy</h1>
     <p>Our Rules of Engagement, in-scope systems for pentesting, and how to report security issues to us.</p>
   </div>
@@ -23,9 +30,9 @@
 <p>
   If you are performing a pentest against the production servers, we ask you to <em>please</em> keep other users in
   mind. If you find something that crashes XIVAuth, don't do it forty times to make a point. If you're trying to
-  access a resource that isn't owned by you, create a second account and try to access those. If you're trying to
-  break in to an account or bypass MFA, please attack your own account. XIVAuth is used by other people too; please
-  don't inconvenience them for hacker cred.
+  access a resource not owned by you, create a second account and try to access those. If you're trying to break in to
+  an account or bypass MFA, please attack your own account. XIVAuth is used by other people too; please don't
+  inconvenience them for hacker cred.
 </p>
 <p>In addition, please refrain from performing any of the following activities:</p>
 <ul>

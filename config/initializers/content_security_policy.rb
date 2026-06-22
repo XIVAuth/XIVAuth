@@ -18,7 +18,7 @@ Rails.application.configure do
     policy.base_uri        :none
     policy.frame_ancestors :none
     policy.connect_src     :self, "https://*.sentry-cdn.com/", "https://*.sentry.io/",
-                           "https://*.cloudflareinsights.com/"
+                           "https://*.cloudflareinsights.com/", "https://challenges.cloudflare.com/"
 
     # We can't use a form_action policy because Chrome is annoying: https://github.com/w3c/webappsec-csp/issues/8
     # Since Chrome will follow redirects, this causes breaks on inbound (and outbound) OAuth, so it's better to just

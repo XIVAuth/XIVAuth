@@ -1,10 +1,16 @@
 <% set_meta_tags title: "Privacy Policy",
-                 description: "The Privacy Policy for XIVAuth explains how user information is collected, used, and " \
-                   "protected, emphasizing transparency and user control. It expressly forbids the use of user data " \
-                   "for marketing purposes." %>
+                 description: "The Privacy Policy explains how we collect, use, and protect your personal " \
+                   "information. It also serves as a record of our data processors and the commitments we make to " \
+                   "protect your privacy. It also outlines how, why, and when we share your data with other parties." %>
 
 <% content_for(:page_header) do %>
   <div>
+    <nav aria-label="breadcrumb" class="mt-n4">
+      <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><%= link_to "Policies", legal_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Privacy Policy</li>
+      </ol>
+    </nav>
     <h1>Privacy Policy</h1>
     <p>How we use your data, and our commitment to your privacy.</p>
   </div>

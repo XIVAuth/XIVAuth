@@ -1,5 +1,7 @@
 @use '../bootstrap_core' as bs;
 
+$header-content-overlap: 3rem;
+
 // Sticky footer: main-content and bare containers flex to fill the viewport
 .main-content {
   flex: 1 0 auto;
@@ -28,7 +30,8 @@ body > .container:not(.toast-container) {
 
   .header-content {
     position: relative;
-    padding: calc(var(--bs-gutter-x, 1rem) * 2);
+    padding: bs.$spacer * 2;
+    padding-bottom: bs.$spacer * 2;
     min-height: 215px;
     display: flex;
     align-items: center;
@@ -49,7 +52,7 @@ body > .container:not(.toast-container) {
 }
 
 .page-header + .content-inner {
-  margin-top: -3rem;
+  margin-top: -$header-content-overlap;
 }
 
 .toast {

@@ -4,6 +4,12 @@
 
 <% content_for(:page_header) do %>
   <div>
+    <nav aria-label="breadcrumb" class="mt-n4">
+      <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><%= link_to "Policies", legal_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Terms of Service</li>
+      </ol>
+    </nav>
     <h1>Terms of Service</h1>
     <p>What you need to know to use XIVAuth, legally speaking.</p>
   </div>

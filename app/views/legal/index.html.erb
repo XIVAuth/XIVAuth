@@ -1,0 +1,87 @@
+<% set_meta_tags title: "Policies",
+                 description: "Our archive of legal documents, policies, and agreements that govern XIVAuth." %>
+
+<% content_for(:page_header) do %>
+  <div>
+    <h1>Policy Directory</h1>
+    <p>Policies and agreements governing XIVAuth.</p>
+  </div>
+<% end %>
+
+<p>
+  The documents linked below govern the use of XIVAuth and related services, as well as the rights and obligations of
+  users and developers. By using XIVAuth, you agree to these policies. Policies may be added, removed, or amended at
+  any time.
+</p>
+
+<p>
+  Please also be aware that we are not lawyers. We've tried to write these documents in a way that is easy to
+  understand and makes our intent clear. Please provide us the courtesy of following the general intent of these
+  documents, as they're meant to protect you as much as they are meant to protect us.
+</p>
+
+<div class="card">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item position-relative py-3">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-file-text fs-4 text-muted flex-shrink-0"></i>
+        <div>
+          <%= link_to "Terms of Service", legal_terms_path, class: "fw-semibold stretched-link text-decoration-none" %>
+          <p class="mb-0 small text-muted">
+            The Terms of Service dictate how you can use the service, your rights and responsibilities, and the legal
+            limitations of the platform.
+          </p>
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item position-relative py-3">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-shield fs-4 text-muted flex-shrink-0"></i>
+        <div>
+          <%= link_to "Privacy Policy", legal_privacy_path, class: "fw-semibold stretched-link text-decoration-none" %>
+          <p class="mb-0 small text-muted">
+            The Privacy Policy explains how we collect, use, and protect your personal information. It also serves as a
+            record of our data processors and the commitments we make to protect your privacy. It also outlines how,
+            why, and when we share your data with other parties.
+          </p>
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item position-relative py-3">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-code-square fs-4 text-muted flex-shrink-0"></i>
+        <div>
+          <%= link_to "Developer Agreement", legal_devagreement_path, class: "fw-semibold stretched-link text-decoration-none" %>
+          <p class="mb-0 small text-muted">
+            The Developer Agreement outlines the rules and requirements to use XIVAuth in your own project. It includes
+            guidelines for how to interact with our data and what we expect from developers in turn.
+          </p>
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item position-relative py-3">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-bug fs-4 text-muted flex-shrink-0"></i>
+        <div>
+          <%= link_to "Security Policy", legal_security_path, class: "fw-semibold stretched-link text-decoration-none" %>
+          <p class="mb-0 small text-muted">
+            The Security Policy explains our commitment to security and includes guidelines for prospective penetration
+            testers. It describes how to report security issues to us and what to expect after a report is made.
+          </p>
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item position-relative py-3">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-person-exclamation fs-4 text-muted flex-shrink-0"></i>
+        <div>
+          <%= link_to "Moderation Policy", legal_moderation_path, class: "fw-semibold stretched-link text-decoration-none" %>
+          <p class="mb-0 small text-muted">
+            The Moderation Policy explains how content moderation will be handled, including how we handle user reports,
+            remove content, and the actions we may take to uphold the platform's integrity.
+          </p>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

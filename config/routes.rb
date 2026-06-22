@@ -117,11 +117,13 @@ path: "cas"
   end
 
   scope path: "/legal", as: :legal, controller: :legal do
+    get "/", to: "legal#index"
     get "terms", to: "legal#terms_of_service"
     get "privacy", to: "legal#privacy_policy"
     get "devagreement", to: "legal#developer_agreement"
     get "security", to: "legal#security_policy"
     get "moderation", to: "legal#moderation_policy"
+    get "ca_issuance", to: "legal#ca_issuance_policy"
   end
 
   resource :health, only: [:show], controller: :health

@@ -3,13 +3,13 @@
 <% content_for(:page_header) do %>
   <div class="d-flex justify-content-between align-items-center">
     <div>
-      <h1>Certificate Details</h1>
       <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb mb-1">
           <li class="breadcrumb-item"><%= link_to "My Certificates", certificates_path %></li>
           <li class="breadcrumb-item active" aria-current="page">Certificate Details</li>
         </ol>
       </nav>
+      <h1>Certificate Details</h1>
     </div>
     <div class="d-flex gap-2">
       <% if @certificate.active? %>

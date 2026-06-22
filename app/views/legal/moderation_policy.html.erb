@@ -1,9 +1,16 @@
 <% set_meta_tags title: "Moderation Policy",
-                 description: "The Moderation Policy for XIVAuth outlines how content moderation will be handled, " \
-                   "including how XIVAuth handles user reports and content removal guidelines." %>
+                 description: "XIVAuth's Moderation Policy outlines how content moderation will be handled, " \
+                   "including how we handle user reports, remove content, and the actions we may take to uphold the " \
+                   "platform's integrity." %>
 
 <% content_for(:page_header) do %>
   <div>
+    <nav aria-label="breadcrumb" class="mt-n4">
+      <ol class="breadcrumb mb-1">
+        <li class="breadcrumb-item"><%= link_to "Policies", legal_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Moderation Policy</li>
+      </ol>
+    </nav>
     <h1>Moderation Policy</h1>
     <p>How we protect users and uphold the integrity of the platform.</p>
   </div>

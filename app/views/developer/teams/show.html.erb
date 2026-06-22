@@ -3,13 +3,13 @@
 <% content_for(:page_header) do %>
   <div class="d-flex justify-content-between align-items-center">
     <div>
-      <h1><%= can?(:update, @team) ? "Edit Team: " : "" %><%= @team.name %></h1>
       <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb mb-1">
           <li class="breadcrumb-item"><%= link_to "My Teams", developer_teams_path %></li>
           <li class="breadcrumb-item active" aria-current="page"><%= @team.name %></li>
         </ol>
       </nav>
+      <h1><%= can?(:update, @team) ? "Edit Team: " : "" %><%= @team.name %></h1>
     </div>
     <div>
       <div class="btn-toolbar gap-2">
