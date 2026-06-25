@@ -45,6 +45,17 @@ en:
             email:
               parse_error: "could not be parsed properly."
               unresolvable_domain: "domain does not appear valid."
+        client_application/oauth_client:
+          attributes:
+            redirect_uris:
+              fragment_present: 'cannot contain a fragment.'
+              invalid_uri: 'must be a valid URI.'
+              unspecified_scheme: 'must specify a scheme.'
+              relative_uri: 'must be an absolute URI.'
+              secured_uri: 'must be an HTTPS/SSL URI.'
+              forbidden_uri: 'is forbidden by the server.'
     attributes:
       oauth/device_grant:
         user_code: "Pairing code"
+      client_application/oauth_client:
+        redirect_uris: "Redirect URI"  # required for index shenanigans. probably needs to be fixed down the line.

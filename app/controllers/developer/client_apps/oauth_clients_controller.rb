@@ -53,10 +53,7 @@ class Developer::ClientApps::OAuthClientsController < Developer::DeveloperPortal
       end
     else
       respond_to do |format|
-        format.html do
-          flash[:error] = "Update failed."
-          redirect_back_or_to(developer_oauth_client_path(@oauth_client))
-        end
+        format.html { render :show, status: :unprocessable_content }
       end
     end
   end

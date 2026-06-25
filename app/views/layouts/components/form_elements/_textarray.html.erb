@@ -1,14 +1,21 @@
 <div data-controller="form--textarray">
   <%
-    # always ensure we have a single field to render so the JS has a template
+    errors_by_index = local_assigns.fetch(:errors, [])
+                        .group_by { |e| e.options[:index] }
+                        .transform_values { |errs| errs.map(&:full_message) }
     values = [""] if values.blank?
-    values.each do |entry|
+    values.each_with_index do |entry, index|
+      entry_errors = errors_by_index[index]
   %>
     <div data-form--textarray-target="input" class="input-group mb-2">
-      <input type="<%= field_type %>" name="<%= field_name %>[]" value="<%= entry %>" class="form-control" />
+      <input type="<%= field_type %>" name="<%= field_name %>[]" value="<%= entry %>"
+             class="form-control<%= " is-invalid" if entry_errors %>" />
       <button type="button" name="deleteRow" class="btn btn-outline-danger btn-icon px-3" data-action="click->form--textarray#removeField">
         <i class="bi bi-trash"></i>
       </button>
+      <% if entry_errors %>
+        <div class="invalid-feedback"><%= entry_errors.join(", ") %></div>
+      <% end %>
     </div>
   <% end %>
   <button type="button" class="btn btn-primary" data-action="click->form--textarray#addNewField">

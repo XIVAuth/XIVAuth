@@ -10,6 +10,7 @@ class ClientApplication::OAuthClient < ApplicationRecord
   alias_attribute :secret, :client_secret
 
   validate :validate_internal_scopes, if: :scopes_changed?
+  validate :validate_redirect_uris_individually
 
   def redirect_uri
     self.redirect_uris.join("\n")
@@ -31,6 +32,19 @@ class ClientApplication::OAuthClient < ApplicationRecord
   def needs_secret?
     (self.confidential? && (self.grant_flows&.include?("authorization_code") || self.grant_flows&.empty?)) ||
       self.grant_flows&.include?("client_credentials")
+  end
+
+  def validate_redirect_uris_individually
+    proxy_class = Struct.new(:redirect_uri) { include ActiveModel::Model }
+    validator = Doorkeeper::RedirectUriValidator.new(attributes: [:redirect_uri])
+
+    redirect_uris.each_with_index do |uri, index|
+      next if uri.blank?
+
+      proxy = proxy_class.new(redirect_uri: uri)
+      validator.validate_each(proxy, :redirect_uri, uri)
+      proxy.errors.each { |e| errors.add(:redirect_uris, e.type, **e.options.merge(index:)) }
+    end
   end
 
   def validate_internal_scopes

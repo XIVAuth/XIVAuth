@@ -33,11 +33,6 @@
           <h5 class="mb-0">Client Details</h5>
         </div>
         <div class="card-body">
-          <% if @oauth_client.errors.any? %>
-            <div class="alert alert-danger" role="alert"><%= t('doorkeeper.applications.form.error') %></div>
-          <% end %>
-
-          <!-- Name -->
           <div class="mb-3">
             <label class="form-label" for="oauth_client_name">Name</label>
             <div class="input-group">
@@ -45,7 +40,6 @@
             </div>
           </div>
 
-          <!-- Client ID -->
           <div class="mb-3">
             <label class="form-label" for="client_id_value">Client ID</label>
             <div class="input-group" data-controller="utilities--copy-code">
@@ -58,7 +52,6 @@
             </div>
           </div>
 
-          <!-- Client Secret -->
           <div class="mb-3">
             <label class="form-label" for="client_secret_value">Client Secret</label>
             <% secret = @oauth_client.plaintext_secret || flash[:application_secret].presence %>
@@ -117,15 +110,14 @@
           <h5 class="mb-0">Redirect URIs</h5>
         </div>
         <div class="card-body">
-          <% if @oauth_client.errors.any? %>
-            <div class="alert alert-danger" role="alert"><%= t('doorkeeper.applications.form.error') %></div>
-          <% end %>
-          <p class="text-secondary small mb-2">Add one or more callback URLs for authorization. For non-redirect flows (e.g., client credentials, device code) this may be optional.</p>
+          <p class="text-secondary small mb-2">Add one or more callback URLs for authorization. For non-redirect flows
+            (e.g., client credentials, device code) this may be optional.</p>
           <div class="mb-3 row">
             <div class="col-sm-12">
               <%= render partial: 'layouts/components/form_elements/textarray',
                          locals: { form: f, values: @oauth_client.redirect_uris,
-                                   field_type: "url", field_name: "oauth_client[redirect_uris]", add_button_text: "Add URI" } %>
+                                   field_type: "url", field_name: "oauth_client[redirect_uris]", add_button_text: "Add URI",
+                                   errors: @oauth_client.errors.where(:redirect_uris) } %>
             </div>
           </div>
           <div class="d-flex justify-content-end mt-3">
@@ -144,10 +136,6 @@
           <h5 class="mb-0">Client Settings</h5>
         </div>
         <div class="card-body">
-          <% if @oauth_client.errors.any? %>
-            <div class="alert alert-danger" role="alert"><%= t('doorkeeper.applications.form.error') %></div>
-          <% end %>
-
           <%= render 'client_settings', f: f %>
 
           <div class="d-flex justify-content-end mt-3">
