@@ -1,6 +1,7 @@
 class Api::V1::ApiController < ActionController::API
   # There are no "open" API calls; everything must require at least authorization.
   before_action :doorkeeper_authorize!
+  before_action :set_default_response_format
 
   rescue_from CanCan::AccessDenied do
     render json: { error: "Forbidden" }, status: :forbidden
@@ -53,5 +54,11 @@ class Api::V1::ApiController < ActionController::API
 
     Sentry.set_context("oauth_application", ctx)
     LogContext.add(oauth_application: ctx)
+  end
+
+  private def set_default_response_format
+    if request.headers["HTTP_ACCEPT"].nil? && params[:format].nil?
+      request.format = :json
+    end
   end
 end
