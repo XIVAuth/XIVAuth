@@ -63,13 +63,13 @@
             <th scope="row">Creation Date</th>
             <td><span data-controller="utilities--hover-dt"
                   data-utilities--hover-dt-ts-value="<%= @user.created_at.to_i %>"
-                  data-utilities--hover-dt-format-value="adaptive"><%= l(@user.created_at, format: :long) %></span></td>
+                  data-utilities--hover-dt-format-value="datetime"><%= l(@user.created_at, format: :long) %></span></td>
           </tr>
           <tr>
             <th scope="row">Last Edit Date</th>
             <td><span data-controller="utilities--hover-dt"
                   data-utilities--hover-dt-ts-value="<%= @user.updated_at.to_i %>"
-                  data-utilities--hover-dt-format-value="adaptive"><%= l(@user.updated_at, format: :long) %></span></td>
+                  data-utilities--hover-dt-format-value="datetime"><%= l(@user.updated_at, format: :long) %></span></td>
           </tr>
           </tbody>
         </table>
