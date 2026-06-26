@@ -376,6 +376,7 @@ GEM
     pg (1.6.3-x86_64-darwin)
     pg (1.6.3-x86_64-linux)
     pg (1.6.3-x86_64-linux-musl)
+    polyglot (0.3.5)
     postmark (1.25.1)
       json
     postmark-rails (0.22.1)
@@ -542,8 +543,8 @@ GEM
     sanitize (7.0.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.16.8)
-    scoped_search (4.3.1)
-      activerecord (>= 4.2.0)
+    search_cop (1.5.0)
+      treetop
     securerandom (0.4.1)
     selenium-webdriver (4.45.0)
       base64 (~> 0.2)
@@ -616,6 +617,8 @@ GEM
       bindata (~> 2.4)
       openssl (> 2.0)
       openssl-signature_algorithm (~> 1.0)
+    treetop (1.6.18)
+      polyglot (~> 0.3)
     tsort (0.2.0)
     turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
@@ -733,7 +736,7 @@ DEPENDENCIES
   rubocop-rspec
   rubocop-rspec_rails
   ruby-vips (~> 2.0)
-  scoped_search (~> 4.2)
+  search_cop (~> 1.4)
   selenium-webdriver
   sentry-rails (~> 6.3)
   sentry-ruby (~> 6.3)

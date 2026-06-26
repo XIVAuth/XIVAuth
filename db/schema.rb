@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_26_005447) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_11_041758) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -124,10 +124,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_005447) do
     t.string "portrait_url", null: false
     t.enum "refresh_fail_reason", enum_type: "ffxiv_character_refresh_error"
     t.datetime "updated_at", null: false
-    t.index "to_tsvector('simple'::regconfig, (name)::text)", name: "index_ffxiv_characters_on_name_fts", using: :gin
     t.index ["content_id"], name: "index_ffxiv_characters_on_content_id", unique: true, where: "((content_id IS NOT NULL) OR ((content_id)::text <> ''::text))"
-    t.index ["data_center"], name: "index_ffxiv_characters_on_data_center"
-    t.index ["home_world"], name: "index_ffxiv_characters_on_home_world"
     t.index ["lodestone_id"], name: "index_ffxiv_characters_on_lodestone_id", unique: true
   end
 

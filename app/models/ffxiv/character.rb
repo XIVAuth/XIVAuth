@@ -1,10 +1,13 @@
 class FFXIV::Character < ApplicationRecord
-  scoped_search on: :name, full_text_search: :simple
-  scoped_search on: :lodestone_id
-  scoped_search on: :home_world, rename: :world
-  scoped_search on: :data_center, rename: :dc
-  scoped_search on: :created_at, rename: :created
-  scoped_search on: :updated_at, rename: :last_updated
+  include SearchCop
+
+  search_scope :admin_search do
+    attributes :name, :lodestone_id
+    attributes world: :home_world
+    attributes dc: :data_center
+    attributes created: :created_at
+    attributes last_updated: :updated_at
+  end
 
   self.implicit_order_column = "lodestone_id"
   validates :lodestone_id, presence: true, uniqueness: true

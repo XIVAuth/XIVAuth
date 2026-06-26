@@ -7,9 +7,9 @@ class Admin::CharactersController < Admin::AdminController
 
   def index
     scope = FFXIV::Character.includes(:ban, :character_registrations)
-    scope = scope.search_for(params[:q]) if params[:q].present?
+    scope = scope.admin_search(params[:q]) if params[:q].present?
     @pagy, @characters = pagy(scope.order(created_at: :desc))
-  rescue ScopedSearch::QueryNotSupported => e
+  rescue ActiveRecord::StatementInvalid => e
     flash.now[:alert] = "Invalid search query: #{e.message}"
     @pagy, @characters = pagy(FFXIV::Character.includes(:ban, :character_registrations).order(created_at: :desc))
   end
