@@ -2,11 +2,14 @@ class FFXIV::Character < ApplicationRecord
   include SearchCop
 
   search_scope :admin_search do
-    attributes :name, :lodestone_id
+    attributes :name
+    attributes id: :lodestone_id
     attributes world: :home_world
     attributes dc: :data_center
     attributes created: :created_at
     attributes last_updated: :updated_at
+
+    options :name, type: :fulltext
   end
 
   self.implicit_order_column = "lodestone_id"
