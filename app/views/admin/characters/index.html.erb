@@ -18,6 +18,9 @@
             <%= f.submit "Search", class: "btn btn-outline-secondary" %>
           </div>
         <% end %>
+        <% if params[:q].present? %>
+          <p class="text-muted">Showing <%= pluralize(@pagy.count, "search result") %>...</p>
+        <% end %>
 
         <table class="table table-hover">
           <thead>
