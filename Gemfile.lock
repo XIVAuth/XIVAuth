@@ -542,6 +542,8 @@ GEM
     sanitize (7.0.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.16.8)
+    scoped_search (4.3.1)
+      activerecord (>= 4.2.0)
     securerandom (0.4.1)
     selenium-webdriver (4.45.0)
       base64 (~> 0.2)
@@ -731,6 +733,7 @@ DEPENDENCIES
   rubocop-rspec
   rubocop-rspec_rails
   ruby-vips (~> 2.0)
+  scoped_search (~> 4.2)
   selenium-webdriver
   sentry-rails (~> 6.3)
   sentry-ruby (~> 6.3)

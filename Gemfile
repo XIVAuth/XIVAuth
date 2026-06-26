@@ -106,6 +106,7 @@ gem "rexml", "~> 3.4.2"
 gem "browser", "~> 6.0"
 gem "meta-tags", "~> 2.23"
 gem "pagy", "~> 43.0"
+gem "scoped_search", "~> 4.2"
 gem "store_model", "~> 4.6"
 
 group :production do
