@@ -1,0 +1,63 @@
+<%= form_with model: @acl, scope: :acl, url: developer_application_acls_path(@application), method: :post do |f| %>
+  <div class="modal-header">
+    <h5 class="modal-title">Add ACL Entry</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body" data-controller="utilities--toggle-category" data-utilities--toggle-category-behavior-value="hide">
+    <% if @acl.errors[:base].any? %>
+      <div class="alert alert-danger">
+        <% @acl.errors[:base].each do |msg| %>
+          <div><%= msg %></div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold d-block">Effect</label>
+      <div class="btn-group" role="group" aria-label="Effect">
+        <%= f.radio_button :deny, false, class: "btn-check", id: "acl_deny_false" %>
+        <%= f.label :deny, "Allow", for: "acl_deny_false", class: "btn btn-outline-success" %>
+        <%= f.radio_button :deny, true, class: "btn-check", id: "acl_deny_true" %>
+        <%= f.label :deny, "Deny", for: "acl_deny_true", class: "btn btn-outline-danger" %>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold d-block">Principal Type</label>
+      <div class="form-check">
+        <%= f.radio_button :principal_type, "User", class: "form-check-input", id: "acl_principal_type_user",
+                           data: { action: "utilities--toggle-category#onChange", "utilities--toggle-category-value": "user" } %>
+        <%= f.label :principal_type, "User", for: "acl_principal_type_user", class: "form-check-label" %>
+      </div>
+      <div class="form-check">
+        <%= f.radio_button :principal_type, "Team", class: "form-check-input", id: "acl_principal_type_team",
+                           data: { action: "utilities--toggle-category#onChange", "utilities--toggle-category-value": "team" } %>
+        <%= f.label :principal_type, "Team", for: "acl_principal_type_team", class: "form-check-label" %>
+      </div>
+    </div>
+
+    <div class="mb-3" data-utilities--toggle-category-value="user" data-utilities--toggle-category-behavior="hide">
+      <%= f.label :principal_id, "User ID", class: "form-label fw-semibold" %>
+      <%= f.text_field :principal_id, class: "form-control font-monospace", id: "acl_principal_id_user",
+                       data: { "utilities--toggle-category-value": "user", "utilities--toggle-category-behavior": "disable" } %>
+    </div>
+
+    <div class="mb-3" data-utilities--toggle-category-value="team" data-utilities--toggle-category-behavior="hide">
+      <%= f.label :principal_id, "Team ID", class: "form-label fw-semibold" %>
+      <%= f.text_field :principal_id, class: "form-control font-monospace", id: "acl_principal_id_team",
+                       data: { "utilities--toggle-category-value": "team", "utilities--toggle-category-behavior": "disable" } %>
+      <div class="form-check mt-2">
+        <%= f.check_box :include_team_descendants, class: "form-check-input", id: "acl_include_team_descendants" %>
+        <%= f.label :include_team_descendants, "Include Descendant Teams", for: "acl_include_team_descendants",
+                    class: "form-check-label" %>
+        <div class="form-text">When checked, this rule will also apply to subteams.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    <%= f.submit "Add Entry", class: "btn btn-primary" %>
+  </div>
+<% end %>

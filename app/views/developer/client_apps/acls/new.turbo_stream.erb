@@ -1,0 +1,5 @@
+<%= turbo_stream.append "body" do %>
+  <%= render 'layouts/components/remote_modal', title: 'Add ACL Entry', modal_id: "add_acl_modal" do %>
+    <%= render 'form' %>
+  <% end %>
+<% end %>

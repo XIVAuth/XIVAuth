@@ -1,0 +1,64 @@
+<div id="acl_list">
+  <% if !@application.private? %>
+    <div class="text-center text-muted">
+      Public apps do not yet support ACLs.
+    </div>
+  <% else %>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Effect</th>
+          <th>Principal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge bg-success">Allow</span></td>
+          <td>
+            <% if @application.owner.is_a?(Team) %>
+              <i class="bi bi-people"></i> Team: <%= @application.owner.name %>
+            <% else %>
+              <i class="bi bi-person"></i> User: <%= @application.owner.display_name %>
+            <% end %>
+          </td>
+          <td class="text-end"><small class="text-muted">(owner)</small></td>
+        </tr>
+        <% @application.acls.each do |acl| %>
+          <tr>
+            <td>
+              <% if acl.deny? %>
+                <span class="badge bg-danger">Deny</span>
+              <% else %>
+                <span class="badge bg-success">Allow</span>
+              <% end %>
+            </td>
+            <td>
+              <% if acl.principal_type == "Team" %>
+                <% team = acl.principal %>
+                <i class="bi bi-people"></i> Team:
+                <% if team && can?(:show, team) %>
+                  <%= team.name %>
+                <% else %>
+                  ID <span class="font-monospace small"><%= acl.principal_id %></span>
+                <% end %>
+                <% if acl.include_team_descendants? %>
+                  <br><small class="text-muted">(and descendants)</small>
+                <% end %>
+              <% else %>
+                <i class="bi bi-person"></i> User: ID <span class="font-monospace small"><%= acl.principal_id %></span>
+              <% end %>
+            </td>
+            <td class="text-end">
+              <%= button_to developer_application_acl_path(@application, acl), method: :delete,
+                            class: "btn btn-outline-danger btn-sm",
+                            data: { turbo_confirm: "Remove this ACL entry?" } do %>
+                <i class="bi bi-trash"></i>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>

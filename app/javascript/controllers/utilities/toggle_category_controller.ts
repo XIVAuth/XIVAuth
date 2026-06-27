@@ -1,57 +1,78 @@
-import { Controller } from "@hotwired/stimulus";
+import {Controller} from "@hotwired/stimulus";
+
+const TOGGLES = `input[type="radio"], input[type="checkbox"]`;
 
 export default class ToggleCategoryController extends Controller {
-  static targets = ["item"]
-  static values = { mode: { type: String, default: "disable" } }
+    static values = {behavior: {type: String, default: "hide"}}
 
-  declare readonly itemTargets: HTMLInputElement[];
-  declare readonly modeValue: string;
+    declare readonly behaviorValue: string;
 
-  connect() {
-    this.refresh();
-  }
-
-  update(event: Event) {
-    const toggle = event.currentTarget as HTMLInputElement;
-    const category = toggle.dataset.category;
-    if (!category) return;
-
-    if (toggle.type === "radio") {
-      this.itemTargets.forEach(el => this.deactivate(el));
-      this.itemsForCategory(category).forEach(el => this.activate(el));
-    } else if (toggle.type === "checkbox") {
-      const action = toggle.checked ? this.activate : this.deactivate;
-      this.itemsForCategory(category).forEach(el => action.call(this, el));
+    connect() {
+        this.refresh();
     }
-  }
 
-  private refresh() {
-    this.itemTargets.forEach(el => this.deactivate(el));
-    this.element.querySelectorAll<HTMLInputElement>("input[type='radio']:checked, input[type='checkbox']:checked")
-      .forEach(toggle => {
-        if (toggle.dataset.category) {
-          this.itemsForCategory(toggle.dataset.category).forEach(el => this.activate(el));
+    onChange(event: Event) {
+        const input = event.currentTarget as HTMLInputElement;
+        const value = this.valueOf(input);
+        if (!value) return;
+
+        if (input.type === "radio") {
+            this.controlled().forEach(el => this.deactivate(el));
+            this.controlledFor(value).forEach(el => this.activate(el));
+        } else if (input.type === "checkbox") {
+            this.controlledFor(value).forEach(el =>
+                input.checked ? this.activate(el) : this.deactivate(el)
+            );
         }
-      });
-  }
-
-  private activate(el: HTMLInputElement) {
-    if (this.modeValue === "hide") {
-      el.classList.remove("d-none");
-    } else {
-      el.disabled = false;
     }
-  }
 
-  private deactivate(el: HTMLInputElement) {
-    if (this.modeValue === "hide") {
-      el.classList.add("d-none");
-    } else {
-      el.disabled = true;
+    private refresh() {
+        this.controlled().forEach(el => this.deactivate(el));
+        this.element.querySelectorAll<HTMLInputElement>(`${TOGGLES}`)
+            .forEach(input => {
+                if (!input.checked) return;
+                const value = this.valueOf(input);
+                if (value) this.controlledFor(value).forEach(el => this.activate(el));
+            });
     }
-  }
 
-  private itemsForCategory(category: string): HTMLInputElement[] {
-    return this.itemTargets.filter(el => el.dataset.category === category);
-  }
+    private activate(el: HTMLElement) {
+        if (this.behaviorFor(el) === "hide") {
+            el.classList.remove("d-none");
+        } else if (el instanceof HTMLInputElement) {
+            el.disabled = false;
+        }
+    }
+
+    private deactivate(el: HTMLElement) {
+        if (this.behaviorFor(el) === "hide") {
+            el.classList.add("d-none");
+        } else if (el instanceof HTMLInputElement) {
+            el.disabled = true;
+        }
+    }
+
+    private behaviorFor(el: HTMLElement): string {
+        return el.getAttribute(this.dataAttr("behavior")) ?? this.behaviorValue;
+    }
+
+    private valueOf(el: Element): string | null {
+        return el.getAttribute(this.dataAttr("value"));
+    }
+
+    private controlled(): HTMLElement[] {
+        return Array.from(this.element.querySelectorAll<HTMLElement>(
+            `[${this.dataAttr("value")}]:not(${TOGGLES})`
+        ));
+    }
+
+    private controlledFor(value: string): HTMLElement[] {
+        return Array.from(this.element.querySelectorAll<HTMLElement>(
+            `[${this.dataAttr("value")}="${value}"]:not(${TOGGLES})`
+        ));
+    }
+
+    private dataAttr(name: string): string {
+        return `data-${this.identifier}-${name}`;
+    }
 }

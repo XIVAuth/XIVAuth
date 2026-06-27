@@ -28,7 +28,7 @@
       <%= radio_button_tag "certificate_request[certificate_type]", "user_identification",
                            cert_request.certificate_type.blank? || cert_request.certificate_type == "user_identification",
                            class: "form-check-input", id: "type_user",
-                           data: { action: "change->utilities--toggle-category#update",
+                           data: { action: "change->utilities--toggle-category#onChange",
                                    category: "user_identification" } %>
       <label class="form-check-label" for="type_user">
         <strong>User Identification</strong><br>
@@ -41,7 +41,7 @@
                            cert_request.certificate_type == "character_identification",
                            class: "form-check-input", id: "type_character",
                            disabled: @verified_characters.empty?,
-                           data: { action: "change->utilities--toggle-category#update",
+                           data: { action: "change->utilities--toggle-category#onChange",
                                    category: "character_identification" } %>
       <label class="form-check-label <%= "text-muted" if @verified_characters.empty? %>" for="type_character">
         <strong>Character Identification</strong><br>
@@ -56,8 +56,8 @@
       </label>
     </div>
 
-    <div class="mt-3 d-none" data-utilities--toggle-category-target="item"
-         data-category="character_identification">
+    <div class="mt-3 d-none" 
+         data-utilities--toggle-category-value="character_identification">
       <select class="form-select <%= "is-invalid" if cert_request.errors[:subject].any? %>"
               name="certificate_request[subject_id]" id="certificate_subject_id"
               data-controller="oauth--character-select"

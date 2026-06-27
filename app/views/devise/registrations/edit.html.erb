@@ -24,7 +24,7 @@
                 <div class="form-check">
                   <%= radio_button_tag "user[avatar_source]", "gravatar", avatar_source == "gravatar",
                         class: "form-check-input", id: "user_avatar_source_gravatar",
-                        data: { action: "change->utilities--toggle-category#update", category: "gravatar" } %>
+                        data: { action: "change->utilities--toggle-category#onChange", "utilities--toggle-category-value": "gravatar" } %>
                   <%= label_tag "user_avatar_source_gravatar", class: "form-check-label" do %>
                     Use Gravatar <a class="very-small" target="_blank"  href="https://support.gravatar.com/basic/what-is-gravatar/">(What is this?)</a>
                   <% end %>
@@ -32,11 +32,11 @@
                 <div class="form-check mb-2">
                   <%= radio_button_tag "user[avatar_source]", "custom", avatar_source == "custom",
                         class: "form-check-input", id: "user_avatar_source_custom",
-                        data: { action: "change->utilities--toggle-category#update", category: "custom" } %>
+                        data: { action: "change->utilities--toggle-category#onChange", "utilities--toggle-category-value": "custom" } %>
                   <%= label_tag "user_avatar_source_custom", "Upload custom avatar", class: "form-check-label" %>
                 </div>
                 <%= f.file_field :avatar, class: "form-control form-control-sm", accept: "image/png,image/jpeg,image/webp,image/gif",
-                      data: { "utilities--toggle-category-target": "item", category: "custom" } %>
+                      data: {  "utilities--toggle-category-value": "custom" } %>
                 <div class="form-text">PNG, JPG, WebP or GIF. Max 2 MB.</div>
               </div>
             </div>

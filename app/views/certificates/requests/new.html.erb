@@ -16,7 +16,7 @@
   <div class="col-lg-7">
     <%= form_with url: certificate_request_path, method: :post, multipart: true,
           data: { controller: "utilities--toggle-category",
-                  "utilities--toggle-category-mode-value": "hide" } do %>
+                  "utilities--toggle-category-behavior-value": "hide" } do %>
       <div class="card">
         <div class="card-body">
           <%= render "form", cert_request: @request %>

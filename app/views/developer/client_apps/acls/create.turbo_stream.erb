@@ -1,0 +1,4 @@
+<%= turbo_stream.replace "acl_list", partial: "developer/client_apps/acl_list" %>
+<%= turbo_stream.append "add_acl_modal-content" do %>
+  <%= render "layouts/components/remote_modal_close" %>
+<% end %>

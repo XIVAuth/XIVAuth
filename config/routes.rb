@@ -23,6 +23,8 @@ Rails.application.routes.draw do
 
       resources :obo_authorizations, controller: "client_apps/obo_authorizations", only: %i[new create destroy],
                 param: :azp_id
+
+      resources :acls, controller: "client_apps/acls", only: %i[new create destroy]
     end
 
     resources :teams, controller: "teams" do
