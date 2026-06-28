@@ -70,9 +70,9 @@
 
     <p>
       Certificates, however, have another special property: they can be verified fully offline and independently. This
-      means that any data signed by a certificate can be independently verified by anyone without involving XIVAuth at
-      all. This allows for trust relationships to be created quickly and efficiently, allowing users to bootstrap trust
-      with minimal technical overhead.
+      means that any data signed by a certificate can be checked by anyone without involving XIVAuth at all. This allows
+      for trust relationships to be efficiently and securely created with fewer privacy implications and relatively
+      little technical overhead.
     </p>
 
     <h2 class="pt-3">Why would I use a certificate?</h2>
@@ -87,28 +87,29 @@
         <strong>Proving data came from your character.</strong><br>
         By signing some data with your certificate, other parties can (reasonably) trust that it came from you and not
         from a third party. This is particularly useful for proving ownership (or authenticity) of data: a digitally
-        signed message in your name means that you are the one who wrote it.
+        signed message signed by your certificate means that it actually originated from you.
       </li>
       <li class="my-3">
         <strong>Encrypting data for others.</strong><br>
         If you have a copy of a certificate for another player, you can encrypt data that only they can read. This
         allows the creation of secure channels for information without permitting eavesdropping by third parties. As an
-        example, you can send a private message to another character and keep it truly private.
+        example, you can send a private message to another character with assurance that you're sending it to the right
+        character <em>and</em> that nobody other than the intended recipient can read it.
       </li>
       <li class="my-3">
         <strong>Authenticating to a service.</strong><br>
         Some services may choose to use a certificate for authentication purposes instead of a username and password.
-        Since certificates tend to have reasonably long lives and private keys cannot be guessed, anyone holding a
-        certificate can prove who they are.
+        Since certificates are based on very large numbers and complex math that makes them nearly impossible to guess,
+        it's reasonable to assume that the holder of a certificate is who they claim to be.
       </li>
     </ul>
 
     <p>
       In most computer systems, certificates are also stored in a secure container. This means that your operating
-      system has built-in protections to secure your private keys, making it harder to steal or tamper with them. Most
-      critically, XIVAuth uses a system called a Certificate Signing Request, which means that private keys are never
-      given to XIVAuth. Keys are generated locally, and your public key (and some metadata) is sent to XIVAuth's systems
-      through our API.
+      system has built-in protections to secure your private keys that make it much harder to steal or tamper with them.
+      As part of this security model, XIVAuth uses Certificate Signing Requests, which are special documents that
+      contain only your public key and some associated metadata. XIVAuth never receives your locally-generated private
+      key and cannot recalculate them.
     </p>
 
     <h2 class="pt-3">What's the downside?</h2>
@@ -134,7 +135,8 @@
       When certificates are appropriate, they still carry fundamental requirements. At a minimum, two separate
       conditions must remain true: the certificate authority (in this case, XIVAuth) must be trustworthy to all parties,
       and the certificate holder must retain sole control over their private key. If either condition is no longer true,
-      a certificate can no longer be trusted.
+      a certificate can no longer be trusted. There are mitigations to this (such as certificate pinning), but
+      implementation of these can also increase the burden on both developers and users.
     </p>
 
     <p>
@@ -154,27 +156,35 @@
       Before you decide to use certificates in your project, I would highly recommend
       <a href="https://rip-van-webble.blogspot.com/2021/03/certificates-confuse-everything.html">this wonderful blog
         post</a> from someone with far more intelligence and experience than me explaining a lot of the less-obvious
-      aspects to certificates. Despite building out a full certificate authority myself, I still
-      <strong>strongly</strong> recommend that developers avoid implementing certificate-based systems unless necessary.
-      Generally, this comes down to most or all of these factors being present:
+      aspects to certificates. As someone who has built out a full-fledged certificate authority, I feel that I have
+      earned the right to <strong>strongly</strong> recommend that developers avoid implementing certificate-based
+      systems unless necessary. Generally, this comes down to most or all of these factors being present:
     </p>
 
     <ul>
-      <li>You need a system that provides bindings of public keys to (public) identities.</li>
-      <li>You're building a system that is unable or unwilling to vouch for identities.</li>
-      <li>Your system needs the ability to verify identities <em>offline</em> without any server interactions.</li>
-      <li>You need a system capable of providing or consuming publicly auditable artifacts.</li>
       <li>
-        There is no better alternative for public key distribution such as DNS or a GPG-like registry. (Or, a publicly
-        queryable registry is undesirable).
+        You need a system that can bind public identities to one or more public keys.
+      </li>
+      <li>
+        You're building a system that is unable or unwilling to vouch for identities (e.g. a decentralized system).
+      </li>
+      <li>
+        Your system needs the ability to verify identities without server interactions.
+      </li>
+      <li>
+        You need a system capable of providing or consuming publicly auditable artifacts.
+      </li>
+      <li>
+        There is no better alternative for public key distribution such as DNS or a GPG-like registry. Or, if one is
+        possible, it's undesirable for technical or practical reasons.
       </li>
     </ul>
 
     <p>
       Implementing and supporting PKI/X.509 is a very complex task, and many things can very easily go wrong. Even my
       implementation (made by someone who generally knows what they're doing!) contains a couple known tradeoffs (read:
-      flaws) that I considered acceptable for a project providing SSO for a video game. These aren't security-critical
-      by any means, but they show the sheer complexity of running a certificate authority. Certificates and a full X.509
+      flaws) that I consider acceptable for a project providing SSO for a video game. These aren't security-critical,
+      but they show the sheer complexity of running a certificate authority. Certificates and a full X.509
       implementation aren't <em>quite</em> a last resort, but they're certainly pretty close. Make sure you know what
       you're signing up for.
     </p>
@@ -182,7 +192,8 @@
     <p>
       If, despite all of this, you still feel that a certificate-based system is the right choice for your needs, please
       consider reaching out to me in the <%= link_to "XIVAuth Discord", discord_path %>. I'd be happy to chat about your
-      use case and offer any advice or guidance I can to make sure you don't shoot yourself in the foot.
+      use case and offer any advice or guidance I can to make sure you don't shoot yourself in the foot. Or, you may
+      choose to get started at your own pace with our <%= link_to "Certificate Authority registry", ca_certs_path %>.
     </p>
   </div>
 </div>

@@ -5,22 +5,23 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    container: ghcr.io/railwayapp/cli:latest
-    environment: production
-    env:
-      WEB_SVC_ID: ${{ secrets.RAILWAY_WEB_SERVICE_ID }}
-      WORKER_SVC_ID: ${{ secrets.RAILWAY_WORKER_SERVICE_ID }}
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
     steps:
       - uses: actions/checkout@v7
 
       # Run worker deploy first so we can smoke test.
-      # Knowledge: if a deploy fails, these will return a nonzero.
       - name: Deploy Sidekiq worker
-        run: railway up -c --service=${{ env.WORKER_SVC_ID }}
+        uses: xivauth/railway-deploy-tool@f7a7fa9eae218f3193f58f8b29a41b75e131c44f
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          environment_id: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
+          service_id: ${{ secrets.RAILWAY_WORKER_SERVICE_ID }}
+
       - name: Deploy web nodes
-        run: railway up -c --service=${{ env.WEB_SVC_ID }}
+        uses: xivauth/railway-deploy-tool@f7a7fa9eae218f3193f58f8b29a41b75e131c44f
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          environment_id: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
+          service_id: ${{ secrets.RAILWAY_WEB_SERVICE_ID }}
 
       # - name: Run DB migrations
       #   run: railway ssh --service=${{ env.WORKER_SVC_ID }} -- rails db:migrate

@@ -4,6 +4,7 @@
 <% content_for(:page_header) do %>
   <div>
     <h1>Certificate Authorities</h1>
+    <p>Download the core certificate authorities used by XIVAuth.</p>
   </div>
 <% end %>
 
@@ -55,12 +56,7 @@
   </tr>
   <tr>
     <th scope="row" class="text-muted ps-0">SHA256</th>
-    <td>
-      <code>
-        8121 ca12 401c 650e 9dbc 46a8 a638 1349<br>
-        1955 28d4 1e79 c7be 8e42 146f 67dc 2dad
-      </code>
-    </td>
+    <td><code>8121 ca12 401c 650e 9dbc 46a8 a638 1349 1955 28d4 1e79 c7be 8e42 146f 67dc 2dad</code></td>
   </tr>
   </tbody>
 </table>
@@ -113,11 +109,11 @@
             <span class="badge bg-success">Active</span>
           <% end %>
         </td>
-        <td><%= ca.allowed_certificate_types.map(&:titleize).join(", ") %></td>
+        <td><%= raw ca.allowed_certificate_types.map(&:titleize).join("<br>") %></td>
         <td>
-          <% if ca.expires_at %><span data-controller="utilities--hover-dt"
-                                      data-utilities--hover-dt-ts-value="<%= ca.expires_at.to_i %>"
-                                      data-utilities--hover-dt-format-value="datetime"><%= ca.expires_at.strftime("%Y-%m-%d %H:%M") %></span>
+          <% if ca.expires_at %>
+            <span data-controller="utilities--hover-dt" data-utilities--hover-dt-ts-value="<%= ca.expires_at.to_i %>"
+                  data-utilities--hover-dt-format-value="short"><%= ca.expires_at.strftime("%Y-%m-%d %H:%M") %></span>
           <% else %>-
           <% end %></td>
         <td>
@@ -126,7 +122,9 @@
             <%= raw hex.scan(/.{4}/).each_slice(8).map { |g| g.join(" ") }.join("<br>") %>
           </code>
         </td>
-        <td class="text-end"><%= render 'ca_download_links', ca: ca %></td>
+        <td class="text-end">
+          <%= render 'ca_download_links', ca: ca %>
+        </td>
       </tr>
     <% end %>
     </tbody>
