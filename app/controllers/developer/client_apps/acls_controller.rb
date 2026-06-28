@@ -35,9 +35,19 @@ class Developer::ClientApps::AclsController < Developer::DeveloperPortalControll
 
     @acl = @application.acls.find(params.expect(:id))
 
+    if request.format.turbo_stream? && params[:commit].blank?
+      render and return
+    end
+
     if @acl.destroy
       respond_to do |format|
         format.html { redirect_to developer_application_path(@application), notice: "ACL entry removed." }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace("acl_list", partial: "developer/client_apps/acl_list"),
+            turbo_stream.append("delete_acl_modal-content", partial: "layouts/components/remote_modal_close")
+          ]
+        end
       end
     else
       respond_to do |format|

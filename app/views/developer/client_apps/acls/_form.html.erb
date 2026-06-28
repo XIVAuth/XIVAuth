@@ -15,35 +15,50 @@
 
     <div class="mb-3">
       <label class="form-label fw-semibold d-block">Effect</label>
-      <div class="btn-group" role="group" aria-label="Effect">
+      <div class="btn-group w-100" role="group" aria-label="Effect">
         <%= f.radio_button :deny, false, class: "btn-check", id: "acl_deny_false" %>
-        <%= f.label :deny, "Allow", for: "acl_deny_false", class: "btn btn-outline-success" %>
+        <%= f.label :deny, for: "acl_deny_false", class: "btn btn-outline-success w-100" do %>
+          <i class="bi bi-check-circle"></i> Allow
+        <% end %>
         <%= f.radio_button :deny, true, class: "btn-check", id: "acl_deny_true" %>
-        <%= f.label :deny, "Deny", for: "acl_deny_true", class: "btn btn-outline-danger" %>
+        <%= f.label :deny, for: "acl_deny_true", class: "btn btn-outline-danger w-100" do %>
+          <i class="bi bi-x-circle"></i> Deny
+        <% end %>
       </div>
     </div>
 
     <div class="mb-3">
       <label class="form-label fw-semibold d-block">Principal Type</label>
-      <div class="form-check">
-        <%= f.radio_button :principal_type, "User", class: "form-check-input", id: "acl_principal_type_user",
+      <div class="btn-group w-100" role="group" aria-label="Principal Type">
+        <%= f.radio_button :principal_type, "User", class: "btn-check", id: "acl_principal_type_user",
                            data: { action: "utilities--toggle-category#onChange", "utilities--toggle-category-value": "user" } %>
-        <%= f.label :principal_type, "User", for: "acl_principal_type_user", class: "form-check-label" %>
-      </div>
-      <div class="form-check">
-        <%= f.radio_button :principal_type, "Team", class: "form-check-input", id: "acl_principal_type_team",
+        <%= f.label :principal_type, for: "acl_principal_type_user", class: "btn btn-outline-primary w-100" do %>
+          <i class="bi bi-person"></i> User
+        <% end %>
+
+        <%= f.radio_button :principal_type, "Team", class: "btn-check", id: "acl_principal_type_team",
                            data: { action: "utilities--toggle-category#onChange", "utilities--toggle-category-value": "team" } %>
-        <%= f.label :principal_type, "Team", for: "acl_principal_type_team", class: "form-check-label" %>
+        <%= f.label :principal_type, for: "acl_principal_type_team", class: "btn btn-outline-primary w-100" do %>
+          <i class="bi bi-people"></i> Team
+        <% end %>
       </div>
     </div>
 
     <div class="mb-3" data-utilities--toggle-category-value="user" data-utilities--toggle-category-behavior="hide">
+      <p>
+        Any user may be added to the ACL, so long as their user ID is known. To preserve user privacy, user display
+        names will not be displayed in the ACL list.
+      </p>
       <%= f.label :principal_id, "User ID", class: "form-label fw-semibold" %>
       <%= f.text_field :principal_id, class: "form-control font-monospace", id: "acl_principal_id_user",
                        data: { "utilities--toggle-category-value": "user", "utilities--toggle-category-behavior": "disable" } %>
     </div>
 
     <div class="mb-3" data-utilities--toggle-category-value="team" data-utilities--toggle-category-behavior="hide">
+      <p>
+        Any team (or subteam) may be added to the ACL, so long as the Team ID is known. If the team is visible to you,
+        its name will be displayed in the ACL list.
+      </p>
       <%= f.label :principal_id, "Team ID", class: "form-label fw-semibold" %>
       <%= f.text_field :principal_id, class: "form-control font-monospace", id: "acl_principal_id_team",
                        data: { "utilities--toggle-category-value": "team", "utilities--toggle-category-behavior": "disable" } %>
@@ -51,7 +66,10 @@
         <%= f.check_box :include_team_descendants, class: "form-check-input", id: "acl_include_team_descendants" %>
         <%= f.label :include_team_descendants, "Include Descendant Teams", for: "acl_include_team_descendants",
                     class: "form-check-label" %>
-        <div class="form-text">When checked, this rule will also apply to subteams.</div>
+        <div class="form-text">
+          When checked, any subteams of this team will also be covered by this ACL rule. This setting will apply
+          regardless of inheritance policies on the child team's side.
+        </div>
       </div>
     </div>
   </div>

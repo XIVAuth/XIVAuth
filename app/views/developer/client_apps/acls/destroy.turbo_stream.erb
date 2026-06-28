@@ -1,0 +1,5 @@
+<%= turbo_stream.append "body" do %>
+  <%= render 'layouts/components/remote_modal', modal_id: "delete_acl_modal" do %>
+    <%= render 'developer/client_apps/acls/destroy_modal' %>
+  <% end %>
+<% end %>

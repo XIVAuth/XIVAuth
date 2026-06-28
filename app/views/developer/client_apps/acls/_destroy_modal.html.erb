@@ -1,0 +1,17 @@
+<%= form_with(url: developer_application_acl_path(@application, @acl), method: :delete) do |f| %>
+  <div class="modal-header">
+    <h5 class="modal-title">Delete ACL Entry</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div>
+    <div class="modal-body">
+      <p>
+        This will remove the ACL entry for <%= @acl.principal %>. Any permissions managed will be revoked.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      <%= f.submit "Delete ACL Entry", class: "btn btn-danger" %>
+    </div>
+  </div>
+<% end %>

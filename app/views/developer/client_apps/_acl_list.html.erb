@@ -1,7 +1,7 @@
 <div id="acl_list">
   <% if !@application.private? %>
     <div class="text-center text-muted">
-      Public apps do not yet support ACLs.
+      Public apps are already available to all users.
     </div>
   <% else %>
     <table class="table table-sm">
@@ -51,8 +51,7 @@
             </td>
             <td class="text-end">
               <%= button_to developer_application_acl_path(@application, acl), method: :delete,
-                            class: "btn btn-outline-danger btn-sm",
-                            data: { turbo_confirm: "Remove this ACL entry?" } do %>
+                            class: "btn btn-outline-danger btn-sm" do %>
                 <i class="bi bi-trash"></i>
               <% end %>
             </td>
