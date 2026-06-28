@@ -1,7 +1,6 @@
 require "sidekiq/web"
 require "sidekiq/throttled"
 require "sidekiq/throttled/web"
-require "sidekiq_unique_jobs/web"
 
 index = ENV.fetch("SIDEKIQ_DB_INDEX", 12)
 
@@ -20,14 +19,6 @@ Sidekiq.configure_server do |config|
     schedule_file = "config/cron.yml"
     Sidekiq::Cron::Job.load_from_hash! YAML.load_file(schedule_file) if File.exist?(schedule_file)
   end
-
-  config.client_middleware do |chain|
-    chain.add SidekiqUniqueJobs::Middleware::Client
-  end
-
-  config.server_middleware do |chain|
-    chain.add SidekiqUniqueJobs::Middleware::Server
-  end
 end
 
 Sidekiq.configure_client do |config|
@@ -38,13 +29,4 @@ Sidekiq.configure_client do |config|
       verify_mode: OpenSSL::SSL::VERIFY_NONE
     }
   }
-
-  config.client_middleware do |chain|
-    chain.add SidekiqUniqueJobs::Middleware::Client
-  end
 end
-
-Sidekiq.default_job_options = {
-  # Provides support for ActiveJob and SidekiqUniqueJobs
-  lock_args_method: ->(args) { [ args.first.except("job_id", "enqueued_at") ] },
-}

@@ -6,7 +6,6 @@ class FFXIV::VerifyCharacterRegistrationJob < ApplicationJob
   MAX_RETRY_ATTEMPTS = 3
 
   queue_as :ffxiv_lodestone_jobs
-  sidekiq_options lock: :until_executed, lock_ttl: 600, on_conflict: :raise
 
   discard_on(StandardError) do |job, error|
     job.report_result("generic_failure")
