@@ -90,7 +90,7 @@ gem "certificate_authority", "~> 1.1"
 gem "faraday", "~> 2.9"
 
 # Better logging
-gem "rails_semantic_logger", "~> 4.17"
+gem "rails_semantic_logger", "~> 5.0"
 
 # Observability (Sentry) - temp for now
 gem "sentry-rails", "~> 6.3"
