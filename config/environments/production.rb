@@ -105,11 +105,11 @@ Rails.application.configure do
 
   config.rails_semantic_logger.appenders do |a|
     if ENV["RAILS_LOG_TO_STDOUT"].present?
-      a.add_server(io: $stdout, formatter: ContextualLogger::Formatters::JsonFormatter.new)
+      a.add(io: $stdout, formatter: ContextualLogger::Formatters::JsonFormatter.new)
     end
 
     if defined?(Sentry)
-      a.add_server(appender: :sentry_ruby)
+      a.add(appender: :sentry_ruby)
     end
 
     a.add_console(formatter: ContextualLogger::Formatters::ColorFormatter.new)
