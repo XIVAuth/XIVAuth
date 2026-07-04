@@ -1,4 +1,5 @@
 require "active_support/core_ext/integer/time"
+require "contextual_logger/formatters/color_formatter"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -100,7 +101,7 @@ Rails.application.configure do
 
   config.log_level = ENV.fetch("LOG_LEVEL", "debug").downcase.strip.to_sym
 
-  config.after_initialize do
-    SemanticLogger.add_appender(io: $stdout, formatter: ContextualLogger::Formatters::ColorFormatter.new)
+  config.rails_semantic_logger.appenders do |a|
+    a.add(io: $stdout, formatter: ContextualLogger::Formatters::ColorFormatter.new)
   end
 end

@@ -26,9 +26,6 @@ class Application < Rails::Application
   # config.eager_load_paths << Rails.root.join("extras")
   config.eager_load_paths << Rails.root.join("lib/contextual_logger/log_context")
 
-  # don't log to file by default.
-  config.rails_semantic_logger.add_file_appender = false
-
   config.action_controller.include_all_helpers = false
 
   # Better error pages

@@ -1,5 +1,6 @@
 require "active_support/core_ext/integer/time"
 require "contextual_logger/formatters/json_formatter"
+require "contextual_logger/formatters/color_formatter"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -99,9 +100,19 @@ Rails.application.configure do
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
 
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    $stdout.sync = true
-    config.semantic_logger.add_appender(io: $stdout, formatter: ContextualLogger::Formatters::JsonFormatter.new)
+  # Logging configurations
+  config.log_level = ENV.fetch("LOG_LEVEL", "info").downcase.strip.to_sym
+
+  config.rails_semantic_logger.appenders do |a|
+    if ENV["RAILS_LOG_TO_STDOUT"].present?
+      a.add_server(io: $stdout, formatter: ContextualLogger::Formatters::JsonFormatter.new)
+    end
+
+    if defined?(Sentry)
+      a.add_server(appender: :sentry_ruby)
+    end
+
+    a.add_console(formatter: ContextualLogger::Formatters::ColorFormatter.new)
   end
 
   # Do not dump schema after migrations.

@@ -14,5 +14,3 @@ Sentry.init do |config|
 
   config.enable_logs = true
 end
-
-SemanticLogger.add_appender(appender: :sentry_ruby)
