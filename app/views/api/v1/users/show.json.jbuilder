@@ -1,4 +1,4 @@
-json.extract! @user, :id
+json.extract! @user, :id, :display_name
 
 if @doorkeeper_token.scopes.exists?("user:email")
   json.email @user.email
