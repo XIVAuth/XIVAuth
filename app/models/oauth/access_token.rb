@@ -17,6 +17,11 @@ class OAuth::AccessToken < ApplicationRecord
     # If a permissible policy is defined, allow the user to regenerate the token to change security settings.
     return nil if result&.permissible_policy_id.present?
 
+    # If we're requesting a scope that potentially requires a new permissible policy (but doesn't have one for some
+    # reason), require a new token be used.
+    # FIXME: This should be done at the access token level instead.
+    return nil if scopes.any? { |s| %w[character character:all user:social].include?(s) }
+
     result
   end
 end

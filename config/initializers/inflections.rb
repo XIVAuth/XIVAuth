@@ -8,6 +8,9 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
 
   inflect.uncountable "legal"
 
+  # braaaand
+  inflect.acronym "XIVAuth"
+
   inflect.acronym "FFXIV"
   inflect.acronym "XIV"
   inflect.acronym "XIVAPI"
