@@ -1,0 +1,9 @@
+.toast {
+  backdrop-filter: blur(8px);
+
+  & .progress.toast-countdown {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    height: 5px
+  }
+}

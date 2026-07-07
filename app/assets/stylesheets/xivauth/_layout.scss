@@ -55,10 +55,6 @@ body > .container:not(.toast-container) {
   margin-top: -$header-content-overlap;
 }
 
-.toast {
-  backdrop-filter: blur(8px);
-}
-
 @each $name, $value in bs.$grid-breakpoints {
   .mw-#{$name} {
     max-width: $value !important;
