@@ -95,8 +95,8 @@ GEM
     auth-sanitizer (0.2.2)
       version_gem (~> 1.1, >= 1.1.10)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1265.0)
-    aws-sdk-core (3.252.0)
+    aws-partitions (1.1271.0)
+    aws-sdk-core (3.254.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -104,11 +104,11 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.129.0)
-      aws-sdk-core (~> 3, >= 3.248.0)
+    aws-sdk-kms (1.130.0)
+      aws-sdk-core (~> 3, >= 3.254.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.226.0)
-      aws-sdk-core (~> 3, >= 3.248.0)
+    aws-sdk-s3 (1.228.0)
+      aws-sdk-core (~> 3, >= 3.254.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
@@ -173,7 +173,6 @@ GEM
       railties (>= 7.2, < 8.2)
       rotp (~> 6.0)
     diff-lcs (1.6.2)
-    docile (1.4.1)
     doorkeeper (5.9.3)
       railties (>= 5)
     down (5.6.0)
@@ -250,7 +249,7 @@ GEM
     jmespath (1.6.2)
     jsbundling-rails (1.3.1)
       railties (>= 6.0.0)
-    json (2.20.0)
+    json (2.21.1)
     json-jwt (1.17.1)
       activesupport (>= 4.2)
       aes_key_wrap
@@ -361,12 +360,12 @@ GEM
     openssl-signature_algorithm (1.3.0)
       openssl (> 2.0)
     orm_adapter (0.5.0)
-    pagy (43.5.6)
+    pagy (43.6.0)
       json
       uri
       yaml
     parallel (2.1.0)
-    parser (3.3.11.1)
+    parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
     pg (1.6.3)
@@ -504,7 +503,7 @@ GEM
     rspec-support (3.13.7)
     rspec_junit_formatter (0.6.0)
       rspec-core (>= 2, < 4, != 2.12.0)
-    rubocop (1.88.1)
+    rubocop (1.88.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -515,13 +514,13 @@ GEM
       rubocop-ast (>= 1.49.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.49.1)
+    rubocop-ast (1.50.0)
       parser (>= 3.3.7.2)
       prism (~> 1.7)
     rubocop-factory_bot (2.28.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-rails (2.35.5)
+    rubocop-rails (2.36.0)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
@@ -548,7 +547,7 @@ GEM
     search_cop (1.5.0)
       treetop
     securerandom (0.4.1)
-    selenium-webdriver (4.45.0)
+    selenium-webdriver (4.46.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -566,7 +565,7 @@ GEM
     sentry-sidekiq (6.6.2)
       sentry-ruby (~> 6.6.2)
       sidekiq (>= 5.0)
-    shrine (3.8.0)
+    shrine (3.9.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
     sidekiq (8.1.6)
@@ -584,15 +583,10 @@ GEM
       concurrent-ruby (>= 1.2.0)
       redis-prescription (~> 2.2)
       sidekiq (>= 8.0)
-    simplecov (0.22.0)
-      docile (~> 1.1)
-      simplecov-html (~> 0.11)
-      simplecov_json_formatter (~> 0.1)
-    simplecov-cobertura (3.2.0)
+    simplecov (1.0.1)
+    simplecov-cobertura (4.0.0)
       rexml
-      simplecov (~> 0.19)
-    simplecov-html (0.13.2)
-    simplecov_json_formatter (0.1.4)
+      simplecov (~> 1.0)
     simpleidn (0.2.3)
     snaky_hash (2.0.6)
       hashie (>= 0.1.0, < 6)
@@ -607,7 +601,8 @@ GEM
       attr_required (>= 0.0.5)
       faraday (~> 2.0)
       faraday-follow_redirects
-    test-prof (1.6.1)
+    test-prof (1.6.2)
+      logger
     thor (1.5.0)
     timeout (0.6.1)
     tpm-key_attestation (0.14.1)
@@ -676,7 +671,7 @@ PLATFORMS
 
 DEPENDENCIES
   amazing_print
-  aws-sdk-s3 (~> 1.0)
+  aws-sdk-s3 (~> 1.228)
   bootsnap
   brakeman
   browser (~> 6.0)
@@ -712,7 +707,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection (~> 2.0)
   omniauth-twitch (~> 1.2)
   omniauth_openid_connect (~> 0.8)
-  pagy (~> 43.0)
+  pagy (~> 43.6)
   pg (~> 1.5)
   postmark-rails (~> 0.22.1)
   propshaft
@@ -738,7 +733,7 @@ DEPENDENCIES
   sentry-rails (~> 6.3)
   sentry-ruby (~> 6.3)
   sentry-sidekiq (~> 6.3)
-  shrine (~> 3.6)
+  shrine (~> 3.9)
   sidekiq (~> 8.0)
   sidekiq-cron (~> 2.3)
   sidekiq-throttled (~> 2.0)
@@ -747,7 +742,7 @@ DEPENDENCIES
   stackprof (~> 0.2)
   stimulus-rails
   store_model (~> 4.6)
-  test-prof (~> 1.0)
+  test-prof (~> 1.6)
   turbo-rails
   tzinfo-data
   web-console
