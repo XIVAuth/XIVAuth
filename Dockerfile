@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.19
 
 # REMEMBER: Set this in .ruby-version too!
-ARG RUBY_VERSION=4.0.5
+ARG RUBY_VERSION=4.0.6
 FROM ruby:${RUBY_VERSION}-alpine AS base
 
 WORKDIR /app
