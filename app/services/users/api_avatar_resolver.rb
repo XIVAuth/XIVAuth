@@ -8,20 +8,12 @@ class Users::ApiAvatarResolver
 
     return Rails.application.routes.url_helpers.url_for(user.avatar) if user.avatar.present?
 
-    candidate_avatar_urls = authorized_registrations.joins(:character).limit(2)
-                                                    .pluck("ffxiv_characters.avatar_url")
-
-    # special case: if we're only allowed to see one character, we can assume that it would
-    # make a good avatar.
-    return candidate_avatar_urls.first if candidate_avatar_urls.size == 1
-
     # only return a gravatar url if the user is sharing their email.
     # gravatar keys on email hash, so we don't want to leak data.
     return user.gravatar_url(256) if scope_granted?("user:email")
 
-    # otherwise, try to find the default character visible to this client.
-    # Or: .first will return null if the array is empty and the client can decide what to do.
-    candidate_avatar_urls.first
+    # no avatar - let the consuming application decide what to do.
+    nil
   end
 
   private def user
@@ -29,18 +21,6 @@ class Users::ApiAvatarResolver
     return nil unless @access_token.resource_owner_type == "User"
 
     @user ||= User.find_by(id: @access_token.resource_owner_id)
-  end
-
-  private def authorized_registrations
-    return CharacterRegistration.none unless character_scope_granted?
-
-    registrations = user.character_registrations.verified
-    return registrations if scope_granted?("character:manage")
-
-    policy = @access_token.permissible_policy
-    return registrations if policy.blank?
-
-    policy.filter_accessible(registrations)
   end
 
   private def character_scope_granted?
