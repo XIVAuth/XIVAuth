@@ -25,11 +25,11 @@ gem "turbo-rails"
 gem "gon", "~> 7.0"
 
 # Asset management
-gem "aws-sdk-s3", "~> 1.0", require: false
+gem "aws-sdk-s3", "~> 1.228", require: false
 gem "image_processing", "~> 2.0"
 gem "marcel", "~> 1.0"
 gem "ruby-vips", "~> 2.0"
-gem "shrine", "~> 3.6"
+gem "shrine", "~> 3.9"
 
 # JSON API
 gem "jbuilder"
@@ -104,7 +104,7 @@ gem "rexml", "~> 3.4.2"
 # Helpers
 gem "browser", "~> 6.0"
 gem "meta-tags", "~> 2.23"
-gem "pagy", "~> 43.0"
+gem "pagy", "~> 43.6"
 gem "search_cop", "~> 1.4"
 gem "store_model", "~> 4.6"
 
@@ -124,7 +124,7 @@ group :development, :test do
   gem "rspec-rails", "~> 8.0"
   gem "simplecov", require: false
   gem "simplecov-cobertura", require: false
-  gem "test-prof", "~> 1.0"
+  gem "test-prof", "~> 1.6"
 
   # Analysis tools
   gem "brakeman", require: false
