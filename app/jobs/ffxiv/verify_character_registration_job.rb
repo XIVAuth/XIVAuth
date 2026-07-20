@@ -1,7 +1,9 @@
 require "utilities/crockford"
 
 class FFXIV::VerifyCharacterRegistrationJob < ApplicationJob
-  class VerificationKeyMissingError < StandardError; end
+  class VerificationKeyMissingError < StandardError
+    include SentryIgnorable
+  end
 
   MAX_RETRY_ATTEMPTS = 3
 
