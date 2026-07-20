@@ -6,7 +6,7 @@ class Users::ApiAvatarResolver
   def resolve
     return nil unless user
 
-    return Rails.application.routes.url_helpers.url_for(user.avatar) if user.avatar.present?
+    return user.avatar.url if user.avatar.present?
 
     # only return a gravatar url if the user is sharing their email.
     # gravatar keys on email hash, so we don't want to leak data.

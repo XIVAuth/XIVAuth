@@ -48,8 +48,15 @@ class OAuth::DeviceAuthorizationsController < Doorkeeper::DeviceAuthorizationGra
 
     (destroy and return) if params["disposition"] == "deny"
 
-    authorization_error_response(:invalid_user_code) if device_grant.nil?
-    authorization_error_response(:expired_user_code) if device_grant.expired?
+    if device_grant.nil?
+      authorization_error_response(:invalid_user_code)
+      return
+    end
+
+    if device_grant.expired?
+      authorization_error_response(:expired_user_code)
+      return
+    end
 
     if device_grant.respond_to?(:permissible_policy)
       policy = build_permissible_policy
@@ -74,6 +81,11 @@ class OAuth::DeviceAuthorizationsController < Doorkeeper::DeviceAuthorizationGra
   end
 
   def destroy
+    if device_grant.nil?
+      authorization_error_response(:invalid_user_code)
+      return
+    end
+
     device_grant.expires_in = 0
 
     if device_grant.save
