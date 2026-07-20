@@ -2,6 +2,7 @@ require "utilities/crockford"
 
 class OAuth::DeviceAuthorizationsController < Doorkeeper::DeviceAuthorizationGrant::DeviceAuthorizationsController
   include OAuth::BuildsPermissiblePolicies
+  include OAuth::RecordsAuthorizeMetrics
 
   def index
     # User code is present, shunt over and try to authorize.
@@ -71,6 +72,13 @@ class OAuth::DeviceAuthorizationsController < Doorkeeper::DeviceAuthorizationGra
     device_grant.resource_owner = current_resource_owner
 
     device_grant.save!
+
+    # log the successful auth to sentry.
+    record_authorize_metric(
+      oauth_client: device_grant.application,
+      response_type: "device_code",
+      resource_owner_id: device_grant.resource_owner_id
+    )
 
     respond_to do |format|
       format.html do

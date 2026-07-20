@@ -1,5 +1,6 @@
 class OAuth::AuthorizationsController < Doorkeeper::AuthorizationsController
   include OAuth::BuildsPermissiblePolicies
+  include OAuth::RecordsAuthorizeMetrics
 
   before_action :set_client_application
 
@@ -35,22 +36,13 @@ class OAuth::AuthorizationsController < Doorkeeper::AuthorizationsController
       end
     end
 
-    oauth_client = @authorize_response.pre_auth.client.application
-
     # log the successful auth to sentry.
-    Sentry.metrics.count(
-      "xivauth.application.authorize",
-      value: 1,
-      attributes: {
-        "oauth_params.response_type": @authorize_response.pre_auth.response_type,
+    record_authorize_metric(
+      oauth_client: @authorize_response.pre_auth.client,
+      response_type: @authorize_response.pre_auth.response_type,
 
-        "application.client_id": oauth_client.id,
-        "application.app_id": oauth_client.application.id,
-        "application.app_name": oauth_client.application.name,
-
-        # FIXME(DEPS): https://github.com/getsentry/sentry-ruby/issues/2842
-        "user.id": @authorize_response.issued_token.resource_owner_id
-      }
+      # FIXME(DEPS): https://github.com/getsentry/sentry-ruby/issues/2842
+      resource_owner_id: @authorize_response.issued_token.resource_owner_id
     )
   end
 
