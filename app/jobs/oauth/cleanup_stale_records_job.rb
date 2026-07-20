@@ -3,6 +3,7 @@ class OAuth::CleanupStaleRecordsJob < ApplicationJob
 
   def perform(*)
     clean_access_grants
+    clean_device_grants
     clean_access_tokens
     clean_permissible_policies
   end
@@ -15,6 +16,13 @@ class OAuth::CleanupStaleRecordsJob < ApplicationJob
     OAuth::AccessGrant.where.not(expires_in: nil)
                       .where("(created_at + expires_in * INTERVAL '1 second') < ?", cutoff)
                       .tap { |rel| logger.info("Scheduling #{rel.count} expired AccessGrants for deletion.") }
+                      .in_batches(&:delete_all)
+  end
+
+  def clean_device_grants(cutoff = 24.hours.ago)
+    OAuth::DeviceGrant.where.not(expires_in: nil)
+                      .where("(created_at + expires_in * INTERVAL '1 second') < ?", cutoff)
+                      .tap { |rel| logger.info("Scheduling #{rel.count} expired DeviceGrants for deletion.") }
                       .in_batches(&:delete_all)
   end
 
@@ -31,8 +39,9 @@ class OAuth::CleanupStaleRecordsJob < ApplicationJob
   end
 
   def clean_permissible_policies
-    orphaned = OAuth::PermissiblePolicy.left_outer_joins(:access_tokens, :access_grants)
-                                       .where(oauth_access_tokens: { id: nil }, oauth_access_grants: { id: nil })
+    orphaned = OAuth::PermissiblePolicy.left_outer_joins(:access_tokens, :access_grants, :device_grants)
+                                       .where(oauth_access_tokens: { id: nil }, oauth_access_grants: { id: nil },
+                                              oauth_device_grants: { id: nil })
 
     logger.info("Scheduling #{orphaned.count} orphaned PermissiblePolicies for deletion.")
 

@@ -8,6 +8,9 @@ class OAuth::PermissiblePolicy < ApplicationRecord
   has_many :access_grants, class_name: "OAuth::AccessGrant",
            inverse_of: :permissible_policy, dependent: nil
 
+  has_many :device_grants, class_name: "OAuth::DeviceGrant",
+           inverse_of: :permissible_policy, dependent: nil
+
   # Determine if the specified resource can be accessed or not.
   # @param fallback [Boolean, nil] Specify a fallback behavior if an explicit rule was not found.
   def can_access_resource?(resource, fallback: nil)
