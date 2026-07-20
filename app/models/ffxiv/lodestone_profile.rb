@@ -2,9 +2,16 @@ class FFXIV::LodestoneProfile
   include ActiveModel::API
 
   class LodestoneProfileInvalid < StandardError; end
-  class LodestoneCharacterHidden < LodestoneProfileInvalid; end
-  class LodestoneProfilePrivate < LodestoneProfileInvalid; end
-  class LodestoneMaintenance < LodestoneProfileInvalid; end
+
+  class LodestoneCharacterHidden < LodestoneProfileInvalid
+    include SentryIgnorable
+  end
+  class LodestoneProfilePrivate < LodestoneProfileInvalid
+    include SentryIgnorable
+  end
+  class LodestoneMaintenance < LodestoneProfileInvalid
+    include SentryIgnorable
+  end
 
   FREE_TRIAL_LEVEL_CAP = 70
   FAILURE_REASONS = %i[unspecified hidden_character profile_private not_found lodestone_maintenance].freeze
