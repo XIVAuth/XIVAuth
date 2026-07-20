@@ -38,7 +38,7 @@ class OAuth::AuthorizationsController < Doorkeeper::AuthorizationsController
 
     # log the successful auth to sentry.
     record_authorize_metric(
-      oauth_client: @authorize_response.pre_auth.client,
+      oauth_client: @authorize_response.pre_auth.client.application,
       response_type: @authorize_response.pre_auth.response_type,
 
       # FIXME(DEPS): https://github.com/getsentry/sentry-ruby/issues/2842
