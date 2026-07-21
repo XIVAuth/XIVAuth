@@ -47,7 +47,10 @@ class OAuth::DeviceAuthorizationsController < Doorkeeper::DeviceAuthorizationGra
       return
     end
 
-    (destroy and return) if params["disposition"] == "deny"
+    if params["disposition"] == "deny"
+      destroy
+      return
+    end
 
     if device_grant.nil?
       authorization_error_response(:invalid_user_code)
