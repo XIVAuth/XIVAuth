@@ -716,7 +716,7 @@ DEPENDENCIES
   rack-mini-profiler
   rails (~> 8.1.0)
   rails_cloudflare_turnstile (~> 0.4)
-  rails_semantic_logger (~> 5.0)
+  rails_semantic_logger (~> 5.1)
   redis (~> 6.0)
   rexml (~> 3.4.2)
   rqrcode (~> 3.2)
