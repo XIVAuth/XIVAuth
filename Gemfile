@@ -10,7 +10,7 @@ gem "rails", "~> 8.1.0"
 gem "msgpack", "~> 1.8"
 gem "pg", "~> 1.5"
 gem "puma", "~> 8.0"
-gem "redis", "~> 6.0"
+gem "redis", "~> 5.2"
 
 # Platform-specific
 gem "tzinfo-data", platforms: %i[windows jruby]
