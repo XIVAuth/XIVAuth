@@ -1,7 +1,7 @@
 <% oauth_client = @pre_auth.client.application %>
 <% client_application = oauth_client.application %>
 
-<%= form_tag oauth_authorization_path, method: :post, data: { turbo: "false" } do %>
+<%= form_tag oauth_authorization_path, method: :post do %>
   <%= render partial: 'auth_card_header', locals: { client_application: client_application, action_prefix: "Connect to" } %>
   <div class="card-body pt-0 px-4">
     <main role="main">
@@ -21,11 +21,11 @@
                   </span>
                   <% case scope %>
                   <% when 'character' %>
-                    <%= render 'oauth/authorizations/scope_selectors/character' %>
+                    <%= render 'oauth/authorizations/scope_selectors/character', auth_ctx: @pre_auth %>
                   <% when 'character:all' %>
-                    <%= render 'oauth/authorizations/scope_selectors/character_all' %>
+                    <%= render 'oauth/authorizations/scope_selectors/character_all', auth_ctx: @pre_auth %>
                   <% when 'user:social' %>
-                    <%= render 'oauth/authorizations/scope_selectors/social_identity' %>
+                    <%= render 'oauth/authorizations/scope_selectors/social_identity', auth_ctx: @pre_auth %>
                   <% else
                        nil %>
                   <% end %>
@@ -51,12 +51,12 @@
       <div class="col-6">
         <%= button_tag t('doorkeeper.authorizations.buttons.deny'), type: "submit",
                        class: 'btn btn-outline-secondary btn-lg w-100',
-                       name: 'disposition', value: 'deny' %>
+                       name: 'disposition', value: 'deny', data: { turbo: false } %>
       </div>
       <div class="col-6">
         <%= button_tag t('doorkeeper.authorizations.buttons.authorize'), type: "submit",
                        class: 'btn btn-success btn-lg w-100',
-                       name: 'disposition', value: 'authorize' %>
+                       name: 'disposition', value: 'authorize', data: { turbo: false } %>
       </div>
     </div>
 

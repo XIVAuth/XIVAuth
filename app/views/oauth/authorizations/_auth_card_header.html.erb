@@ -11,7 +11,7 @@
       <i class="bi bi-patch-check-fill text-success" title="App verified by XIVAuth"></i>
     <% end %>
   </h4>
-  <p class="text-center text-muted small">by
+  <p class="text-center text-muted small mb-0">by
     <% case client_application.owner %>
     <% when User %>
       <i class="bi bi-person-fill"></i> <%= client_application.owner.profile.display_name %>
@@ -20,5 +20,11 @@
     <% else
          nil %>
     <% end %>
+  </p>
+  <p class="text-center text-muted small">
+    Logged in as <%= current_user.profile.display_name %>.
+    <%= link_to "Not you?", destroy_user_session_path(redirect_to: request.original_url),
+                class: "text-muted",
+                data: { turbo_method: :delete } %>
   </p>
 </div>

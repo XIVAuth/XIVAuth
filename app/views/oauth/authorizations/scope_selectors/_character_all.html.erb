@@ -10,11 +10,12 @@
       </option>
     <% end %>
   </select>
-
-  <div class="form-check form-switch">
-    <%= check_box_tag :share_new_characters, true, checked: true, class: 'form-check-input' %>
-    <%= label_tag :share_new_characters, class: "form-check-label" do %>
-      Automatically share any new characters
-    <% end %>
-  </div>
+  <% if auth_ctx.scopes.include?("refresh") %>
+    <div class="form-check form-switch">
+      <%= check_box_tag :share_new_characters, true, checked: true, class: 'form-check-input' %>
+      <%= label_tag :share_new_characters, class: "form-check-label" do %>
+        Automatically share any new characters
+      <% end %>
+    </div>
+  <% end %>
 </div>

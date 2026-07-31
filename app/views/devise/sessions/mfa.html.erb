@@ -20,7 +20,8 @@
     <div>
       <div class="input-group mb-4">
         <%= f.text_field :otp_attempt, inputmode: "numeric", value: "", placeholder: "OTP Code", class: "form-control",
-                         autocomplete: "one-time-code", aria: { "describedby": "otp-submit", label: "OTP Code" } %>
+                         autocomplete: "one-time-code", aria: { "describedby": "otp-submit", label: "OTP Code" },
+                         autofocus: true %>
 
         <%= f.button class: "btn btn-outline-primary", id: "otp-submit" do %>
           <i class="bi bi-arrow-right"></i> Sign In with OTP
