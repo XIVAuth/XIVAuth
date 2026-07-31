@@ -21,11 +21,11 @@
                   </span>
                   <% case scope %>
                   <% when 'character' %>
-                    <%= render 'oauth/authorizations/scope_selectors/character' %>
+                    <%= render 'oauth/authorizations/scope_selectors/character', auth_ctx: @pre_auth %>
                   <% when 'character:all' %>
-                    <%= render 'oauth/authorizations/scope_selectors/character_all' %>
+                    <%= render 'oauth/authorizations/scope_selectors/character_all', auth_ctx: @pre_auth %>
                   <% when 'user:social' %>
-                    <%= render 'oauth/authorizations/scope_selectors/social_identity' %>
+                    <%= render 'oauth/authorizations/scope_selectors/social_identity', auth_ctx: @pre_auth %>
                   <% else
                        nil %>
                   <% end %>
