@@ -6,7 +6,7 @@ class User::Profile < ApplicationRecord
   # TODO: maybe this should be a database table...
   DISPLAY_NAME_BLOCKED_WORDS = [
     "auth", "admin", "root", "system", "oauth", "security", "dalamud", "support", "moderator",
-    /ff[-.@_ ]*(xiv|14)/, /square([-.@_ ]*e)?nix/, /yoshi[-.@_ ]*p/, /naoki+[-.@_ ]*yoshi(da)?/,
+    /^ff[-.@_ ]*(xiv|14)/, /square([-.@_ ]*e)?nix/, /yoshi[-.@_ ]*p/, /naoki+[-.@_ ]*yoshi(da)?/,
     /kaz[-.@_ ]*wolfe?/, /goa+ts?/
   ].freeze
 
