@@ -44,12 +44,29 @@ class Developer::Teams::InviteLinksController < Developer::DeveloperPortalContro
   end
 
   def accept_invite
-    redirect_to root_path, alert: "Team invite link invalid." if @team.blank?
+    return redirect_to root_path, alert: "Team invite link invalid." if @invite_link.blank? || @team.blank?
 
-    membership = Team::Membership.new(team: @team, user: current_user)
+    membership = nil
+    accepted = false
 
-    if membership.save
+    @invite_link.with_lock do
+      next unless @invite_link.active?
+
+      membership = Team::Membership.new(
+        team: @team,
+        user: current_user,
+        role: @invite_link.target_role
+      )
+      next unless membership.save
+
+      @invite_link.increment!(:usage_count)
+      accepted = true
+    end
+
+    if accepted
       redirect_to developer_team_path(@team), notice: "You have joined the team #{@team.name}!"
+    elsif membership.nil?
+      redirect_to root_path, alert: "Team invite link invalid."
     else
       redirect_to root_path, alert: "Could not join the team: #{@team.name}"
     end
