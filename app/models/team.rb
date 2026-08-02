@@ -105,7 +105,7 @@ class Team < ApplicationRecord
   end
 
   def all_members(include_antecedents: true, include_descendants: false)
-    scope = User.where(id: self.direct_memberships.reselect(:user_id))
+    scope = User.where(id: self.active_memberships.reselect(:user_id))
 
     scope = scope.or(User.where(id: antecedent_memberships.reselect(:user_id))) if include_antecedents
     scope = scope.or(User.where(id: descendant_memberships.reselect(:user_id))) if include_descendants

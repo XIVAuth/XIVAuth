@@ -351,6 +351,17 @@ RSpec.describe Team do
       expect(team.all_members.find(user2.id)).to eql(user2)
     end
 
+    it "does not include blocked or invited direct members" do
+      team = FactoryBot.create(:team)
+      active_user = FactoryBot.create(:user)
+
+      FactoryBot.create(:team_membership, team: team, user: active_user)
+      FactoryBot.create(:team_membership, :blocked, team: team, user: FactoryBot.create(:user))
+      FactoryBot.create(:team_membership, :invited, team: team, user: FactoryBot.create(:user))
+
+      expect(team.all_members(include_antecedents: false)).to contain_exactly(active_user)
+    end
+
     it "does not include blocked or invited roles from antecedents or descendants" do
       parent, _, parent_owner = create_root_team
       team = FactoryBot.create(:team, parent: parent)

@@ -78,7 +78,7 @@ class ClientApplication < ApplicationRecord
     return true if owner.is_a?(User) && owner == user
 
     if owner.is_a?(Team)
-      return true if owner.direct_members.include?(user)
+      return true if owner.active_memberships.exists?(user_id: user.id)
       return true if owner.antecedent_memberships.admins.exists?(user_id: user.id)
     end
 

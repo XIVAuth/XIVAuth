@@ -76,6 +76,18 @@ RSpec.describe ClientApplication do
         expect(app.usable_by?(user)).to be true
       end
 
+      it "denies access for inactive direct team members" do
+        team = FactoryBot.create(:team)
+        app = FactoryBot.create(:client_application, owner: team, private: true)
+
+        %w[invited blocked].each do |role|
+          user = FactoryBot.create(:user)
+          FactoryBot.create(:team_membership, team: team, user: user, role: role)
+
+          expect(app.usable_by?(user)).to be false
+        end
+      end
+
       it "does not allow team members to be denied via ACL, even directly" do
         team = FactoryBot.create(:team)
         user = FactoryBot.create(:user)
@@ -146,6 +158,17 @@ RSpec.describe ClientApplication do
         FactoryBot.create(:client_application_acl, application: app, principal: parent_team, deny: false)
 
         expect(app.usable_by?(direct_member)).to be true
+      end
+
+      it "does not allow inactive direct members when the team is on the ACL" do
+        FactoryBot.create(:client_application_acl, application: app, principal: parent_team, deny: false)
+
+        %w[invited blocked].each do |role|
+          user = FactoryBot.create(:user)
+          FactoryBot.create(:team_membership, team: parent_team, user: user, role: role)
+
+          expect(app.usable_by?(user)).to be false
+        end
       end
 
       it "allows access to members of parent teams if inheritance is enabled" do
