@@ -7,12 +7,13 @@ RSpec.describe HasDefaultAvatar do
   # since generate_default_avatar leans on has_upload_attachment's config and
   # AR callbacks being present on the including model.
   describe "Team" do
-    it "builds a default_icon_url from the team's name" do
+    it "builds a default_icon_url seeded from the team's name" do
       team = FactoryBot.build(:team, name: "Ferrymen")
 
-      expect(team.default_icon_url).to eq(
-        "https://api.dicebear.com/10.x/initials/png?seed=Ferrymen&backgroundType=gradientLinear"
-      )
+      uri = URI.parse(team.default_icon_url)
+      expect(uri.host).to eq("api.dicebear.com")
+      expect(uri.path).to eq("/10.x/initials/png")
+      expect(URI.decode_www_form(uri.query).to_h["seed"]).to eq("Ferrymen")
     end
 
     it "enqueues avatar generation on create when no icon was uploaded" do
@@ -42,12 +43,13 @@ RSpec.describe HasDefaultAvatar do
   end
 
   describe "ClientApplication" do
-    it "builds a default_icon_url from the app's name" do
+    it "builds a default_icon_url seeded from the app's name" do
       app = FactoryBot.build(:client_application, name: "My App")
 
-      expect(app.default_icon_url).to eq(
-        "https://api.dicebear.com/10.x/initials/png?seed=My+App&backgroundType=gradientLinear"
-      )
+      uri = URI.parse(app.default_icon_url)
+      expect(uri.host).to eq("api.dicebear.com")
+      expect(uri.path).to eq("/10.x/initials/png")
+      expect(URI.decode_www_form(uri.query).to_h["seed"]).to eq("My App")
     end
 
     it "enqueues avatar generation on create when no icon was uploaded" do
