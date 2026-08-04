@@ -7,10 +7,8 @@ SimpleCov.formatters = [
 ]
 
 SimpleCov.start "rails" do
-  track_files "{app,lib}/**/*.rb"
-  add_filter "db/migrate"
-  add_filter "spec/"
-  add_filter "vendor/"
+  cover "{app,lib}/**/*.rb"
+  skip %w[db/migrate spec/ vendor/]
 
   SimpleCov.coverage_dir "tmp/testresults/coverage"
 end

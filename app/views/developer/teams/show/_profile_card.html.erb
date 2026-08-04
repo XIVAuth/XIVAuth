@@ -24,12 +24,6 @@
                 <%= image_tag @team.icon_url, class: "rounded flex-shrink-0", style: "width: 64px; height: 64px; object-fit: cover;", alt: "Current icon" %>
                 <div class="flex-grow-1">
                   <%= f.file_field :icon, class: "form-control form-control-sm", accept: "image/png,image/jpeg,image/webp,image/gif", disabled: @team.readonly? %>
-                  <% if @team.icon.present? %>
-                    <div class="form-check mt-1">
-                      <%= check_box_tag "team[remove_icon]", "1", false, class: "form-check-input", id: "team_remove_icon", disabled: @team.readonly? %>
-                      <%= label_tag "team_remove_icon", "Remove current icon", class: "form-check-label" %>
-                    </div>
-                  <% end %>
                   <div class="form-text">PNG, JPG, WebP or GIF. Max 2 MB.</div>
                 </div>
               </div>

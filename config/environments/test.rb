@@ -36,6 +36,11 @@ Rails.application.configure do
   config.active_storage.service = :test
   config.active_storage.variant_processor = :disabled
 
+  # Queue jobs instead of running them (inline via :async), so specs stay
+  # deterministic and don't trigger real side effects (e.g. outbound HTTP)
+  # as a byproduct of unrelated record creation.
+  config.active_job.queue_adapter = :test
+
   config.action_mailer.perform_caching = false
 
   # Tell Action Mailer not to deliver emails to the real world.

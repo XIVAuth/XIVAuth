@@ -67,7 +67,6 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
   def update
     authorize! :update, @application
 
-    @application.icon&.destroy if params.dig(:client_application, :remove_icon) == "1"
     @application.oauth_background&.destroy if params.dig(:client_application, :remove_oauth_background) == "1"
 
     if @application.update(application_params)

@@ -1,5 +1,6 @@
 class ClientApplication < ApplicationRecord
   include HasUploadAttachment
+  include HasDefaultAvatar
 
   ENTITLEMENTS = [
     :code_signing_certificates,  # Allowed to issue code signing certificates.
@@ -19,6 +20,7 @@ class ClientApplication < ApplicationRecord
                             large: pipeline.resize_to_fill!(256, 256)
                           }
                         }
+  generate_default_avatar :icon, seed: :name, backgroundType: "gradientLinear"
 
   has_upload_attachment :oauth_background, content_types: %w[image/png image/jpeg image/webp],
                         max_size: 5.megabytes,
@@ -66,7 +68,7 @@ class ClientApplication < ApplicationRecord
   end
 
   def icon_url(derivative: nil)
-    icon&.url(derivative: derivative) || "https://api.dicebear.com/9.x/initials/png?seed=#{self.name}&backgroundType=gradientLinear"
+    icon&.url(derivative: derivative) || default_icon_url
   end
 
   def verified?

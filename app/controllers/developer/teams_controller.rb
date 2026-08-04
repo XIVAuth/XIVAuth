@@ -79,8 +79,6 @@ class Developer::TeamsController < Developer::DeveloperPortalController
       return redirect_to developer_team_path(@team)
     end
 
-    @team.icon&.destroy if params.dig(:team, :remove_icon) == "1"
-
     if @team.update(update_team_params)
       flash[:notice] = "Team updated successfully."
       redirect_to developer_team_path(@team)

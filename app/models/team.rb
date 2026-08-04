@@ -1,5 +1,6 @@
 class Team < ApplicationRecord
   include HasUploadAttachment
+  include HasDefaultAvatar
 
   TEAM_DEPTH_LIMIT = 5
   TEAM_SUBTEAM_LIMIT = 5
@@ -17,6 +18,7 @@ class Team < ApplicationRecord
                             large: pipeline.resize_to_fill!(256, 256)
                           }
                         }
+  generate_default_avatar :icon, seed: :name, backgroundType: "gradientLinear"
 
   belongs_to :parent, class_name: "Team", optional: true
   has_many :subteams, class_name: "Team", foreign_key: "parent_id", inverse_of: :parent, dependent: nil
@@ -47,7 +49,7 @@ class Team < ApplicationRecord
   end
 
   def icon_url(derivative: nil)
-    icon&.url(derivative: derivative) || "https://api.dicebear.com/9.x/initials/png?seed=#{self.name}&backgroundType=gradientLinear"
+    icon&.url(derivative: derivative) || default_icon_url
   end
 
   def active_memberships
