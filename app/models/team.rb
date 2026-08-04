@@ -18,7 +18,9 @@ class Team < ApplicationRecord
                             large: pipeline.resize_to_fill!(256, 256)
                           }
                         }
-  generate_default_avatar :icon, seed: :name, backgroundType: "gradientLinear"
+  generate_default_avatar :icon, seed: :name,
+                          backgroundColorFill: "linear",
+                          backgroundColorAngle: "-360,360"
 
   belongs_to :parent, class_name: "Team", optional: true
   has_many :subteams, class_name: "Team", foreign_key: "parent_id", inverse_of: :parent, dependent: nil

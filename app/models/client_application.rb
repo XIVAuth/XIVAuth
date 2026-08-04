@@ -3,10 +3,10 @@ class ClientApplication < ApplicationRecord
   include HasDefaultAvatar
 
   ENTITLEMENTS = [
-    :code_signing_certificates,  # Allowed to issue code signing certificates.
-    :custom_background,          # Allowed to use a custom OAuth background. Automatic for verified apps.
-    :flarestone_force_fresh,     # Allowed to bypass Flarestone caches.
-    :internal                    # Allowed to use scopes tagged as "internal."
+    :code_signing_certificates, # Allowed to issue code signing certificates.
+    :custom_background, # Allowed to use a custom OAuth background. Automatic for verified apps.
+    :flarestone_force_fresh, # Allowed to bypass Flarestone caches.
+    :internal # Allowed to use scopes tagged as "internal."
   ].freeze
 
   has_upload_attachment :icon,
@@ -20,7 +20,9 @@ class ClientApplication < ApplicationRecord
                             large: pipeline.resize_to_fill!(256, 256)
                           }
                         }
-  generate_default_avatar :icon, seed: :name, backgroundType: "gradientLinear"
+  generate_default_avatar :icon, seed: :name,
+                          backgroundColorFill: "linear",
+                          backgroundColorAngle: "-360,360"
 
   has_upload_attachment :oauth_background, content_types: %w[image/png image/jpeg image/webp],
                         max_size: 5.megabytes,
@@ -58,7 +60,7 @@ class ClientApplication < ApplicationRecord
   validates_associated :profile
   accepts_nested_attributes_for :profile, update_only: true
 
-  validates :entitlements, array: { inclusion: { in: ENTITLEMENTS.map(&:to_s) } }
+  validates :entitlements, array: {inclusion: {in: ENTITLEMENTS.map(&:to_s)}}
 
   validate :validate_owner_has_mfa, on: :create
   validate :validate_oauth_background_requires_verification
