@@ -50,11 +50,11 @@ class JwtSigningKey < ApplicationRecord
     alg_type = JWT::JWA.find(algorithm_name).class
     case alg_type.to_s
     when "JWT::JWA::Rsa", "JWT::JWA::Ps"
-      JwtSigningKeys::RSA.active.first
+      JwtSigningKeys::RSA.active.order(id: :desc).first
     when "JWT::EdDSA::Algo"
-      JwtSigningKeys::Ed25519.active.first
+      JwtSigningKeys::Ed25519.active.order(id: :desc).first
     when "JWT::JWA::Hmac", "JWT::JWA::HmacRbNaCl"
-      JwtSigningKeys::HMAC.active.first
+      JwtSigningKeys::HMAC.active.order(id: :desc).first
     when "JWT::JWA::Ecdsa"
       JwtSigningKeys::ECDSA.preferred_key_for_algorithm(algorithm_name)
     end

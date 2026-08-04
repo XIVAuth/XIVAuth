@@ -68,6 +68,6 @@ class JwtSigningKeys::ECDSA < JwtSigningKey
   def self.preferred_key_for_algorithm(algorithm_name)
     curves = ::JWT::JWA::Ecdsa::NAMED_CURVES.filter { |_, c| c[:algorithm] == algorithm_name }
 
-    active.where("key_params->>'curve' IN (?)", curves.keys).first
+    active.where("key_params->>'curve' IN (?)", curves.keys).order(id: :desc).first
   end
 end

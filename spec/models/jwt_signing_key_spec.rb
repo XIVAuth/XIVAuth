@@ -69,41 +69,36 @@ RSpec.describe JwtSigningKey do
   end
 
   describe ".preferred_key_for_algorithm" do
-    # Key generation is expensive, do it once and share across all tests
-    before(:context) do
-      @rsa_key = FactoryBot.create(:jwt_signing_keys_rsa)
-      @hmac_key = FactoryBot.create(:jwt_signing_keys_hmac)
-      @eddsa_key = FactoryBot.create(:jwt_signing_keys_ed25519)
-      @ecdsa_key = FactoryBot.create(:jwt_signing_keys_ecdsa, curve: "prime256v1")
-    end
-
-    after(:context) do
-      # Clean up keys to prevent test pollution
-      @rsa_key&.destroy
-      @hmac_key&.destroy
-      @eddsa_key&.destroy
-      @ecdsa_key&.destroy
-    end
+    let!(:rsa_key) { FactoryBot.create(:jwt_signing_keys_rsa) }
+    let!(:hmac_key) { FactoryBot.create(:jwt_signing_keys_hmac) }
+    let!(:eddsa_key) { FactoryBot.create(:jwt_signing_keys_ed25519) }
+    let!(:ecdsa_key) { FactoryBot.create(:jwt_signing_keys_ecdsa, curve: "prime256v1") }
 
     it "returns RSA for RS256 and PS256 families" do
-      expect(described_class.preferred_key_for_algorithm("RS256")).to eq(@rsa_key)
-      expect(described_class.preferred_key_for_algorithm("PS256")).to eq(@rsa_key)
+      expect(described_class.preferred_key_for_algorithm("RS256")).to eq(rsa_key)
+      expect(described_class.preferred_key_for_algorithm("PS256")).to eq(rsa_key)
     end
 
     it "returns HMAC for HS256 family" do
-      expect(described_class.preferred_key_for_algorithm("HS256")).to eq(@hmac_key)
+      expect(described_class.preferred_key_for_algorithm("HS256")).to eq(hmac_key)
     end
 
     it "returns Ed25519 for EdDSA" do
-      expect(described_class.preferred_key_for_algorithm("EdDSA")).to eq(@eddsa_key)
+      expect(described_class.preferred_key_for_algorithm("EdDSA")).to eq(eddsa_key)
     end
 
     it "returns a matching ECDSA key for ECDSA curves" do
-      expect(described_class.preferred_key_for_algorithm("ES256")).to eq(@ecdsa_key)
+      expect(described_class.preferred_key_for_algorithm("ES256")).to eq(ecdsa_key)
     end
 
     it "returns nil for unknown algorithm" do
       expect(described_class.preferred_key_for_algorithm("foo.bar")).to be_nil
+    end
+
+    it "prefers the most recently created active key when more than one exists" do
+      newer_rsa = FactoryBot.create(:jwt_signing_keys_rsa)
+
+      expect(described_class.preferred_key_for_algorithm("RS256")).to eq(newer_rsa)
     end
   end
 
