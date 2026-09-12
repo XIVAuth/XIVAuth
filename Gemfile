@@ -10,7 +10,7 @@ gem "rails", "~> 8.1.0"
 gem "msgpack", "~> 1.8"
 gem "pg", "~> 1.5"
 gem "puma", "~> 8.0"
-gem "redis", "~> 5.2" # TODO: Can't be upgraded until Rails 8.2?
+gem "redis", "~> 6.0" # TODO: Can't be upgraded until Rails 8.2?
 
 # Platform-specific
 gem "tzinfo-data", platforms: %i[windows jruby]
@@ -25,8 +25,8 @@ gem "turbo-rails"
 gem "gon", "~> 7.0"
 
 # Asset management
-gem "aws-sdk-s3", "~> 1.228", require: false
-gem "image_processing", "~> 2.0"
+gem "aws-sdk-s3", "~> 1.230", require: false
+gem "image_processing", "~> 2.1"
 gem "marcel", "~> 1.0"
 gem "ruby-vips", "~> 2.0"
 gem "shrine", "~> 3.9"
@@ -45,7 +45,7 @@ gem "postmark-rails", "~> 0.22.1"
 gem "rack-cors", "~> 3.0.0"
 
 # Workers
-gem "sidekiq", "~> 8.0"
+gem "sidekiq", "~> 8.1"
 gem "sidekiq-cron", "~> 2.3"
 gem "sidekiq-throttled", "~> 2.0"
 
@@ -56,7 +56,7 @@ gem "devise-pwned_password", "~> 0.2.0"
 gem "zxcvbn", "~> 1.0"
 
 # Authn (MFA)
-gem "devise-two-factor", "~> 6.1"
+gem "devise-two-factor", "~> 6.4"
 gem "rqrcode", "~> 3.2"
 gem "webauthn", "~> 3.4.1"
 
@@ -81,7 +81,7 @@ gem "flipper-ui", "~> 1.3"
 gem "jwt", "~> 3.0"
 gem "jwt-eddsa", "~> 1.0"
 gem "omniauth-rails_csrf_protection", "~> 2.0"
-gem "rails_cloudflare_turnstile", "~> 0.4"
+gem "rails_cloudflare_turnstile", "~> 0.5"
 
 # CA certificates
 gem "certificate_authority", "~> 1.1"
@@ -90,12 +90,12 @@ gem "certificate_authority", "~> 1.1"
 gem "faraday", "~> 2.9"
 
 # Better logging
-gem "rails_semantic_logger", "~> 5.1"
+gem "rails_semantic_logger", "~> 5.2"
 
 # Observability (Sentry) - temp for now
-gem "sentry-rails", "~> 6.3"
-gem "sentry-ruby", "~> 6.3"
-gem "sentry-sidekiq", "~> 6.3"
+gem "sentry-rails", "~> 7.0"
+gem "sentry-ruby", "~> 7.0"
+gem "sentry-sidekiq", "~> 7.0"
 gem "stackprof", "~> 0.2"
 
 # Heroku dependencies
@@ -103,7 +103,7 @@ gem "rexml", "~> 3.4.2"
 
 # Helpers
 gem "browser", "~> 6.0"
-gem "meta-tags", "~> 2.23"
+gem "meta-tags", "~> 2.24"
 gem "pagy", "~> 43.6"
 gem "search_cop", "~> 1.4"
 gem "store_model", "~> 4.6"
