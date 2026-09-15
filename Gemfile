@@ -27,7 +27,6 @@ gem "gon", "~> 7.0"
 # Asset management
 gem "aws-sdk-s3", "~> 1.228", require: false
 gem "image_processing", "~> 2.0"
-gem "marcel", "~> 1.0"
 gem "ruby-vips", "~> 2.0"
 gem "shrine", "~> 3.9"
 
@@ -93,9 +92,9 @@ gem "faraday", "~> 2.9"
 gem "rails_semantic_logger", "~> 5.1"
 
 # Observability (Sentry) - temp for now
-gem "sentry-rails", "~> 6.3"
-gem "sentry-ruby", "~> 6.3"
-gem "sentry-sidekiq", "~> 6.3"
+gem "sentry-rails", "~> 7.0"
+gem "sentry-ruby", "~> 7.0"
+gem "sentry-sidekiq", "~> 7.0"
 gem "stackprof", "~> 0.2"
 
 # Heroku dependencies

@@ -13,8 +13,6 @@ Sentry.init do |config|
 
   config.enabled_patches += [:sidekiq_cron]
 
-  config.enable_logs = true
-
   config.before_send = lambda do |event, hint|
     hint[:exception].is_a?(SentryIgnorable) ? nil : event
   end

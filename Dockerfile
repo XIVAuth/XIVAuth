@@ -15,7 +15,6 @@ RUN gem update --system --no-document && \
 RUN apk add --no-cache curl jemalloc postgresql-client tzdata libsodium libpq vips
 
 
-
 # -----------------------------
 # Dev and Builder Stage
 FROM base AS dev
