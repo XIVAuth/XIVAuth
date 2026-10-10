@@ -4,13 +4,13 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby ">= 4.0.0", "< 4.1"
 
 # Rails.
-gem "rails", "~> 8.1.0"
+gem "rails", "~> 8.1.4"
 
 # Core systems
 gem "msgpack", "~> 1.8"
-gem "pg", "~> 1.5"
+gem "pg", "~> 1.7"
 gem "puma", "~> 8.0"
-gem "redis", "~> 5.2" # TODO: Can't be upgraded until Rails 8.2?
+gem "redis", "~> 6.0" # TODO: Can't be upgraded until Rails 8.2?
 
 # Platform-specific
 gem "tzinfo-data", platforms: %i[windows jruby]
@@ -22,14 +22,14 @@ gem "propshaft"
 gem "stimulus-rails"
 gem "turbo-rails"
 
-gem "gon", "~> 7.0"
+gem "gon", "~> 8.0"
 
 # Asset management
-gem "aws-sdk-s3", "~> 1.228", require: false
-gem "image_processing", "~> 2.0"
+gem "aws-sdk-s3", "~> 1.233", require: false
+gem "image_processing", "~> 2.2"
 gem "marcel", "~> 1.0"
 gem "ruby-vips", "~> 2.0"
-gem "shrine", "~> 3.9"
+gem "shrine", "~> 3.10"
 
 # JSON API
 gem "jbuilder"
@@ -45,7 +45,7 @@ gem "postmark-rails", "~> 0.22.1"
 gem "rack-cors", "~> 3.0.0"
 
 # Workers
-gem "sidekiq", "~> 8.0"
+gem "sidekiq", "~> 8.1"
 gem "sidekiq-cron", "~> 2.3"
 gem "sidekiq-throttled", "~> 2.0"
 
@@ -56,7 +56,7 @@ gem "devise-pwned_password", "~> 0.2.0"
 gem "zxcvbn", "~> 1.0"
 
 # Authn (MFA)
-gem "devise-two-factor", "~> 6.1"
+gem "devise-two-factor", "~> 6.4"
 gem "rqrcode", "~> 3.2"
 gem "webauthn", "~> 3.4.1"
 
@@ -67,7 +67,7 @@ gem "omniauth-twitch", "~> 1.2"
 gem "omniauth_openid_connect", "~> 0.8"
 
 # Outbound OAuth2
-gem "doorkeeper", "~> 5.9.0"
+gem "doorkeeper", "~> 5.9.9"
 gem "doorkeeper-device_authorization_grant",
     github: "XIVAuth/doorkeeper-device_authorization_grant",
     ref: "f84062469900890461b1f03d9c37960236413321"
@@ -78,24 +78,24 @@ gem "flipper-active_record", "~> 1.3"
 gem "flipper-ui", "~> 1.3"
 
 # Internal security
-gem "jwt", "~> 3.0"
+gem "jwt", "~> 3.3"
 gem "jwt-eddsa", "~> 1.0"
 gem "omniauth-rails_csrf_protection", "~> 2.0"
-gem "rails_cloudflare_turnstile", "~> 0.4"
+gem "rails_cloudflare_turnstile", "~> 0.5"
 
 # CA certificates
 gem "certificate_authority", "~> 1.1"
 
 # HTTP Requests
-gem "faraday", "~> 2.9"
+gem "faraday", "~> 2.14"
 
 # Better logging
-gem "rails_semantic_logger", "~> 5.1"
+gem "rails_semantic_logger", "~> 5.2"
 
 # Observability (Sentry) - temp for now
-gem "sentry-rails", "~> 6.3"
-gem "sentry-ruby", "~> 6.3"
-gem "sentry-sidekiq", "~> 6.3"
+gem "sentry-rails", "~> 7.1"
+gem "sentry-ruby", "~> 7.1"
+gem "sentry-sidekiq", "~> 7.1"
 gem "stackprof", "~> 0.2"
 
 # Heroku dependencies
@@ -103,9 +103,9 @@ gem "rexml", "~> 3.4.2"
 
 # Helpers
 gem "browser", "~> 6.0"
-gem "meta-tags", "~> 2.23"
-gem "pagy", "~> 43.6"
-gem "search_cop", "~> 1.4"
+gem "meta-tags", "~> 2.24"
+gem "pagy", "~> 43.7"
+gem "search_cop", "~> 1.6"
 gem "store_model", "~> 4.6"
 
 group :production do
