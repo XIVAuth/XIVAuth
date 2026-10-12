@@ -31,20 +31,15 @@ module HasUploadAttachment
     # attachment with the same name; the getter returns one Attachment or nil.
     #
     # Options:
-    #   prefix:        Override the storage path prefix (String or Proc). The storage's
-    #                  own prefix is always preserved — this sits after it. Defaults to
-    #                  "<model_plural>/<record_id>/<name>". A Proc receives the owner
-    #                  record as its argument.
-    #   content_types: Array of permitted MIME types, e.g. %w[image/png image/jpeg].
-    #   max_size:      Maximum file size in bytes, e.g. 2.megabytes.
-    #   validate:      Proc (or array of procs) run in Shrine attacher context for
-    #                  arbitrary validation. Has access to +file+, +record+, +errors+,
-    #                  and all Shrine validation helpers.
-    #   derivatives:   Proc called with a pre-sourced ImageProcessing::Vips pipeline;
-    #                  must return a Hash of { derivative_name => processed_file }.
-    def has_upload_attachment(name, prefix: nil, content_types: nil, max_size: nil, validate: nil, derivatives: nil)
-      _register_upload_attachment(name, prefix: prefix, content_types: content_types,
-                                        max_size: max_size, validate: validate, derivatives: derivatives)
+    #   strategy: An UploadStrategy instance describing how this kind of file is
+    #             validated, processed, and stored — e.g.
+    #             UploadStrategy::Image.new(derivatives: { large: [256, 256] }).
+    #   prefix:   Override the storage path prefix (String or Proc). The storage's
+    #             own prefix is always preserved — this sits after it. Defaults to
+    #             "<model_plural>/<record_id>/<name>". A Proc receives the owner
+    #             record as its argument.
+    def has_upload_attachment(name, strategy:, prefix: nil)
+      _register_upload_attachment(name, strategy: strategy, prefix: prefix)
 
       define_method(name) do
         if attachments.loaded?
@@ -75,9 +70,8 @@ module HasUploadAttachment
     # use build_<singular> to append a new file.
     #
     # Accepts the same options as has_upload_attachment.
-    def has_upload_attachments(name, prefix: nil, content_types: nil, max_size: nil, validate: nil)
-      _register_upload_attachment(name, prefix: prefix, content_types: content_types,
-                                        max_size: max_size, validate: validate, multiple: true)
+    def has_upload_attachments(name, strategy:, prefix: nil)
+      _register_upload_attachment(name, strategy: strategy, prefix: prefix, multiple: true)
 
       define_method(name) do
         attachments.where(name: name.to_s)

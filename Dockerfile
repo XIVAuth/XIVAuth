@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.19
 
 # REMEMBER: Set this in .ruby-version too!
-ARG RUBY_VERSION=4.0.6
+ARG RUBY_VERSION=4.0.7
 FROM ruby:${RUBY_VERSION}-alpine AS base
 
 WORKDIR /app
@@ -13,6 +13,7 @@ RUN gem update --system --no-document && \
 
 # Install base packages
 RUN apk add --no-cache curl jemalloc postgresql-client tzdata libsodium libpq vips
+
 
 
 # -----------------------------
@@ -65,7 +66,7 @@ ENV BUNDLE_DEPLOYMENT="1" \
 COPY --from=precompile "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=precompile /app /app
 
-RUN addgroup --system --gid 1000 appsrv && \
-    adduser --system appsrv --uid 1000 --ingroup appsrv --home /home/appsrv --shell /bin/sh appsrv && \
+RUN addgroup --gid 1000 app && \
+    adduser -D --uid 1000 --ingroup app --home /home/app --shell /bin/sh app && \
     chown -R 1000:1000 db log storage tmp
 USER 1000:1000

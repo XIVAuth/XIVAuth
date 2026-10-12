@@ -8,16 +8,10 @@ class Team < ApplicationRecord
   has_one :profile, class_name: "Team::Profile", dependent: :destroy, required: true, autosave: true
 
   has_upload_attachment :icon,
-                        content_types: %w[image/png image/jpeg image/webp image/gif],
-                        max_size: 2.megabytes,
-                        validate: [
-                          ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
-                        ],
-                        derivatives: lambda { |pipeline|
-                          {
-                            large: pipeline.resize_to_fill!(256, 256)
-                          }
-                        }
+                        strategy: UploadStrategy::Image.new(
+                          max_size: 2.megabytes,
+                          derivatives: { large: [256, 256] }
+                        )
   generate_default_avatar :icon, seed: :name,
                           backgroundColorFill: "linear",
                           backgroundColorAngle: [-360, 360]

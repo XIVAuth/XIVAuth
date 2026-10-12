@@ -1,18 +1,34 @@
+# Plumbing only: locations, promotion, and dispatch to the attachment's
+# UploadStrategy. Everything that depends on what kind of file is being handled
+# lives in the strategy, not here.
 class AttachmentUploader < Shrine
   Attacher.derivatives do |original|
-    config = record&.owner_attachment_config
-    next { } unless (deriv_proc = config&.dig(:derivatives))
-
-    pipeline = ImageProcessing::Vips.source(original)
-    instance_exec(pipeline, &deriv_proc)
+    record&.upload_strategy&.derivatives(original, self) || { }
   end
 
   Attacher.validate do
-    config = record&.owner_attachment_config
-    validate_mime_type config[:content_types] if config&.dig(:content_types)
-    validate_max_size  config[:max_size]      if config&.dig(:max_size)
+    record&.upload_strategy&.validate(self)
+  end
 
-    Array(config[:validate]).each { |v| instance_exec(&v) }
+  class Attacher < Shrine::Attacher
+    # Lets the strategy rewrite the file on its way into permanent storage (e.g.
+    # stripping image metadata). A rewritten file is an anonymous tempfile, so
+    # the cached file's filename and MIME type are carried across explicitly --
+    # generate_location depends on the latter for the stored extension.
+    def promote(storage: store_key, **options)
+      strategy = record&.upload_strategy
+      return super if strategy.nil? || file.nil?
+
+      processed      = strategy.process_original(file, self)
+      upload_options = strategy.upload_options(self)
+
+      options[:upload_options] = upload_options if upload_options.present?
+      unless processed.equal?(file)
+        options[:metadata] = { "filename" => file.original_filename, "mime_type" => file.mime_type }
+      end
+
+      set upload(processed, storage, action: :store, **options)
+    end
   end
 
   def generate_location(_io, record: nil, derivative: nil, metadata: { }, **)

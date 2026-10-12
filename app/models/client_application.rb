@@ -10,30 +10,22 @@ class ClientApplication < ApplicationRecord
   ].freeze
 
   has_upload_attachment :icon,
-                        content_types: %w[image/png image/jpeg image/webp image/gif],
-                        max_size: 2.megabytes,
-                        validate: [
-                          ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
-                        ],
-                        derivatives: lambda { |pipeline|
-                          {
-                            large: pipeline.resize_to_fill!(256, 256)
-                          }
-                        }
+                        strategy: UploadStrategy::Image.new(
+                          max_size: 2.megabytes,
+                          derivatives: { large: [256, 256] }
+                        )
   generate_default_avatar :icon, seed: :name,
                           backgroundColorFill: "linear",
                           backgroundColorAngle: [-360, 360]
 
-  has_upload_attachment :oauth_background, content_types: %w[image/png image/jpeg image/webp],
-                        max_size: 5.megabytes,
-                        derivatives: lambda { |pipeline|
-                          base = pipeline.convert("webp").saver(strip: true, near_lossless: true, quality: 80)
-
-                          {
-                            hd: base.resize_to_limit!(2560, 1440),
-                            thumb: base.resize_to_fill!(160, 90)
-                          }
-                        }
+  has_upload_attachment :oauth_background, strategy: UploadStrategy::Image.new(
+                          content_types: %w[image/png image/jpeg image/webp],
+                          max_size: 5.megabytes,
+                          format: "webp",
+                          saver: { near_lossless: true },
+                          quality: 80,
+                          derivatives: { hd: [2560, 1440, :limit], thumb: [160, 90] }
+                        )
 
   belongs_to :owner, polymorphic: true, optional: true
 

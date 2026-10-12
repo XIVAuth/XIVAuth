@@ -6,17 +6,10 @@ class User < ApplicationRecord
   include HasUploadAttachment
 
   has_upload_attachment :avatar,
-                        content_types: %w[image/png image/jpeg image/webp image/gif],
-                        max_size: 2.megabytes,
-                        validate: [
-                          ShrineValidations::AnimationDetector::VALIDATE_NOT_ANIMATED
-                        ],
-                        derivatives: lambda { |pipeline|
-                          {
-                            large: pipeline.resize_to_fill!(256, 256),
-                            medium: pipeline.resize_to_fill!(144, 144)
-                          }
-                        }
+                        strategy: UploadStrategy::Image.new(
+                          max_size: 2.megabytes,
+                          derivatives: { large: [256, 256], medium: [144, 144] }
+                        )
 
   attribute :preferences, User::Preferences.to_type
 

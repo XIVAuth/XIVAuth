@@ -22,7 +22,7 @@ gem "propshaft"
 gem "stimulus-rails"
 gem "turbo-rails"
 
-gem "gon", "~> 7.0"
+gem "gon", "~> 8.0"
 
 # Asset management
 gem "aws-sdk-s3", "~> 1.228", require: false

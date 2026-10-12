@@ -15,6 +15,13 @@ class Attachment < ApplicationRecord
     end
   end
 
+  # The UploadStrategy governing this attachment, resolved through the owning
+  # model's declaration. Looked up via record_type rather than the association so
+  # the owner record doesn't have to be loaded to validate or process a file.
+  def upload_strategy
+    owner_attachment_config[:strategy]
+  end
+
   def owner_attachment_config
     owner_class = record_type&.safe_constantize
     owner_class&.upload_attachment_configs&.dig(name&.to_sym) || { }
