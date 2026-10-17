@@ -10,7 +10,7 @@ gem "rails", "~> 8.1.0"
 gem "msgpack", "~> 1.8"
 gem "pg", "~> 1.5"
 gem "puma", "~> 8.0"
-gem "redis", "~> 5.2" # TODO: Can't be upgraded until Rails 8.2?
+gem "redis", "~> 6.0" # TODO: Can't be upgraded until Rails 8.2?
 
 # Platform-specific
 gem "tzinfo-data", platforms: %i[windows jruby]
@@ -103,7 +103,7 @@ gem "rexml", "~> 3.4.2"
 # Helpers
 gem "browser", "~> 6.0"
 gem "meta-tags", "~> 2.23"
-gem "pagy", "~> 43.6"
+gem "pagy", "~> 43.7"
 gem "search_cop", "~> 1.4"
 gem "store_model", "~> 4.6"
 
