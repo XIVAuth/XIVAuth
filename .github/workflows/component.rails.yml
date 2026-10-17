@@ -84,7 +84,7 @@ jobs:
           report_type: coverage
 
       - name: Report test results
-        uses: mikepenz/action-junit-report@v6.5.0
+        uses: mikepenz/action-junit-report@v6.6.1
         with:
           report_paths: 'tmp/testresults/rspec.xml'
 
