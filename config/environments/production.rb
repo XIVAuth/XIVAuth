@@ -109,7 +109,13 @@ Rails.application.configure do
     end
 
     if defined?(Sentry)
-      a.add(appender: :sentry_ruby)
+      a.add(
+        appender: :sentry_ruby,
+        filter: lambda do |log|
+          # Clients routinely unsubscribe from channels the server already dropped (reconnects, page navigation).
+          !(log.name == "ActionCable" && log.message.to_s.include?("Unable to find subscription"))
+        end
+      )
     end
 
     a.add_console(formatter: ContextualLogger::Formatters::ColorFormatter.new)

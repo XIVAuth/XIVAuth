@@ -143,19 +143,16 @@ class CharacterRegistrationsController < ApplicationController
                      end
 
     attributes = {
-      "registration.search_type": analytics_type.to_s,
-      "registration.result": result.to_s,
-
-      # FIXME(DEPS): https://github.com/getsentry/sentry-ruby/issues/2842
-      "user.id": current_user.id
+      "registration.search_type" => analytics_type.to_s,
+      "registration.result" => result.to_s,
     }
 
     if (character = registration_request.character)
       attributes.merge!({
-        "registration.is_first": (character.character_registrations.count <= 1).to_s,
-        "character.lodestone_id": character.lodestone_id,
-        "character.home_world": character.home_world,
-        "character.data_center": character.data_center
+        "registration.is_first" => (character.character_registrations.count <= 1).to_s,
+        "character.lodestone_id" => character.lodestone_id,
+        "character.home_world" => character.home_world,
+        "character.data_center" => character.data_center
       })
     end
 

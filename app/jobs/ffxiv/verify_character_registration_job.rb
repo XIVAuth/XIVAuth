@@ -124,10 +124,10 @@ wait: 2.minutes) do |job, _error|
 
     registration = arguments[0]
     Sentry.metrics.count("xivauth.character.verify", value: 1, attributes: {
-      "character.lodestone_id": registration.character.lodestone_id,
-      "character.verification_result": result,
+      "character.lodestone_id" => registration.character.lodestone_id,
+      "character.verification_result" => result,
 
-      "user.id": registration.user_id
+      "user.id" => registration.user_id
     })
   end
 end

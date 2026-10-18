@@ -44,9 +44,8 @@ class MarketingController < ApplicationController
       "xivauth.headpat",
       value: 1,
       attributes: {
-        "user.authenticated": current_user.present?,
-        "user.id": current_user&.id,
-        "network.ip": request.remote_ip
+        "user.authenticated" => current_user.present?,
+        "network.ip" => request.remote_ip
       }
     )
   end
