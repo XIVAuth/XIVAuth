@@ -1,7 +1,6 @@
 require "doorkeeper/permissible_policy_cloner"
 require "doorkeeper/grant_data_attacher"
-
-# frozen_string_literal: true
+require "resolv"
 
 Doorkeeper.configure do
   # Change the ORM that doorkeeper will use (requires ORM extensions installed).
@@ -286,13 +285,19 @@ Doorkeeper.configure do
   #
   # force_ssl_in_redirect_uri { |uri| uri.host != 'localhost' }
   force_ssl_in_redirect_uri do |uri|
-    !(uri.host == "localhost" ||
-      uri.host =~ /.*(\.test|\.example|\.localhost|\.invalid)$/ ||
-      begin
-        IPAddr.new(uri.host)
-      rescue StandardError
-        nil
-      end&.loopback?)
+    next false if Rails.env.development? && ENV["DEV_OAUTH_SKIP_SSL"].present?
+
+    # `hostname` strips the brackets from IPv6 literals.
+    host = uri.hostname.to_s.downcase
+    next false if host == "localhost"
+    next false if host.end_with?(".test", ".example", ".localhost", ".invalid", ".localdomain", ".local")
+
+    if host.match?(Resolv::IPv4::Regex) || host.match?(Resolv::IPv6::Regex)
+      ip = IPAddr.new(host)
+      next false if ip.loopback? || ip.private? || ip.link_local?
+    end
+
+    true
   end
 
   # Specify what redirect URI's you want to block during Application creation.
