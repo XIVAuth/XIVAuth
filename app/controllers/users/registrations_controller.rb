@@ -16,17 +16,25 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # POST /resource
   def create
     super
-  rescue Postmark::InactiveRecipientError
+  rescue EmailDelivery::RecipientRejected
     flash.now[:error] = render_to_string(partial: "devise/shared/mta_error")
     resource.errors.add(:email, "was rejected by our email provider.")
 
     resource.destroy
     respond_with resource
-  rescue Postmark::InvalidEmailRequestError
+  rescue EmailDelivery::InvalidRecipient
     resource.errors.add(:email, "is not a valid email address.")
 
     resource.destroy
     respond_with resource
+  rescue EmailDelivery::Failed => e
+    # Keep the account: the provider may have accepted the email before failing (e.g. a timeout), and destroying the
+    # user would invalidate that link. Recovery re-sends confirmation instructions for unconfirmed accounts.
+    Sentry.capture_exception(e)
+
+    redirect_to new_user_session_path,
+                flash: { error: "Your account was created, but we couldn't send your verification email. Please use " \
+                                "account recovery to request a new one in a few minutes." }
   end
 
   # GET /resource/edit

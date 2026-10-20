@@ -40,6 +40,7 @@ gem "bootsnap", require: false
 gem "email_address", "~> 0.2"
 gem "postmark-rails", "~> 0.22.1"
 gem "premailer-rails", "~> 1.12"
+gem "cloudflare-email_service", "~> 0.3.0"
 
 # Internal Security
 gem "rack-cors", "~> 3.0.0"

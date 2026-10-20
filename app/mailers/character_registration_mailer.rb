@@ -10,4 +10,6 @@ class CharacterRegistrationMailer < ApplicationMailer
          template_path: "character_registrations/mailers",
          template_name: "character_clobbered"
   end
+
+  private def mta_actor = @user
 end

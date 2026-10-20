@@ -138,6 +138,7 @@ GEM
     cbor (0.5.10.3)
     certificate_authority (1.1.0)
     chunky_png (1.4.0)
+    cloudflare-email_service (0.3.0)
     cloudflare-rails (7.0.0)
       actionpack (>= 7.2.0, < 8.2.0)
       activesupport (>= 7.2.0, < 8.2.0)
@@ -693,6 +694,7 @@ DEPENDENCIES
   cancancan (~> 3.5)
   capybara
   certificate_authority (~> 1.1)
+  cloudflare-email_service (~> 0.3.0)
   cloudflare-rails (~> 7.0)
   cssbundling-rails
   debug

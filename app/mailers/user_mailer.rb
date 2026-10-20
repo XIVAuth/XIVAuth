@@ -19,4 +19,6 @@ class UserMailer < Devise::Mailer
 
     super(record, token, defaults.merge(opts))
   end
+
+  private def mta_actor = @resource
 end

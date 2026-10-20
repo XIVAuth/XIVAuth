@@ -22,7 +22,7 @@ RSpec.describe UserMailer do
 
     it "is addressed to the user" do
       expect(mail.to).to eq([user.email])
-      expect(mail.subject).to eq("Reset your XIVAuth password")
+      expect(mail.subject).to eq(I18n.t("devise.mailer.reset_password_instructions.subject"))
     end
 
     it_behaves_like "a multipart email", "reset_password_token=abc123", "6 hours"
@@ -39,7 +39,7 @@ RSpec.describe UserMailer do
 
       it "is addressed to the user" do
         expect(mail.to).to eq([user.email])
-        expect(mail.subject).to eq("Welcome to XIVAuth! Please verify your email")
+        expect(mail.subject).to eq(I18n.t("devise.mailer.confirmation_instructions.subject"))
       end
 
       it_behaves_like "a multipart email", "confirmation_token=abc123"
@@ -55,7 +55,7 @@ RSpec.describe UserMailer do
 
       it "is addressed to the new email address" do
         expect(mail.to).to eq([new_email])
-        expect(mail.subject).to eq("Confirm your new XIVAuth email address")
+        expect(mail.subject).to eq(I18n.t("devise.mailer.reconfirmation_instructions.subject"))
       end
 
       it_behaves_like "a multipart email", "confirmation_token=abc123"
