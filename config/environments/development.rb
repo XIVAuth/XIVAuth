@@ -41,7 +41,6 @@ Rails.application.configure do
 
   routes.default_url_options[:host] = ENV["APP_URL"] || "http://localhost:3000"
 
-  # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_caching = false
   config.action_mailer.default_url_options = {
@@ -49,10 +48,7 @@ Rails.application.configure do
   }
   config.action_mailer.preview_paths << Rails.root.join("spec/mailers/previews").to_s
 
-  config.action_mailer.delivery_method = :postmark
-  config.action_mailer.postmark_settings = {
-    api_token: Rails.application.credentials.dig(:postmark, :api_token)
-  }
+  config.action_mailer.delivery_method = ENV.fetch("DEV_DEFAULT_MTA", "file").to_sym
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
