@@ -40,7 +40,7 @@ class Users::RecoveryController < ApplicationController
     # NOTE: This technically does enable an enumeration attack, but only for users that exist but can't receive emails.
     # It's better (imo) to explicitly tell the user that we can't reset their account so they don't end up waiting for
     # an email that never comes.
-    flash.now[:error] = render_to_string(partial: "devise/mailer/mta_error")
+    flash.now[:error] = render_to_string(partial: "devise/shared/mta_error")
     render "devise/recovery/new", status: :unprocessable_content
   end
 

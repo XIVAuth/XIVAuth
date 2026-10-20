@@ -1,0 +1,26 @@
+<p>Hi <%= @user.display_name %>,</p>
+
+<p>
+  We are informing you that your verified character <strong><%= link_to "#{@character.name} @ #{@character.home_world}", @character.lodestone_url %></strong> was claimed by another user. If this was expected, you may disregard this e-mail.
+</p>
+
+<p>
+  If this was not expected, this may indicate that your Square Enix account was accessed by someone else. You will need
+  to reverify your character from the <%= link_to "XIVAuth Character Management", character_registrations_url %> page.
+  Additionally, please consider the following security actions:
+</p>
+
+<ul>
+  <li>Change your Square Enix account password.</li>
+  <li>Enable two-factor authentication on your Square Enix and XIVAuth accounts.</li>
+  <li>Change the passwords on any other sites that reuse your Square Enix password to something unique.</li>
+</ul>
+
+<p>
+  If you have any questions about this notification, feel free to
+  <a href="mailto:xivauth@wolf.dev">email Kaz directly</a> or ping <code>@kazwolfe</code> in the
+  <a href="<%= discord_url %>">XIVAuth Discord</a> server.
+</p>
+
+<p>Thanks,
+  <br>XIVAuth User Management Service</p>

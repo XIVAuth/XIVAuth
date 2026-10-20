@@ -1,0 +1,36 @@
+@use 'tokens' as t;
+
+@include t.narrow {
+  .email-header-overlay { padding: 16px 20px !important; }
+  .email-body { padding: 24px 20px !important; }
+  .email-footer { padding: 16px 20px !important; }
+}
+
+@include t.dark-mode {
+  body { background-color: t.$dark-page-bg !important; }
+
+  .email-outer { background-color: t.$dark-page-bg !important; }
+  .email-container { box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5) !important; }
+
+  .email-header {
+    background-color: t.$dark-header-bg !important;
+    background-image: url('#{t.$cdn-images}/header_night.png') !important;
+  }
+  .email-header-overlay { background-color: t.$dark-header-overlay-bg !important; }
+  .email-logo { color: t.$dark-body-color !important; }
+
+  .email-body { background-color: t.$dark-body-bg !important; color: t.$dark-body-color !important; }
+  .email-body h1 { color: t.$dark-heading-color !important; }
+  .email-body a:not(.btn) { color: t.$dark-link-color !important; }
+
+  .callout { background-color: t.$dark-callout-bg !important; color: t.$dark-callout-color !important; }
+  .callout-warning { background-color: t.$dark-callout-warning-bg !important; color: t.$dark-callout-warning-color !important; }
+  .divider { border-top-color: t.$dark-border-color !important; }
+
+  .email-footer {
+    background-color: t.$dark-footer-bg !important;
+    border-top-color: t.$dark-footer-border !important;
+    color: t.$dark-footer-color !important;
+  }
+  .email-footer a { color: t.$dark-footer-link-color !important; }
+}

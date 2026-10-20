@@ -1,0 +1,23 @@
+Character Verification Alert
+****************************
+
+Hello <%= @user.display_name %>,
+
+We are informing you that your verified character <%= @character.name %> @ <%= @character.home_world %> was claimed by
+another user. If this was expected, you may disregard this e-mail.
+
+If this was not expected, this may indicate that your Square Enix account was accessed by someone else. You will need to
+reverify your character from the XIVAuth Character Management page (<%= character_registrations_url %>). Additionally,
+please consider:
+
+* Changing your Square Enix account password.
+* Enabling two-factor authentication on your Square Enix and XIVAuth accounts.
+* Changing the passwords on any other sites that reuse your Square Enix password.
+
+If you have any questions about this notification, feel free to reach out via any of the following methods:
+
+* Send an email to xivauth@wolf.dev
+* Join the XIVAuth Discord (<%= discord_url %>), and ping @KazWolfe
+
+Thanks,
+XIVAuth User Management Service

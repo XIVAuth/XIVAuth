@@ -18,9 +18,11 @@ en:
       unconfirmed: "You have to confirm your email address before continuing."
     mailer:
       confirmation_instructions:
-        subject: "Confirmation instructions"
+        subject: "Welcome to XIVAuth!"
+      reconfirmation_instructions:
+        subject: "Email Address Change Request"
       reset_password_instructions:
-        subject: "Reset password instructions"
+        subject: "Password Reset Request"
       unlock_instructions:
         subject: "Unlock instructions"
       email_changed:

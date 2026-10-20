@@ -1,0 +1,27 @@
+<h1>Welcome to XIVAuth!</h1>
+<p>
+  Thank you for creating an XIVAuth account! Before you can sign in for the first time, you need to verify your email
+  address. Please be aware that the verification link below will expire after 14 days.
+</p>
+
+<div class="btn-cta-wrap">
+  <%= link_to 'Verify Now', confirmation_url(@resource, confirmation_token: @token), class: "btn bg-primary" %>
+</div>
+
+<p>
+  After successfully verifying your email address, your XIVAuth account will be activated and you will be able to
+  create and verify characters, sign in to XIVAuth-protected services, and manage developer applications.
+</p>
+<p>
+  If you have any questions or issues, feel free to <a href="mailto:xivauth@wolf.dev">email Kaz directly</a>, or ping
+  <code>@kazwolfe</code> in the <a href="<%= discord_url %>">XIVAuth Discord</a> server.
+</p>
+
+<p>Thanks,<br>XIVAuth User Management Service</p>
+
+<hr class="divider">
+
+<p class="fine-print">
+  If you're having trouble with the button above, copy and paste this URL into your browser:<br>
+  <span style="font-family: monospace;"><%= confirmation_url(@resource, confirmation_token: @token) %></span>
+</p>

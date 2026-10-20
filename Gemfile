@@ -39,6 +39,7 @@ gem "bootsnap", require: false
 # Mail Services
 gem "email_address", "~> 0.2"
 gem "postmark-rails", "~> 0.22.1"
+gem "premailer-rails", "~> 1.12"
 
 # Internal Security
 gem "rack-cors", "~> 3.0.0"

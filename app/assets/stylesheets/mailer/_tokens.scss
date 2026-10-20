@@ -1,0 +1,57 @@
+@use '../bootstrap_core' as bs;
+
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$logo-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$brand-blue: #00A8E8;
+
+$cdn-images: 'https://cdn.xivauth.net/static/images/email';
+
+// === Light (default) ===
+$page-bg: #f0f2f5;
+$header-bg: #c8d4df;
+$header-overlay-bg: rgba(240, 244, 248, 0.78);
+$body-bg: bs.$white;
+$body-color: bs.$body-color;
+$heading-color: #111827;
+$link-color: bs.$link-color;
+$border-color: bs.$gray-200;
+$muted-color: bs.$secondary;
+$footer-bg: bs.$gray-100;
+
+$callout-bg: #eef4fe;
+$callout-border: bs.$primary;
+$callout-color: #1a4a8a;
+$callout-warning-bg: #fff8e6;
+$callout-warning-border: #f59e0b;
+$callout-warning-color: #78350f;
+
+// === Dark ===
+$dark-page-bg: #0d1117;
+$dark-header-bg: #1a1d23;
+$dark-header-overlay-bg: rgba(8, 12, 22, 0.72);
+$dark-body-bg: #1e2128;
+$dark-body-color: bs.$body-color-dark;
+$dark-heading-color: bs.$gray-100;
+$dark-link-color: bs.$link-color-dark;
+$dark-border-color: #2d3139;
+$dark-footer-bg: #13161d;
+$dark-footer-border: rgba(255, 255, 255, 0.08);
+$dark-footer-color: rgba(255, 255, 255, 0.4);
+$dark-footer-link-color: rgba(255, 255, 255, 0.5);
+
+$dark-callout-bg: #1a2d4a;
+$dark-callout-color: #93c5fd;
+$dark-callout-warning-bg: #2d2008;
+$dark-callout-warning-color: #fcd34d;
+
+@mixin dark-mode {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}
+
+@mixin narrow {
+  @media (max-width: 480px) {
+    @content;
+  }
+}

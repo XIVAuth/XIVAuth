@@ -17,7 +17,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     super
   rescue Postmark::InactiveRecipientError
-    flash.now[:error] = render_to_string(partial: "devise/mailer/mta_error")
+    flash.now[:error] = render_to_string(partial: "devise/shared/mta_error")
     resource.errors.add(:email, "was rejected by our email provider.")
 
     resource.destroy

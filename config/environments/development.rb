@@ -47,6 +47,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = {
     host: routes.default_url_options[:host]
   }
+  config.action_mailer.preview_paths << Rails.root.join("spec/mailers/previews").to_s
 
   config.action_mailer.delivery_method = :postmark
   config.action_mailer.postmark_settings = {
