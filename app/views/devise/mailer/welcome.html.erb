@@ -1,3 +1,6 @@
+<% email_confirm_action name: "Verify Email",
+                         url: user_one_click_confirmation_url(confirmation_token: @token),
+                         description: "Verify your email address to activate your XIVAuth account." %>
 <h1>Welcome to XIVAuth!</h1>
 <p>
   Thank you for creating an XIVAuth account! Before you can sign in for the first time, you need to verify your email
@@ -5,7 +8,7 @@
 </p>
 
 <div class="btn-cta-wrap">
-  <%= link_to 'Verify Now', confirmation_url(@resource, confirmation_token: @token), class: "btn bg-primary" %>
+  <%= link_to 'Verify Now', user_confirmation_url(confirmation_token: @token), class: "btn bg-primary" %>
 </div>
 
 <p>
@@ -23,5 +26,5 @@
 
 <p class="fine-print">
   If you're having trouble with the button above, copy and paste this URL into your browser:<br>
-  <span style="font-family: monospace;"><%= confirmation_url(@resource, confirmation_token: @token) %></span>
+  <span style="font-family: monospace;"><%= user_confirmation_url(confirmation_token: @token) %></span>
 </p>

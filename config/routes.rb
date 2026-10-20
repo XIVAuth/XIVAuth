@@ -176,6 +176,7 @@ path: "cas"
       delete "register", to: "users/registrations#destroy", as: :cancel_user_registration
       get "register/post_signup", to: "users/registrations#post_signup", as: :user_post_registration
       get "register/confirm", to: "users/confirmations#show", as: :user_confirmation
+      post "register/confirm", to: "users/confirmations#one_click", as: :user_one_click_confirmation
 
       get "recovery", to: "users/recovery#new", as: :begin_user_recovery
       post "recovery", to: "users/recovery#create", as: :user_recovery

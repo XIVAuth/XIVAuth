@@ -1,6 +1,7 @@
 class ApplicationMailer < ActionMailer::Base
   default from: "XIVAuth <noreply@xivauth.net>"
   layout "mailer"
+  helper EmailMarkupHelper
 
   after_action :route_to_cloudflare, if: -> { Flipper.enabled?(:cloudflare_mta, mta_actor) }
 

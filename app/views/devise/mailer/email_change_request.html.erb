@@ -1,3 +1,6 @@
+<% email_confirm_action name: "Confirm New Email",
+                         url: user_one_click_confirmation_url(confirmation_token: @token),
+                         description: "Confirm this email address for your XIVAuth account." %>
 <h1>Hi there!</h1>
 <p>
   Someone (hopefully you) requested to change the email address associated with an XIVAuth account to
@@ -6,7 +9,7 @@
 </p>
 
 <div class="btn-cta-wrap">
-  <%= link_to "Confirm New Email", confirmation_url(@resource, confirmation_token: @token), class: "btn bg-primary",
+  <%= link_to "Confirm New Email", user_confirmation_url(confirmation_token: @token), class: "btn bg-primary",
               target: "_blank" %>
 </div>
 
@@ -16,5 +19,5 @@
 
 <p class="fine-print">
   If you're having trouble with the button above, copy and paste this URL into your browser:<br>
-  <span style="font-family: monospace;"><%= confirmation_url(@resource, confirmation_token: @token) %></span>
+  <span style="font-family: monospace;"><%= user_confirmation_url(confirmation_token: @token) %></span>
 </p>

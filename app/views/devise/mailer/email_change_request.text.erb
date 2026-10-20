@@ -1,6 +1,6 @@
 Someone (hopefully you) requested to change the email address associated with an XIVAuth account to <%= @email %> (this address). To confirm the change, simply open the below link using your web browser. If you did not request this change or weren't expecting this email, you may safely disregard this email.
 
-<%= confirmation_url(@resource, confirmation_token: @token) %>
+<%= user_confirmation_url(confirmation_token: @token) %>
 
 Thanks,
 XIVAuth User Management Service
