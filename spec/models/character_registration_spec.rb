@@ -73,4 +73,59 @@ RSpec.describe CharacterRegistration do
       expect(new_registration).not_to be_verified
     end
   end
+
+  context "derived secrets" do
+    let(:registration) do
+      described_class.new(user: FactoryBot.create(:user), character: FactoryBot.create(:ffxiv_character))
+    end
+
+    def stub_seeds(verification: nil, entanglement: nil)
+      credentials = Rails.application.credentials
+      allow(credentials).to receive(:dig).and_call_original
+      allow(credentials).to receive(:dig).with(:xivauth, :character, :verification_seed).and_return(verification)
+      allow(credentials).to receive(:dig).with(:xivauth, :character, :entanglement_seed).and_return(entanglement)
+    end
+
+    def legacy_seed(salt)
+      Base64.strict_encode64(Rails.application.key_generator.generate_key(salt))
+    end
+
+    it "falls back to secret_key_base derivation when seeds are unset" do
+      stub_seeds
+
+      expect(described_class.seed_secret(:entanglement_seed, key_base_salt: "CharacterEntanglementSecret"))
+        .to eq(Rails.application.key_generator.generate_key("CharacterEntanglementSecret"))
+    end
+
+    it "preserves existing values when seeds are set to the legacy derived keys" do
+      stub_seeds
+      legacy_verification_key = registration.verification_key
+      legacy_entangled_id = registration.entangled_id
+
+      stub_seeds(verification: legacy_seed("CharacterVerificationSecret"),
+                 entanglement: legacy_seed("CharacterEntanglementSecret"))
+
+      expect(registration.verification_key).to eq(legacy_verification_key)
+      expect(registration.entangled_id).to eq(legacy_entangled_id)
+    end
+
+    it "uses the configured seeds when set" do
+      verification_seed = SecureRandom.bytes(64)
+      entanglement_seed = SecureRandom.bytes(64)
+      stub_seeds(verification: Base64.strict_encode64(verification_seed),
+                 entanglement: Base64.strict_encode64(entanglement_seed))
+
+      input = "#{registration.character.lodestone_id}###{registration.user.id}"
+      expected_entangled_id = Base64.urlsafe_encode64(
+        OpenSSL::HMAC.digest(OpenSSL::Digest.new("sha1"), entanglement_seed, input), padding: false
+      )
+      expected_verification_hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new("sha256"), verification_seed, input)
+      expected_verification_code = Crockford.encode_string(expected_verification_hmac)
+                                            .truncate(described_class::VERIFICATION_KEY_LENGTH, omission: "")
+
+      expect(registration.entangled_id).to eq(expected_entangled_id)
+      expect(registration.verification_key)
+        .to eq("#{described_class::VERIFICATION_KEY_PREFIX}#{expected_verification_code}")
+    end
+  end
 end

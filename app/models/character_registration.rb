@@ -81,8 +81,8 @@ class CharacterRegistration < ApplicationRecord
   end
 
   def verification_key
-    # TODO: Load secret from environment, don't use lodestone_id as it's not reusable (other models in future)
-    secret = Rails.application.key_generator.generate_key("CharacterVerificationSecret")
+    # TODO: Don't use lodestone_id as it's not reusable (other models in future)
+    secret = self.class.seed_secret(:verification_seed, key_base_salt: "CharacterVerificationSecret")
     hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new("sha256"), secret, "#{character.lodestone_id}###{user.id}")
 
     "#{VERIFICATION_KEY_PREFIX}#{Crockford.encode_string(hmac)&.truncate(VERIFICATION_KEY_LENGTH, omission: '')}"
@@ -95,11 +95,22 @@ class CharacterRegistration < ApplicationRecord
     entanglement_key = "#{character.lodestone_id}###{user.id}"
     entanglement_key += "###{higher_order_id}" if higher_order_id.present?
 
-    # TODO: Think of a better strategy for this
-    secret = Rails.application.key_generator.generate_key("CharacterEntanglementSecret")
+    secret = self.class.seed_secret(:entanglement_seed, key_base_salt: "CharacterEntanglementSecret")
     hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new("sha1"), secret, entanglement_key)
 
     Base64.urlsafe_encode64(hmac, padding: false)
+  end
+
+  # Loads a Base64-encoded HMAC seed from credentials at `xivauth.character.<name>`. If unset, falls back to deriving
+  # a key from `secret_key_base` with the given salt (the legacy behavior), so existing keys/IDs are preserved as long
+  # as the configured seed is the Base64 encoding of that derived key.
+  #
+  # TODO: Remove the `secret_key_base` fallback once seeds are configured in all environments.
+  def self.seed_secret(name, key_base_salt:)
+    seed = Rails.application.credentials.dig(:xivauth, :character, name)
+    return Base64.strict_decode64(seed) if seed.present?
+
+    Rails.application.key_generator.generate_key(key_base_salt)
   end
 
   # Create a new (unsaved) CharacterRegistration from a Lodestone ID
