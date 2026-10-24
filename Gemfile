@@ -10,7 +10,7 @@ gem "rails", "~> 8.1.0"
 gem "msgpack", "~> 1.8"
 gem "pg", "~> 1.5"
 gem "puma", "~> 8.0"
-gem "redis", "~> 5.2" # TODO: Can't be upgraded until Rails 8.2?
+gem "redis", "~> 6.0" # TODO: Can't be upgraded until Rails 8.2?
 
 # Platform-specific
 gem "tzinfo-data", platforms: %i[windows jruby]
@@ -25,7 +25,7 @@ gem "turbo-rails"
 gem "gon", "~> 8.0"
 
 # Asset management
-gem "aws-sdk-s3", "~> 1.228", require: false
+gem "aws-sdk-s3", "~> 1.235", require: false
 gem "image_processing", "~> 2.0"
 gem "ruby-vips", "~> 2.0"
 gem "shrine", "~> 3.9"
