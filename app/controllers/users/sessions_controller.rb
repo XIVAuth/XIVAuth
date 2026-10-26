@@ -163,7 +163,7 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def after_sign_in_path_for(resource)
-    auth_data = session[:auth_data] || { }
+    auth_data = (session[:auth_data] || { }).with_indifferent_access
 
     auth_data[:created_at] = Time.current.iso8601
     auth_data[:initial_ip] = request.remote_ip

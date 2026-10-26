@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   private def update_session_metadata
     return unless user_signed_in?
 
-    auth_data = session[:auth_data] || { }
+    auth_data = (session[:auth_data] || { }).with_indifferent_access
     auth_data.merge!(helpers.build_auth_data("current"))
     ua = request.user_agent&.force_encoding("UTF-8")&.scrub
     auth_data[:current_browser] = helpers.parse_user_agent(ua) if auth_data.dig(:current_browser, :user_agent) != ua

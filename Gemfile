@@ -59,7 +59,7 @@ gem "zxcvbn", "~> 1.0"
 # Authn (MFA)
 gem "devise-two-factor", "~> 6.1"
 gem "rqrcode", "~> 3.2"
-gem "webauthn", "~> 3.4.1"
+gem "webauthn", "~> 3.5.0"
 
 # OAuth2 Providers
 gem "omniauth-github", "~> 2.0"
