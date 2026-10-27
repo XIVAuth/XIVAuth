@@ -1,0 +1,64 @@
+<%# Locals:
+      reporter - who gets the credit (required)
+      title    - heading for the report, e.g. the weakness class (optional)
+      cwe      - CWE number, shown in front of the title as a link to MITRE (optional)
+      category - kind of issue (optional). One of the names below gets its marker and hover description; any other
+                 text is shown as plain text with a generic marker.
+      severity - :informational, :low, :medium, :high or :critical (optional)
+      fix_hash - commit hash of the fix, shown as a link to the commit on GitHub (optional)
+%>
+<% severity_classes = { informational: "text-bg-secondary", low: "text-bg-info", medium: "text-bg-warning",
+                        high: "text-bg-danger", critical: "text-bg-danger" } %>
+
+<% categories = {
+  "Authentication" => { icon: "person-lock", description: "A technical flaw in identity verification." },
+  "Authorization" => { icon: "shield-lock", description: "Failures in access control or permission management." },
+  "OAuth / OIDC" => { icon: "key", description: "Problems specific to OAuth or OpenID Connect implementations." },
+  "Business Rules" => { icon: "diagram-3", description: "A feature's intended design contains a flaw." },
+  "Information Disclosure" => { icon: "eye", description: "Data is exposed to someone who shouldn't see it." },
+  "Cryptography" => { icon: "lock", description: "Weaknesses in cryptographic operations like PKI." },
+  "Infra / Config" => { icon: "hdd-network", description: "A flaw in XIVAuth's hosting infrastructure or config." },
+  "Other" => { icon: "question-circle", description: "Doesn't fit any of the other categories." }
+} %>
+
+<% severity = local_assigns[:severity]&.to_sym %>
+<% cwe = local_assigns[:cwe] %>
+<% title = local_assigns[:title] %>
+<% category = local_assigns[:category] %>
+
+<div class="card mb-3">
+  <div class="card-header d-flex flex-wrap justify-content-between align-items-start gap-2">
+    <div>
+      <h3 class="h6 mb-1">
+        <% if cwe %>
+          <a href="https://cwe.mitre.org/data/definitions/<%= cwe %>.html" class="text-reset">CWE-<%= cwe %></a><%= ": " if title %>
+        <% end %>
+        <%= title %>
+        <%= "Security Report" unless cwe || title %>
+      </h3>
+      <div class="small text-muted">
+        <i class="bi bi-trophy" aria-hidden="true"></i> Reported by <strong><%= reporter %></strong>
+        <% if local_assigns[:fix_hash] %>
+          &middot; Fixed in
+          <a href="https://github.com/XIVAuth/XIVAuth/commit/<%= fix_hash %>" class="font-monospace"><%= fix_hash.first(7) %></a>
+        <% end %>
+      </div>
+    </div>
+    <% if category || severity %>
+      <div class="d-flex flex-wrap gap-1">
+        <% if category %>
+          <% info = categories[category] %>
+          <span class="badge text-bg-light border" <%= tag.attributes(title: info&.fetch(:description)) %>>
+            <i class="bi bi-<%= info ? info[:icon] : "tag" %>" aria-hidden="true"></i> <%= category %>
+          </span>
+        <% end %>
+        <% if severity %>
+          <span class="badge <%= severity_classes.fetch(severity, "text-bg-secondary") %>"><%= severity.to_s.titleize %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <%= yield %>
+  </div>
+</div>

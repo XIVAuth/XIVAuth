@@ -131,3 +131,31 @@
   report is rejected, we will include detailed information about our justifications and any mitigations that we have
   in place (if necessary).
 </p>
+
+<h2>Report Hall of Fame</h2>
+
+<p>
+  The below reports were accepted, and a fix was applied. We thank everyone for their contributions!
+</p>
+
+<%= render layout: "legal/hall_of_fame_entry",
+           locals: { reporter: "Ashe Galatine", category: "Business Rules", severity: :informational, cwe: 288,
+                     fix_hash: "d27a8b2bf5c41ca187b6818ffd02ed656fa51b99",
+                     title: "Authentication Bypass Using an Alternate Path or Channel" } do %>
+  <p>
+    An attacker could skip multi-factor authentication on a target account by binding a new social identity (e.g., a
+    Discord login), provided the social identity has the same (verified) email address.
+  </p>
+
+  <h6>Impact</h6>
+  <p>
+    Minor; an attacker with access to the user's email address may already reset the user's password or impersonate the
+    user to support.
+  </p>
+
+  <h6>Resolution</h6>
+  <p class="mb-0">
+    Business logic was adjusted to require an existing user session before binding a new social identity if MFA is
+    present.
+  </p>
+<% end %>
