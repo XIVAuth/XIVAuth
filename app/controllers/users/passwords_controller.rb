@@ -29,4 +29,8 @@ class Users::PasswordsController < Devise::PasswordsController
     set_flash_message(:alert, :no_token)
     redirect_to new_user_session_path
   end
+
+  protected def sign_in_after_reset_password?
+    !resource.mfa_enabled? && super
+  end
 end
