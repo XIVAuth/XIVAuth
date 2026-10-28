@@ -11,16 +11,18 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
         common
       end
     end
+  end
 
-    routes = Rails.application.routes
-    routes.disable_clear_and_finalize = true
-    routes.draw do
-      devise_scope :user do
-        post "/test_sso/discord", to: "users/omniauth_callbacks#discord"
-        post "/test_sso/steam", to: "users/omniauth_callbacks#steam"
+  # As the test env doesn't load SSO configurations, just make some up.
+  routes do
+    ActionDispatch::Routing::RouteSet.new.tap do |set|
+      set.draw do
+        devise_scope :user do
+          post "/test_sso/discord", to: "users/omniauth_callbacks#discord"
+          post "/test_sso/steam", to: "users/omniauth_callbacks#steam"
+        end
       end
     end
-    routes.disable_clear_and_finalize = false
   end
 
   let(:provider) { "discord" }
@@ -42,6 +44,8 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
     allow(User).to receive_messages(omniauth_providers: %i[discord steam], omniauth_login_providers: %i[discord steam])
     Flipper.enable(:user_signups)
   end
+
+  def app_routes = Rails.application.routes.url_helpers
 
   def callback!(action = provider)
     post action.to_sym
@@ -87,7 +91,7 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
         expect { callback! }.not_to change(User, :count)
 
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(app_routes.new_user_session_path)
         expect(flash[:alert]).to match(/sign-ups are disabled/i)
         expect(controller.current_user).to be_nil
       end
@@ -124,7 +128,7 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
 
         callback!
 
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(app_routes.new_user_session_path)
         expect(controller.current_user).to be_nil
         expect(User::SocialIdentity.where(external_id: uid)).to be_empty
       end
@@ -138,7 +142,7 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
       it "blocks the login without binding the identity" do
         expect { callback! }.not_to change(User::SocialIdentity, :count)
 
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(app_routes.new_user_session_path)
         expect(flash[:alert]).to match(/must link your Discord account/i)
         expect(controller.current_user).to be_nil
       end
@@ -160,7 +164,7 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
       it "requires the identity to be linked first, without creating or binding anything" do
         expect { callback! }.not_to change { [User.count, User::SocialIdentity.count] }
 
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(app_routes.new_user_session_path)
         expect(flash[:alert]).to match(/must link your Steam account/i)
         expect(controller.current_user).to be_nil
       end
