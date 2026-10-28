@@ -1,0 +1,47 @@
+<%#
+  Sudo mode MFA challenge. Render inside any form; proof is submitted as `sudo[...]` params.
+  Locals:
+    auto_submit: (default true) submit the enclosing form once a security key responds. When false, the key's response
+                 is only collected, and the form's own submit button sends it.
+    error:       (optional) error message to show, defaults to @sudo_error.
+%>
+<% auto_submit = local_assigns.fetch(:auto_submit, true) %>
+<% error = local_assigns.fetch(:error, @sudo_error) %>
+<% challenge = sudo_webauthn_challenge %>
+
+<div data-controller="users--sudo-mode" data-users--sudo-mode-auto-submit-value="<%= auto_submit %>">
+  <%= hidden_field_tag "sudo[prompted]", "1", id: nil %>
+
+  <% if error.present? %>
+    <div class="alert alert-danger" role="alert"><%= error %></div>
+  <% end %>
+
+  <% if challenge.present? %>
+    <%= hidden_field_tag nil, challenge.to_json, disabled: true, id: nil,
+                         data: { "users--sudo-mode-target": "challenge" } %>
+    <%= hidden_field_tag "sudo[webauthn_response]", "", id: nil, data: { "users--sudo-mode-target": "response" } %>
+
+    <div class="d-grid mb-3">
+      <button type="button" class="btn btn-primary" data-action="users--sudo-mode#authenticate"
+              data-users--sudo-mode-target="keyButton">
+        <i class="bi bi-usb-drive"></i> Use Security Key
+      </button>
+    </div>
+  <% end %>
+
+  <% if current_user.totp_credential&.otp_enabled %>
+    <div class="mb-3">
+      <%= label_tag "sudo_otp_attempt", "Authenticator or backup code", class: "form-label fw-semibold" %>
+      <%= text_field_tag "sudo[otp_attempt]", "", id: "sudo_otp_attempt", inputmode: "numeric", placeholder: "123456",
+                         class: "form-control", autocomplete: "one-time-code" %>
+    </div>
+  <% end %>
+
+  <% if Rails.env.development? %>
+    <div class="d-grid mb-3">
+      <button type="submit" class="btn btn-devunsafe" name="sudo[bypass_mfa]" value="1">
+        <i class="bi bi-shield-lock"></i> [DEV] Skip MFA
+      </button>
+    </div>
+  <% end %>
+</div>

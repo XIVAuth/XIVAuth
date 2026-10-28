@@ -1,5 +1,11 @@
-<%= turbo_stream.append "body" do %>
-  <%= render 'layouts/components/remote_modal', title: 'Add Security Key', modal_id: "register_webauthn_modal" do %>
-    <%= render 'users/webauthn_credentials/modal' %>
+<% if request.post? %>
+  <%# Arrived from the sudo challenge; the modal is already open. %>
+  <%= turbo_stream.update "register_webauthn_modal-content", partial: "users/webauthn_credentials/modal",
+                          formats: [:html] %>
+<% else %>
+  <%= turbo_stream.append "body" do %>
+    <%= render 'layouts/components/remote_modal', title: 'Add Security Key', modal_id: "register_webauthn_modal" do %>
+      <%= render 'users/webauthn_credentials/modal' %>
+    <% end %>
   <% end %>
 <% end %>

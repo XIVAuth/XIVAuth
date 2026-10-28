@@ -1,0 +1,11 @@
+<% if update %>
+  <%= turbo_stream.update "#{modal_id}-content" do %>
+    <%= render partial, formats: [:html], **partial_locals %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.append "body" do %>
+    <%= render "layouts/components/remote_modal", modal_id: modal_id do %>
+      <%= render partial, formats: [:html], **partial_locals %>
+    <% end %>
+  <% end %>
+<% end %>

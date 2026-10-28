@@ -200,9 +200,13 @@ path: "cas"
 
       resources :social_identities, path: "identities", controller: "users/social_identities", only: [:destroy]
       resources :webauthn_credentials, path: "webauthn", controller: "users/webauthn_credentials",
-                only: %i[new create destroy]
+                only: %i[new create destroy] do
+        # sudo mode: the MFA challenge re-posts to `new`
+        post "new", to: "users/webauthn_credentials#new", on: :collection, as: nil
+      end
       resource :totp_credential, path: "totp", controller: "users/totp_credentials", only: %i[new create destroy] do
         post :regenerate_backup, to: "users/totp_credentials#regenerate_backup"
+        post "new", to: "users/totp_credentials#new", as: nil
       end
       resources :oauth_authorizations, path: "authorizations", controller: "users/oauth_authorizations",
 only: %i[index destroy]

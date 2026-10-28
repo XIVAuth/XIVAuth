@@ -1,4 +1,9 @@
 class Users::WebauthnCredentialsController < ApplicationController
+  include Users::RequiresSudo
+
+  requires_sudo only: %i[new create], within: 5.minutes, and_rerender: :render_sudo_challenge
+  requires_sudo only: :destroy, within: 0, and_rerender: :render_destroy_modal
+
   def new
     if current_user.webauthn_id.nil?
       current_user.update(webauthn_id: WebAuthn.generate_user_id)
@@ -64,7 +69,8 @@ class Users::WebauthnCredentialsController < ApplicationController
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.replace("mfa-settings", partial: "devise/registrations/sections/mfa_settings",
-                                 locals: { resource: current_user })
+                                 locals: { resource: current_user }),
+            turbo_stream.append("remove_webauthn_modal-content", partial: "layouts/components/remote_modal_close")
           ]
         end
         format.html { redirect_to edit_user_path, notice: "Credential was removed." }
@@ -74,6 +80,18 @@ class Users::WebauthnCredentialsController < ApplicationController
         format.html { redirect_to edit_user_path, error: "Credential could not be deleted." }
       end
     end
+  end
+
+  private def render_sudo_challenge(error: nil)
+    render_sudo_modal(modal_id: "register_webauthn_modal", partial: "users/sudo_mode/modal_challenge",
+                      locals: { title: "Add Security Key", url: new_user_webauthn_credential_path },
+                      error: error, update: error.present? || action_name == "create")
+  end
+
+  private def render_destroy_modal(error: nil)
+    @webauthn_credential = current_user.webauthn_credentials.find(params.expect(:id))
+    render_sudo_modal(modal_id: "remove_webauthn_modal", partial: "users/webauthn_credentials/destroy_modal",
+                      error: error)
   end
 
   private def render_new_form_again(status: :unprocessable_content)

@@ -5,13 +5,9 @@
   </div>
   <div class="modal-body">
     <p>
-      To regenerate your TOTP backup codes, you will need to authenticate with your current authenticator or a backup
-      code.
+      To regenerate your backup codes, confirm your identity with multifactor authentication.
     </p>
-    <div class="mb-3">
-      <%= f.label :otp_attempt, "Current OTP Code", class: "form-label fw-semibold" %>
-      <%= f.text_field :otp_attempt, placeholder: "123456", class: "form-control" %>
-    </div>
+    <%= render "users/sudo_mode/challenge_fields", auto_submit: false %>
 
   </div>
   <div class="modal-footer">

@@ -68,6 +68,13 @@ RSpec.describe "Users::SessionsController" do
         expect(response).to have_http_status(:ok)
       end
 
+      it "records a password-only authentication context" do
+        post user_session_path, params: login_params
+
+        expect(session["authn_context"]).to include("amr" => %w[pwd], "auth_time" => be_present)
+        expect(session["authn_context"]).not_to have_key("mfa_time")
+      end
+
       it "clears any password reset tokens" do
         user.update(reset_password_token: "some_token", reset_password_sent_at: Time.current)
 
@@ -183,6 +190,12 @@ RSpec.describe "Users::SessionsController" do
         expect(session["mfa"]).to be_nil
       end
 
+      it "records the authentication context with an MFA time" do
+        post user_session_path, params: mfa_params(otp_attempt: valid_otp)
+
+        expect(session["authn_context"]).to include("amr" => %w[pwd otp mfa], "mfa_time" => be_present)
+      end
+
       it "rejects invalid TOTP code" do
         post user_session_path, params: mfa_params(otp_attempt: "000000")
 
@@ -240,6 +253,8 @@ RSpec.describe "Users::SessionsController" do
         # Verify sign count was updated
         webauthn_credential.reload
         expect(webauthn_credential.sign_count).to be > 0
+
+        expect(session["authn_context"]).to include("amr" => %w[pwd hwk mfa], "mfa_time" => be_present)
       end
 
       it "rejects invalid WebAuthn response with wrong challenge" do
@@ -286,6 +301,9 @@ RSpec.describe "Users::SessionsController" do
 
       expect(response).to redirect_to(character_registrations_path)
       expect(session["webauthn_discoverable_challenge"]).to be_nil
+
+      # User verification is required, so a passkey login counts as MFA for sudo mode.
+      expect(session["authn_context"]).to include("amr" => %w[hwk user mfa], "mfa_time" => be_present)
     end
 
     it "rejects passkeys not asserting user_verified (CVE-2020-8236)" do

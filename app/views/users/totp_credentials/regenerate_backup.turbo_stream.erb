@@ -1,5 +1,0 @@
-<%= turbo_stream.append "body" do %>
-  <%= render 'layouts/components/remote_modal', title: 'Regenerate TOTP Credential', modal_id: "regenerate_totp_backup_modal" do %>
-    <%= render 'users/totp_credentials/regenerate_check_modal' %>
-  <% end %>
-<% end %>

@@ -64,6 +64,13 @@ RSpec.describe Users::OmniauthCallbacksController, type: :controller do
       expect(controller.current_user).to eq(user)
     end
 
+    it "records a federated authentication context" do
+      callback!
+
+      expect(session["authn_context"]).to include("amr" => %w[fed])
+      expect(session["authn_context"]).not_to have_key("mfa_time")
+    end
+
     it "refreshes the identity and marks it as used" do
       callback!
 

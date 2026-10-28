@@ -37,6 +37,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     if user.persisted?
       set_flash_message(:notice, :success, kind: auth_data["provider"].camelize) if is_navigational_format?
       sign_in_and_redirect user, event: :authentication
+      Users::AuthnContext.new(session).record_login!(%w[fed])
     else
       session["devise.oauth.data"] = auth_data.except(:extra)
       redirect_to new_user_registration_path, alert: user.errors.full_messages.join("\n")

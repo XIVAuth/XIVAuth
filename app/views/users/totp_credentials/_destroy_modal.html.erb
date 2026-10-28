@@ -5,13 +5,10 @@
   </div>
   <div class="modal-body">
     <p>
-      To remove your TOTP credential, you must authenticate with it one last time. If you no longer have access
-      to your authenticator, you may use a backup code.
+      To remove your authenticator app, confirm your identity with multifactor authentication. If you no longer have
+      access to your authenticator, you may use a backup code.
     </p>
-    <div class="mb-3">
-      <%= f.label :otp_attempt, "Current OTP Code", class: "form-label fw-semibold" %>
-      <%= f.text_field :otp_attempt, placeholder: "123456", class: "form-control" %>
-    </div>
+    <%= render "users/sudo_mode/challenge_fields", auto_submit: false %>
 
   </div>
   <div class="modal-footer">

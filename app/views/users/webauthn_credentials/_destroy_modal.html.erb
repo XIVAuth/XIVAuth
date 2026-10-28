@@ -1,0 +1,17 @@
+<%= form_with(url: user_webauthn_credential_path(@webauthn_credential), method: :delete) do %>
+  <div class="modal-header">
+    <h5 class="modal-title">Remove Security Key</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <p>
+      Remove <strong><%= @webauthn_credential.nickname %></strong> from your account? To continue, confirm your identity
+      with multifactor authentication.
+    </p>
+    <%= render "users/sudo_mode/challenge_fields", auto_submit: false %>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary-outline" data-bs-dismiss="modal">Cancel</button>
+    <button type="submit" class="btn btn-danger">Remove Security Key</button>
+  </div>
+<% end %>

@@ -1,5 +1,10 @@
-<%= turbo_stream.append "body" do %>
-  <%= render 'layouts/components/remote_modal', title: 'Register TOTP Credential', modal_id: "register_totp_modal" do %>
-    <%= render 'users/totp_credentials/new_modal' %>
+<% if request.post? %>
+  <%# Arrived from the sudo challenge; the modal is already open. %>
+  <%= turbo_stream.update "register_totp_modal-content", partial: "users/totp_credentials/new_modal", formats: [:html] %>
+<% else %>
+  <%= turbo_stream.append "body" do %>
+    <%= render 'layouts/components/remote_modal', title: 'Register TOTP Credential', modal_id: "register_totp_modal" do %>
+      <%= render 'users/totp_credentials/new_modal' %>
+    <% end %>
   <% end %>
 <% end %>

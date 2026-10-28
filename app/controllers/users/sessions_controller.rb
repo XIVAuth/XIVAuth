@@ -138,6 +138,7 @@ class Users::SessionsController < Devise::SessionsController
           prompt_for_mfa(status_code: :unprocessable_content, pwned: pwned)
         else
           sign_in(resource_name, self.resource)
+          Users::AuthnContext.new(session).record_login!(%w[pwd])
         end
       else
         # Wrong password (confirmed): fallback to Warden's own behavior for devise compat.

@@ -14,6 +14,8 @@ module Users::AuthenticatesViaPasskey
     verifier.execute(discoverable: true)
 
     sign_in(:user, @user)
+    # User verification (PIN/biometric) is enforced above, so possession + verification counts as MFA.
+    Users::AuthnContext.new(session).record_login!(%w[hwk user], mfa: true)
   rescue WebAuthn::Error => e
     flash.now[:alert] = "Passkey authentication failed: #{e.message}"
     respond_to do |format|

@@ -1,4 +1,10 @@
 class Users::TotpCredentialsController < ApplicationController
+  include Users::RequiresSudo
+
+  requires_sudo only: %i[new create], within: 5.minutes, and_rerender: :render_sudo_challenge
+  requires_sudo only: :destroy, within: 0, and_rerender: :render_destroy_modal
+  requires_sudo only: :regenerate_backup, within: 0, and_rerender: :render_regenerate_modal
+
   def new
     if current_user.totp_credential&.otp_enabled
       redirect_to edit_user_path, error: "TOTP has already been enabled."
@@ -48,20 +54,6 @@ class Users::TotpCredentialsController < ApplicationController
   def destroy
     @totp_credential = current_user.totp_credential
 
-    otp_attempt = params.dig(:user_totp_credential, :otp_attempt)
-
-    # If TOTP code isn't present, the user just clicked on the button.
-    render and return if otp_attempt.nil?
-
-    unless @totp_credential.validate_and_consume_otp_or_backup!(otp_attempt)
-      @totp_credential.errors.add(:otp_attempt, "was invalid")
-      render status: :unprocessable_content,
-             turbo_stream: turbo_stream.update("remove_totp_modal-content",
-                                               partial: "users/totp_credentials/destroy_modal")
-
-      return
-    end
-
     if @totp_credential.delete
       flash[:notice] = "TOTP credential successfully removed."
     else
@@ -73,20 +65,6 @@ class Users::TotpCredentialsController < ApplicationController
 
   def regenerate_backup
     @totp_credential = current_user.totp_credential
-    otp_attempt = params.dig(:user_totp_credential, :otp_attempt)
-
-    # If TOTP code isn't present, the user just clicked on the button.
-    render and return if otp_attempt.nil?
-
-    unless @totp_credential.validate_and_consume_otp_or_backup!(otp_attempt)
-      @totp_credential.errors.add(:otp_attempt, "was invalid")
-      render status: :unprocessable_content,
-             turbo_stream: turbo_stream.update("regenerate_totp_backup_modal-content",
-                                               partial: "users/totp_credentials/regenerate_check_modal")
-
-      return
-    end
-
     @backup_codes = @totp_credential.generate_otp_backup_codes!
     if @totp_credential.save
       render status: :ok,
@@ -95,6 +73,23 @@ class Users::TotpCredentialsController < ApplicationController
     else
       redirect_to edit_user_path, error: "TOTP backup codes could not be regenerated."
     end
+  end
+
+  private def render_sudo_challenge(error: nil)
+    render_sudo_modal(modal_id: "register_totp_modal", partial: "users/sudo_mode/modal_challenge",
+                      locals: { title: "Set Up Authenticator App", url: new_user_totp_credential_path },
+                      error: error, update: error.present? || action_name == "create")
+  end
+
+  private def render_destroy_modal(error: nil)
+    @totp_credential = current_user.totp_credential
+    render_sudo_modal(modal_id: "remove_totp_modal", partial: "users/totp_credentials/destroy_modal", error: error)
+  end
+
+  private def render_regenerate_modal(error: nil)
+    @totp_credential = current_user.totp_credential
+    render_sudo_modal(modal_id: "regenerate_totp_backup_modal",
+                      partial: "users/totp_credentials/regenerate_check_modal", error: error)
   end
 
   private def render_new_form_again(status: :unprocessable_content)

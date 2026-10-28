@@ -2,17 +2,28 @@ module Users::AuthenticatesWithMFA
   extend ActiveSupport::Concern
 
   def authenticate_with_mfa
-    if mfa_params[:otp_attempt].present? && session["mfa"]
-      authenticate_with_totp
-    elsif mfa_params[:webauthn_response].present? && session["mfa"]
-      authenticate_with_webauthn
-    elsif mfa_params[:bypass_mfa].present? && Rails.env.development? && session["mfa"]
-      # local dev gets to bypass.
-      handle_mfa_success
-    else
-      logger.error("MFA authentication attempt failed - missing params or no session data?")
+    unless session["mfa"]
+      logger.error("MFA authentication attempt failed - no session data?")
       handle_mfa_failure("setup", message: "invalid context")
+      return
     end
+
+    # local dev gets to bypass.
+    if mfa_params[:bypass_mfa].present? && Rails.env.development?
+      handle_mfa_success(:bypass)
+      return
+    end
+
+    method = Users::MFAVerifier.new(
+      @user,
+      otp_attempt: mfa_params[:otp_attempt],
+      webauthn_response: mfa_params[:webauthn_response],
+      webauthn_challenge: session.dig("mfa", "webauthn_challenge")
+    ).verify!
+
+    handle_mfa_success(method)
+  rescue Users::MFAVerifier::VerificationError => e
+    handle_mfa_failure(e.method, message: e.message)
   end
 
   def prompt_for_mfa(status_code: :ok, **extra_metadata)
@@ -32,35 +43,15 @@ module Users::AuthenticatesWithMFA
     session.delete("mfa")
   end
 
-  private def authenticate_with_webauthn
-    challenge_data = session.dig("mfa", "webauthn_challenge")
-    verifier = Users::Webauthn::AuthenticateService.new(@user, mfa_params[:webauthn_response], challenge_data)
-
-    verifier.execute
-    handle_mfa_success
-  rescue WebAuthn::Error => e
-    handle_mfa_failure("WebAuthn", message: e.message)
-  end
-
-  private def authenticate_with_totp
-    unless @user.totp_credential&.otp_enabled
-      handle_mfa_failure("TOTP", message: "TOTP is not configured!")
-      return
-    end
-
-    if @user.totp_credential.validate_and_consume_otp_or_backup!(mfa_params[:otp_attempt])
-      handle_mfa_success
-    else
-      handle_mfa_failure("TOTP", message: "TOTP was invalid or could not be verified.")
-    end
-  end
-
-  private def handle_mfa_success
+  private def handle_mfa_success(method)
     # Check for pwn status before clearing everything out, and set the flash.
     self.flash[:modal] = :password_breached_warning if session.dig("mfa", "pwned")
 
     reset_mfa_attempt!
     sign_in(:user, @user)
+
+    # MFA is only prompted after a password.
+    Users::AuthnContext.new(session).record_login!(["pwd", Users::AuthnContext::MFA_AMR[method]], mfa: true)
   end
 
   private def handle_mfa_failure(method, message: nil)
