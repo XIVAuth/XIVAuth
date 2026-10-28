@@ -2,7 +2,8 @@
   <div class="row align-items-center justify-content-between">
     <div class="col-12 col-lg-4 text-center text-lg-start mb-3 mb-lg-0 text-muted small">
       <p class="mb-0">
-        &copy; LOLOL, <a href="https://github.com/KazWolfe/" class="text-decoration-none">KazWolfe</a>.
+        &copy; <%= Random.rand >= 0.98 ? "OMNOMNOM" : "LOLOLOL" %>,
+        <a href="https://github.com/KazWolfe/" class="text-decoration-none">KazWolfe</a>.
         Not associated with Square Enix.
       </p>
       <ul class="list-unstyled list-inline pipe-separated-items mb-0">
@@ -25,9 +26,10 @@
     </div>
 
 
-<div class="col-12 col-lg-4 mb-0">
+    <div class="col-12 col-lg-4 mb-0">
       <ul class="nav justify-content-center justify-content-lg-end">
-        <li class="nav-item"><a href="https://github.com/XIVAuth/XIVAuth" class="nav-link px-2 text-muted">GitHub</a></li>
+        <li class="nav-item"><a href="https://github.com/XIVAuth/XIVAuth" class="nav-link px-2 text-muted">GitHub</a>
+        </li>
         <li class="nav-item"><%= link_to "Discord", discord_path, class: "nav-link px-2 text-muted",
                                          data: { "turbo-prefetch": false } %></li>
         <li class="nav-item">

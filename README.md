@@ -12,7 +12,7 @@
 ---
 
 XIVAuth is an identity provider designed to provide a unified, cohesive, and secure authentication solution for the 
-community of the critically acclaimed MMORPG Final Fantasy XIV. Users can quickly and easily connect to many apps
+community of the critically acclaimed MMORPG FINAL FANTASY XIV. Users can quickly and easily connect to many apps
 across the ecosystem, and developers can implement a secure authentication process just as easily.
 
 At a high level, XIVAuth allows users to create, register, and verify their characters with the service. Other sites or
