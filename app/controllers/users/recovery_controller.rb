@@ -22,7 +22,7 @@ class Users::RecoveryController < ApplicationController
       return
     end
 
-    @user = User.find_by(email: permitted_params[:email])
+    @user = User.find_for_authentication(email: permitted_params[:email])
 
     if @user.nil?
       redirect_to new_user_session_path, notice: RECOVERY_MESSAGE
