@@ -6,7 +6,7 @@ RSpec.describe Users::RequiresSudo, type: :controller do
   controller(ApplicationController) do
     include Users::RequiresSudo
 
-    requires_sudo only: :destroy, within: 0, and_rerender: :render_challenge, fallback: :confirm_name!
+    requires_sudo only: :destroy, within: 0, and_rerender: :render_challenge
     requires_sudo only: :update, within: 1.hour, and_rerender: :render_challenge
 
     def update
@@ -14,15 +14,11 @@ RSpec.describe Users::RequiresSudo, type: :controller do
     end
 
     def destroy
-      render plain: "destroyed"
+      render plain: "destroyed (sudo_verified: #{sudo_verified?})"
     end
 
     private def render_challenge(error: nil)
       render plain: "challenge: #{error}", status: error ? :unprocessable_content : :ok
-    end
-
-    private def confirm_name!
-      render plain: "bad name", status: :unprocessable_content unless params[:name] == "confirm"
     end
   end
 
@@ -43,17 +39,9 @@ RSpec.describe Users::RequiresSudo, type: :controller do
   end
 
   context "when the user has no MFA" do
-    it "runs the fallback instead of challenging" do
-      delete :destroy, params: { name: "wrong" }
-      expect(response.body).to eq("bad name")
-
-      delete :destroy, params: { name: "confirm" }
-      expect(response.body).to eq("destroyed")
-    end
-
-    it "passes through when there is no fallback" do
-      patch :update
-      expect(response.body).to eq("updated")
+    it "passes through without sudo_verified?, leaving confirmation to the action" do
+      delete :destroy
+      expect(response.body).to eq("destroyed (sudo_verified: false)")
     end
   end
 
@@ -68,8 +56,8 @@ RSpec.describe Users::RequiresSudo, type: :controller do
       expect(response.body).to eq("challenge: ")
     end
 
-    it "ignores the non-MFA fallback" do
-      delete :destroy, params: { name: "confirm" }
+    it "challenges even when the action's own confirmation is sent" do
+      delete :destroy, params: { confirm_text: "anything" }
       expect(response.body).to eq("challenge: ")
     end
 
@@ -108,7 +96,7 @@ RSpec.describe Users::RequiresSudo, type: :controller do
       expect(response.body).to eq("challenge: ")
 
       delete :destroy, params: { sudo: { otp_attempt: valid_otp } }
-      expect(response.body).to eq("destroyed")
+      expect(response.body).to eq("destroyed (sudo_verified: true)")
     end
 
     it "locks out after repeated failures" do

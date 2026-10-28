@@ -1,9 +1,13 @@
 class Developer::TeamsController < Developer::DeveloperPortalController
   layout "chroma/page"
   include Pagy::Method
+  include Users::RequiresSudo
 
   before_action :load_parent_teams, only: %i[new create]
   before_action :set_team, only: %i[show update destroy leave]
+
+  # Must come after the record is loaded.
+  requires_sudo only: :destroy, within: 0, and_rerender: :render_destroy_modal
   skip_before_action :check_developer_role, only: %i[index leave]
   before_action :check_team_list_access, only: %i[index]
 
@@ -92,7 +96,11 @@ class Developer::TeamsController < Developer::DeveloperPortalController
   def destroy
     authorize! :destroy, @team
 
-    render and return if request.format.turbo_stream? && params[:confirm_text].blank?
+    # Users with MFA were confirmed by the sudo gate; everyone else confirms by typing the team's name.
+    unless sudo_verified? || params[:confirm_text] == @team.name
+      reject_unconfirmed_destroy
+      return
+    end
 
     if @team.destroy
       flash[:notice] = "Team destroyed."
@@ -104,6 +112,22 @@ class Developer::TeamsController < Developer::DeveloperPortalController
       format.html { redirect_to developer_teams_url }
       format.turbo_stream { redirect_to developer_teams_url }
       format.json { head :no_content }
+    end
+  end
+
+  # Opens the delete modal, or re-renders it with an error. Holds the MFA challenge or the typed-name confirmation.
+  private def render_destroy_modal(error: nil)
+    authorize! :destroy, @team
+    render_sudo_modal(modal_id: "delete_team_modal", partial: "developer/teams/destroy_modal", error: error)
+  end
+
+  private def reject_unconfirmed_destroy
+    error = "The name you entered didn't match." if params[:confirm_text].present?
+
+    respond_to do |format|
+      format.turbo_stream { render_destroy_modal(error: error) }
+      format.html { redirect_back_or_to developer_teams_url, alert: error || "Please confirm the deletion." }
+      format.json { render json: { error: "confirm_text must match the team name" }, status: :unprocessable_content }
     end
   end
 

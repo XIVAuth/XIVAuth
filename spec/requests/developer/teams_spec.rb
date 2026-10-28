@@ -8,6 +8,11 @@ RSpec.describe "Developer::Teams" do
     sign_in user
   end
 
+  # Developers have TOTP enabled by the factory, so deletions go through sudo mode.
+  def sudo_params
+    { sudo: { otp_attempt: ROTP::TOTP.new(user.totp_credential.otp_secret).now } }
+  end
+
   describe "POST /developer/teams (create)" do
     context "when creating a standalone team" do
       it "creates a team and makes the user an admin" do
@@ -268,7 +273,7 @@ RSpec.describe "Developer::Teams" do
 
     it "allows deleting a team with no children" do
       expect do
-        delete developer_team_path(team)
+        delete developer_team_path(team), params: sudo_params
       end.to change(Team, :count).by(-1)
 
       expect(response).to redirect_to(developer_teams_path)
@@ -277,7 +282,7 @@ RSpec.describe "Developer::Teams" do
     it "prevents deleting a team with child teams" do
       child = FactoryBot.create(:team, parent: team)
 
-      delete developer_team_path(team)
+      delete developer_team_path(team), params: sudo_params
 
       expect(response).to redirect_to(developer_teams_path)
       expect(flash[:alert]).to match(/child teams/i)
@@ -290,7 +295,7 @@ RSpec.describe "Developer::Teams" do
       system_team = FactoryBot.create(:team, id: special_id, name: "System Team")
       FactoryBot.create(:team_membership, team: system_team, user: user, role: "admin")
 
-      delete developer_team_path(system_team)
+      delete developer_team_path(system_team), params: sudo_params
 
       expect(flash[:alert]).to match(/system team/i)
       expect(Team.exists?(system_team.id)).to be true
@@ -326,7 +331,7 @@ RSpec.describe "Developer::Teams" do
       subteam = FactoryBot.create(:team, parent: team)
 
       expect do
-        delete developer_team_path(subteam)
+        delete developer_team_path(subteam), params: sudo_params
       end.to change(Team, :count).by(-1)
     end
   end

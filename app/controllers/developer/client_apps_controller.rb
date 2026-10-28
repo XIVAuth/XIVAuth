@@ -1,11 +1,15 @@
 class Developer::ClientAppsController < Developer::DeveloperPortalController
   layout "chroma/page"
   include Pagy::Method
+  include Users::RequiresSudo
 
   helper Doorkeeper::DashboardHelper
 
   before_action :load_available_owners, only: %i[new create]
   before_action :set_application, only: %i[show update destroy transfer update_transfer]
+
+  # Must come after the record is loaded.
+  requires_sudo only: :destroy, within: 0, and_rerender: :render_destroy_modal
 
   def index
     @pagy, @applications = pagy(accessible_applications, items: 24)
@@ -91,7 +95,11 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
   def destroy
     authorize! :destroy, @application
 
-    render and return if request.format.turbo_stream? && params[:confirm_text].blank?
+    # Users with MFA were confirmed by the sudo gate; everyone else confirms by typing the application's name.
+    unless sudo_verified? || params[:confirm_text] == @application.name
+      reject_unconfirmed_destroy
+      return
+    end
 
     flash[:notice] = "Application destroyed." if @application.destroy
 
@@ -146,6 +154,22 @@ class Developer::ClientAppsController < Developer::DeveloperPortalController
         format.html { render :transfer, status: :unprocessable_content }
         format.turbo_stream { render :transfer, status: :unprocessable_content }
       end
+    end
+  end
+
+  # Opens the delete modal, or re-renders it with an error. Holds the MFA challenge or the typed-name confirmation.
+  private def render_destroy_modal(error: nil)
+    authorize! :destroy, @application
+    render_sudo_modal(modal_id: "delete_app_modal", partial: "developer/client_apps/destroy_modal", error: error)
+  end
+
+  private def reject_unconfirmed_destroy
+    error = "The name you entered didn't match." if params[:confirm_text].present?
+
+    respond_to do |format|
+      format.turbo_stream { render_destroy_modal(error: error) }
+      format.html { redirect_back_or_to developer_applications_url, alert: error || "Please confirm the deletion." }
+      format.json { render json: { error: "confirm_text must match the application name" }, status: :unprocessable_content }
     end
   end
 

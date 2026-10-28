@@ -3,23 +3,41 @@
     <h5 class="modal-title">Delete Team</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
   </div>
-  <div data-controller="form--confirm" data-form--confirm-text-value="<%= @team.name %>">
+  <% if sudo_applicable? %>
     <div class="modal-body">
       <p>
         This will permanently delete <strong><%= @team.name %></strong> and all associations. This action cannot be
         undone.
       </p>
-      <div class="mb-3">
-        <label class="form-label fw-semibold" for="confirm_text">Type the team's name to confirm.</label>
-        <input type="text" class="form-control" placeholder="<%= @team.name %>"
-               data-form--confirm-target="input" data-action="input->form--confirm#validate"
-               autocomplete="off" id="confirm_text" name="confirm_text">
-      </div>
+      <p>To continue, confirm your identity with multifactor authentication.</p>
+      <%= render "users/sudo_mode/challenge_fields", auto_submit: false %>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-      <%= f.submit "Delete Team", class: "btn btn-danger",
-                   data: { "form--confirm-target": "submit" } %>
+      <%= f.submit "Delete Team", class: "btn btn-danger" %>
     </div>
-  </div>
+  <% else %>
+    <div data-controller="form--confirm" data-form--confirm-text-value="<%= @team.name %>">
+      <div class="modal-body">
+        <p>
+          This will permanently delete <strong><%= @team.name %></strong> and all associations. This action cannot be
+          undone.
+        </p>
+        <% if @sudo_error.present? %>
+          <div class="alert alert-danger" role="alert"><%= @sudo_error %></div>
+        <% end %>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" for="confirm_text">Type the team's name to confirm.</label>
+          <input type="text" class="form-control" placeholder="<%= @team.name %>"
+                 data-form--confirm-target="input" data-action="input->form--confirm#validate"
+                 autocomplete="off" id="confirm_text" name="confirm_text">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <%= f.submit "Delete Team", class: "btn btn-danger",
+                     data: { "form--confirm-target": "submit" } %>
+      </div>
+    </div>
+  <% end %>
 <% end %>

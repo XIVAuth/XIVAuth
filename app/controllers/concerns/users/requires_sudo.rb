@@ -1,12 +1,15 @@
 # Gates controller actions behind a recent MFA proof ("sudo mode").
 #
-#   requires_sudo only: :destroy, within: 0, and_rerender: :render_destroy_modal, fallback: :confirm_name!
+#   requires_sudo only: :destroy, within: 0, and_rerender: :render_destroy_modal
 #
 # - `within:` how recent the user's last MFA proof must be. `0` means the proof must arrive with this request.
 # - `and_rerender:` a method, called as `method(error: nil)`, that renders the UI holding the MFA challenge (the
 #   `users/sudo_mode/challenge_fields` partial). It's called with no error when a challenge is needed, and with a
 #   message when a proof was rejected. It must render.
-# - `fallback:` (optional) a method to run instead when the user has no MFA. It may render/redirect to halt the action.
+#
+# Users without MFA pass the gate untouched; the action handles them with its own confirmation. Actions can check
+# `sudo_verified?` to tell whether this request passed via MFA, and views can check `sudo_applicable?` to choose
+# between the MFA challenge and the regular confirmation.
 #
 # A proof is accepted from `params[:sudo]`, verified with Users::MFAVerifier, and recorded as the session's latest
 # `mfa_time` in Users::AuthnContext (logging in with MFA sets it too). Any later action with a large enough `within:`
@@ -35,14 +38,12 @@ module Users::RequiresSudo
   extend ActiveSupport::Concern
 
   included do
-    helper_method :sudo_applicable?, :sudo_webauthn_challenge
+    helper_method :sudo_applicable?, :sudo_verified?, :sudo_webauthn_challenge
   end
 
   class_methods do
-    def requires_sudo(within:, and_rerender:, fallback: nil, **filter_options)
-      before_action(**filter_options) do
-        require_sudo!(within: within, rerender: and_rerender, fallback: fallback)
-      end
+    def requires_sudo(within:, and_rerender:, **filter_options)
+      before_action(**filter_options) { require_sudo!(within: within, rerender: and_rerender) }
     end
   end
 
@@ -50,6 +51,11 @@ module Users::RequiresSudo
   # regular confirmation.
   def sudo_applicable?
     current_user&.mfa_enabled? || false
+  end
+
+  # Whether this request passed the sudo gate with MFA (a proof just now, or a recent enough one).
+  def sudo_verified?
+    @sudo_verified || false
   end
 
   # Builds (once per request) a WebAuthn challenge for sudo and stores it for verification.
@@ -69,13 +75,13 @@ module Users::RequiresSudo
     @step_up_lockout ||= Users::StepUpLockout.new(session)
   end
 
-  private def require_sudo!(within:, rerender:, fallback: nil)
-    unless sudo_applicable?
-      send(fallback) if fallback
+  private def require_sudo!(within:, rerender:)
+    return unless sudo_applicable?
+
+    if authn_context.mfa_fresh?(within: within)
+      @sudo_verified = true
       return
     end
-
-    return if authn_context.mfa_fresh?(within: within)
 
     error = if sudo_proof_present?
               verify_sudo_proof
@@ -88,7 +94,10 @@ module Users::RequiresSudo
               return
             end
 
-    return if error.nil?
+    if error.nil?
+      @sudo_verified = true
+      return
+    end
 
     @sudo_error = error
     send(rerender, error: error)
@@ -134,6 +143,7 @@ module Users::RequiresSudo
   # and its content replaced when re-prompting after an error; pass `update: true` to always replace (e.g. when the
   # modal is already open for another reason).
   private def render_sudo_modal(modal_id:, partial:, locals: { }, error: nil, update: error.present?)
+    @sudo_error = error
     render "users/sudo_mode/modal",
            locals: { modal_id: modal_id, partial: partial, partial_locals: locals, update: update },
            formats: [:turbo_stream],
