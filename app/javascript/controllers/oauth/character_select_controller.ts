@@ -15,10 +15,17 @@ export default class CharacterSelectDropdownContoller extends TomSelectControlle
 
         if (this.element.multiple) {
             settings.plugins = {
-                'remove_button': {
-                    title: 'Remove this item'
+                'select_all': {
+                    label: 'Select all characters'
                 },
-                'clear_button': {},
+                'checkbox_options': {},
+                'summary': {
+                    threshold: 1,
+                    format: (count: number) => `${count} ${count == 1 ? 'character' : 'characters'} selected`,
+                    icon: (data: TomOption, escape: typeof escape_html) =>
+                        `<img src="${escape(data.characterAvatar)}" alt="">`,
+                },
+                'no_backspace_delete': {},
             };
         }
 

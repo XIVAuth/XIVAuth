@@ -11,7 +11,7 @@
     <% end %>
   </select>
   <% if auth_ctx.scopes.include?("refresh") %>
-    <div class="form-check form-switch">
+    <div class="form-check form-switch mt-1">
       <%= check_box_tag :share_new_characters, true, checked: true, class: 'form-check-input' %>
       <%= label_tag :share_new_characters, class: "form-check-label" do %>
         Automatically share any new characters

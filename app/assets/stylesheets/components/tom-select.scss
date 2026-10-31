@@ -17,14 +17,114 @@
 }
 
 // control color/backgrounds for multi-select items (selected)
+// .ts-summary shares the chip look; geometry mirrors tom-select.bootstrap5's `.ts-control > div`
 .ts-wrapper.multi .ts-control {
-  & > div.item {
-    background-color: var(--bs-secondary-bg);
+  & > div.item,
+  & > .ts-summary {
+    background: var(--bs-secondary-bg);
     color: var(--bs-body-color);
+    margin: 0 3px 3px 0;
+    padding: 1px 5px;
+    border-radius: calc(var(--bs-border-radius) - 1px);
 
     &.active {
-      background-color: var(--bs-primary-bg-subtle);
+      background: var(--bs-primary-bg-subtle);
       color: var(--bs-primary-text-emphasis);
     }
+  }
+}
+
+// "summary" plugin
+.ts-wrapper .ts-control > .ts-summary {
+  display: none;
+}
+
+.ts-wrapper.ts-summarized .ts-control {
+  // !important needed to beat utility classes (e.g. .d-flex) on custom-rendered items
+  & > div.item {
+    display: none !important;
+  }
+
+  & > .ts-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+}
+
+// overlapping avatar/icon stack inside the summary chip
+// rem sizing so the smaller "+N" text doesn't shrink its pill
+.ts-summary .ts-stack {
+  display: inline-flex;
+  align-items: center;
+
+  .ts-stack-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.25rem;
+    min-width: 1.25rem;
+    border-radius: 100%; // circle when square, pill when wider
+    overflow: hidden;
+    // ring in the chip colour so overlapping icons stay distinct
+    box-shadow: 0 0 0 2px var(--bs-secondary-bg);
+    background: var(--bs-tertiary-bg);
+
+    & + .ts-stack-icon {
+      margin-left: -0.35rem;
+    }
+
+    & > img {
+      width: 1.25rem;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .ts-stack-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 100%;
+    color: #ffffff;
+    font-size: 0.7rem;
+  }
+
+  .ts-stack-more {
+    padding: 0 0.3rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--bs-body-color);
+  }
+}
+
+// "select_all" plugin
+.ts-dropdown .ts-select-all {
+  border-bottom: var(--bs-border-width) solid var(--bs-border-color);
+
+  & > button {
+    color: var(--bs-link-color);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--bs-link-hover-color);
+      text-decoration: underline;
+    }
+  }
+}
+
+// "checkbox_options" plugin
+.ts-dropdown .option {
+  display: flex;
+  align-items: center;
+
+  & > .tomselect-checkbox {
+    accent-color: var(--bs-primary);
+    color-scheme: inherit;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    margin: 0 0.5rem 0 0;
   }
 }

@@ -10,10 +10,18 @@ export default class IdentitySelectDropdownController extends TomSelectControlle
                 option: this.renderOption,
             },
             plugins: {
-                'remove_button': {
-                    title: 'Remove this item'
+                'checkbox_options': {},
+                'select_all': {
+                    label: 'Select all identities'
                 },
-                'clear_button': {},
+                'summary': {
+                    threshold: 1,
+                    format: (count: number) => `${count} ${count == 1 ? 'identity' : 'identities'} selected`,
+                    icon: (data: TomOption, escape: typeof escape_html) =>
+                        `<span class="ts-stack-brand bg-brand-${escape(data.identityProvider)}">` +
+                        `<i class="fab fa-${escape(data.identityProvider)}"></i></span>`,
+                },
+                'no_backspace_delete': {},
             },
             searchField: ["identityName", "identityProvider"],
         };
@@ -30,26 +38,11 @@ export default class IdentitySelectDropdownController extends TomSelectControlle
             `<span><i class='fab fa-${data.identityProvider} me-1 fa-fw'></i> ${data.identityDisplayName}</span>`;
 
         if (data.identityUsername != data.identityDisplayName) {
-            render += ` <span class='very-small'>(@${escape(data.identityUsername)})</span>`;
+            render += `<span class='very-small ps-1'>(@${escape(data.identityUsername)})</span>`;
         }
 
         render += "</div>"
 
         return render;
-    }
-
-    onItemAdd(value: (string | number), item: HTMLDivElement): void {
-        if (value == "_all") {
-            this.tomSelect!.clear(true);
-
-            let items: string[] = [];
-            for (let option of Object.values(this.tomSelect!.options)) {
-                if (option.value != "_all") {
-                    items.push(option.value);
-                }
-            }
-
-            this.tomSelect!.addItems(items);
-        }
     }
 }

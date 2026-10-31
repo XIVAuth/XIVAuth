@@ -7,6 +7,10 @@ $brand-colors: (
 );
 
 @each $brand, $color in $brand-colors {
+  .bg-brand-#{$brand} {
+    background-color: $color;
+  }
+
   .btn-social-#{$brand} {
     color: #ffffff;
     background-color: $color;
