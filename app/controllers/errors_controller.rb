@@ -61,8 +61,7 @@ class ErrorsController < ActionController::Base # rubocop:disable Rails/Applicat
   end
 
   private def internal_trace_id
-    return Sentry.get_current_scope&.get_span&.trace_id if defined?(Sentry)
-
-    nil
+    span_context = OpenTelemetry::Trace.current_span.context
+    span_context.valid? ? span_context.hex_trace_id : nil
   end
 end

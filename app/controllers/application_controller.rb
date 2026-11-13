@@ -33,6 +33,7 @@ class ApplicationController < ActionController::Base
       sentry_frontend_data[:user] = user_meta
 
       Sentry.set_user(user_meta)
+      OpenTelemetry::Trace.current_span.add_attributes("user.id" => current_user.id)
       LogContext.add(user: user_meta)
     end
 

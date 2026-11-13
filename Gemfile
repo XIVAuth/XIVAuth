@@ -97,6 +97,14 @@ gem "rails_semantic_logger", "~> 5.1"
 gem "sentry-rails", "~> 7.0"
 gem "sentry-ruby", "~> 7.0"
 gem "sentry-sidekiq", "~> 7.0"
+gem "sentry-opentelemetry", "~> 7.0"
+
+# Tracing (exported to Sentry via OTLP)
+gem "opentelemetry-exporter-otlp", "~> 0.30"
+gem "opentelemetry-exporter-otlp-logs", "~> 0.2"
+gem "opentelemetry-instrumentation-all", "~> 0.80"
+gem "opentelemetry-logs-sdk", "~> 0.4"
+gem "opentelemetry-sdk", "~> 1.8"
 gem "stackprof", "~> 0.2"
 
 # Heroku dependencies

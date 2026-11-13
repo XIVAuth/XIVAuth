@@ -20,6 +20,8 @@ class SentryDebugger {
             dsn: sentryData.dsn,
             environment: sentryData.environment,
             sendDefaultPii: true,
+            // Backend uses OTel's W3C propagators, so send traceparent alongside sentry-trace.
+            propagateTraceparent: true,
             integrations: [
                 Sentry.feedbackIntegration({
                     autoInject: false,

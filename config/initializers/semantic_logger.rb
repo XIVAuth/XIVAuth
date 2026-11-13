@@ -7,3 +7,6 @@ SemanticLogger.environment = ENV["APP_ENV"] || Rails.env.to_s
 
 # default log formatter
 Rails.application.middleware.insert_before RailsSemanticLogger::Rack::Logger, ContextualLogger::Middleware
+
+# always try to ship to OTel; if it's not around, this no-ops.
+SemanticLogger.add_appender(appender: :open_telemetry)

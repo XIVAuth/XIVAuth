@@ -49,10 +49,15 @@ class Api::V1::ApiController < ActionController::API
 
     if current_user.present?
       Sentry.set_user(id: current_user.id, username: current_user.display_name)
+      OpenTelemetry::Trace.current_span.add_attributes("user.id" => current_user.id)
       LogContext.add(user: { id: current_user.id, username: current_user.display_name })
     end
 
     Sentry.set_context("oauth_application", ctx)
+    OpenTelemetry::Trace.current_span.add_attributes(
+      "xivauth.oauth.client_id" => ctx[:client_id].to_s,
+      "xivauth.oauth.scopes" => ctx[:scopes].to_a.map(&:to_s)
+    )
     LogContext.add(oauth_application: ctx)
   end
 
