@@ -84,7 +84,7 @@ jobs:
           report_type: coverage
 
       - name: Report test results
-        uses: mikepenz/action-junit-report@v6.7.0
+        uses: mikepenz/action-junit-report@v6.7.1
         with:
           report_paths: 'tmp/testresults/rspec.xml'
 
@@ -107,7 +107,7 @@ jobs:
         run: bundle binstubs rubocop
 
       - name: Run rubocop with reviewdog
-        uses: reviewdog/action-rubocop@v2.22.0
+        uses: reviewdog/action-rubocop@v2.23.0
         with:
           reporter: github-pr-review
           only_changed: true
